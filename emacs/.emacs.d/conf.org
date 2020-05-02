@@ -1044,3 +1044,10 @@ Will hide all minor-modes, shown in mode-line, in a list.
   (use-package minions
     :config (minions-mode 1))
 #+END_SRC
+* bookmarks
+Saving bookmarks to Dropbox and auto-saving upon change.
+#+BEGIN_SRC emacs-lisp
+  (setq bookmark-default-file "~/Dropbox/emacs/bookmarks"
+        ;; num changes before saving bookmark
+        bookmark-save-flag 1)
+#+END_SRC
