@@ -68,9 +68,6 @@ alias shows='flexget series list'
 # subliminal
 alias sub="subliminal download -l"
 
-# 
-alias alsa="alsamixer"
-
 # pacman
 alias update="sudo pacman -Syu"
 alias upgrade="sudo pacman -Syu"
