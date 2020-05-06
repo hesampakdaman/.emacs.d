@@ -71,9 +71,6 @@ alias sub="subliminal download -l"
 # 
 alias alsa="alsamixer"
 
-# zathura
-alias zat="zathura"
-
 # pacman
 alias update="sudo pacman -Syu"
 alias upgrade="sudo pacman -Syu"
