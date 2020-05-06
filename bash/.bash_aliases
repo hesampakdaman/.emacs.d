@@ -58,9 +58,6 @@ alias day='redshift -x'
 alias night='redshift -x; redshift -O 2800 -b 0.5'
 alias dark='redshift -x; redshift -O 2000 -b 0.2'
 
-# flexget
-alias shows='flexget series list'
-
 # subliminal
 alias sub="subliminal download -l"
 
