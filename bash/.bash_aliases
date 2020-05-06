@@ -71,10 +71,6 @@ alias pacins="sudo pacman -S"
 alias screenup=" xrandr --output DP2 --mode 2560x1440 --right-of eDP1; xrandr --output HDMI1 --mode 2560x1440 --left-of eDP1"
 alias screendwn="xrandr --output HDMI1 --off; xrandr --output DP2 --off"
 
-# history
-alias his=history
-alias hisg='history | grep'
-
 # copy/paste
 alias xcopy="xsel -i -b"
 alias xpaste="parcellite"
