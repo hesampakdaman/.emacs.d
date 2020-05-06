@@ -22,15 +22,6 @@ alias szsh="source ~/dotfiles/zsh/.zshrc"
 # dtach
 alias dta='dtach -A'
 
-# git
-alias ga="git add"
-alias gagc="git add .; git commit"
-alias gc="git commit"
-alias gd="git diff"
-alias gh="git push"
-alias gs="git status"
-alias gu="git pull"
-
 # find
 alias fn='find -L -iname'
 alias fr='find -L -regex'
