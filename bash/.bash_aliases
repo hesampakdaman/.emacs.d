@@ -14,8 +14,6 @@ alias emacsrc="$EDITOR ~/dotfiles/emacs/.emacs.d/emacs.org"
 alias salice="source ~/dotfiles/bash/.bash_aliases"
 alias sbashprofile="source ~/dotfiles/bash/.bash_profile"
 alias sbashrc="source ~/dotfiles/bash/.bashrc"
-alias szshenv="source ~/dotfiles/zsh/.zshenv"
-alias szsh="source ~/dotfiles/zsh/.zshrc"
 
 # dtach
 alias dta='dtach -A'
