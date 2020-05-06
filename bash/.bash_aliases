@@ -45,10 +45,6 @@ alias mvi="vim"
 alias miv="vim"
 # alias vim="nvim"
 
-# python
-alias py2="python"
-alias py3="python3"
-
 # tmux
 alias t="tmux -u"
 
