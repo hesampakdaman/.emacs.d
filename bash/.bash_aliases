@@ -6,7 +6,6 @@ alias i3rc="$EDITOR ~/dotfiles/i3/.config/i3/config"
 alias nvimrc="n$EDITOR ~/.config/nvim/init.vim"
 alias sshrc="$EDITOR ~/.ssh/config"
 alias termiterc="$EDITOR ~/dotfiles/termite/.config/termite/config"
-alias tmuxrc="$EDITOR ~/dotfiles/tmux/.tmux.conf"
 alias xinitrc="$EDITOR ~/dotfiles/xinit/.xinitrc"
 alias vimrc="$EDITOR ~/dotfiles/vim/.vimrc"
 alias emacsrc="$EDITOR ~/dotfiles/emacs/.emacs.d/emacs.org"
@@ -15,7 +14,6 @@ alias emacsrc="$EDITOR ~/dotfiles/emacs/.emacs.d/emacs.org"
 alias salice="source ~/dotfiles/bash/.bash_aliases"
 alias sbashprofile="source ~/dotfiles/bash/.bash_profile"
 alias sbashrc="source ~/dotfiles/bash/.bashrc"
-alias stmux="tmux source-file ~/dotfiles/tmux/.tmux.conf"
 alias szshenv="source ~/dotfiles/zsh/.zshenv"
 alias szsh="source ~/dotfiles/zsh/.zshrc"
 
@@ -44,9 +42,6 @@ alias imv="vim"
 alias mvi="vim"
 alias miv="vim"
 # alias vim="nvim"
-
-# tmux
-alias t="tmux -u"
 
 # ls
 alias ls='ls --color=auto'
