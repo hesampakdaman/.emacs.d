@@ -29,10 +29,6 @@ alias fp="find -L -path"
 alias fd='find -L -type d -iname'
 alias countfiles="find -type f | wc -l"
 
-# latex report
-alias larep="cd $ladir; $EDITOR ./sections/*.tex main.tex ./refs/*.bib"
-alias crep="latexmk -pvc -pdf -outdir=./outfiles"
-
 # emacs
 alias ec='emacsclient -n'
 alias ce='emacsclient -n'
