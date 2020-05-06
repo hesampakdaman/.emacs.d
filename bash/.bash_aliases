@@ -50,10 +50,6 @@ alias lla="ll -a --color=auto"
 alias week="date +%V"
 alias cal="cal -wm"
 
-# moving, copying
-alias del="mv ~/.Trash/"
-alias emptytrash="rm -r ~/.Trash/*"
-
 #tar
 alias tgz='tar -zxvf'
 
