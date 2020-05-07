@@ -12,6 +12,7 @@
 
   (require 'exwm-config)
   (exwm-config-default)
+  (ido-mode -1)				; (exwm-default-config) loads ido
 
   ;; workspace
   (setq exwm-workspace-show-all-buffers t   ; show buffers on other workspaces
@@ -663,8 +664,6 @@ Bindings to control screen luminance.
 * ivy and friends
 #+BEGIN_SRC emacs-lisp
   (use-package ivy
-    :init
-    (ido-mode 0)
     :config
     (ivy-mode 1)
     (counsel-mode 1)
