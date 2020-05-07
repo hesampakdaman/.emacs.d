@@ -715,14 +715,6 @@ Bindings to control screen luminance.
   (put 'suspend-frame 'disabled t)
   (put 'upcase-region 'disabled nil)
 #+END_SRC
-* undo-tree
-#+BEGIN_SRC emacs-lisp
-  ;; (use-package undo-tree
-  ;;   :ensure t
-  ;;   :bind ("M-/" . 'undo-tree-redo)
-  ;;   :config
-  ;;   (global-undo-tree-mode 1))
-#+END_SRC
 * company
 General completion system.
 #+BEGIN_SRC emacs-lisp
