@@ -1,3 +1,3 @@
 for d in */ ; do
-    stow $d
+    stow $d -t ~
 done
