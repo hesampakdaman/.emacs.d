@@ -262,7 +262,7 @@ Will add closing brackets and indent code accordingly.
   (defvar global-current-theme light-theme)
   (defvar global-next-theme dark-theme)
 
-  ;;; theme based on time of day
+  ;; theme based on time of day
   (cond ((> (string-to-number (format-time-string "%H")) 18)
          (setq global-current-theme dark-theme) (setq global-next-theme light-theme)))
 
@@ -270,7 +270,7 @@ Will add closing brackets and indent code accordingly.
 
   (defun hesam/switch-theme (current-theme next-theme)
     (disable-theme current-theme)
-    (enable-theme next-theme)
+    (load-theme next-theme t)
     (setq global-current-theme next-theme)
     (setq global-next-theme current-theme))
 
