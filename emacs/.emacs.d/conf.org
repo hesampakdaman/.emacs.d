@@ -1072,3 +1072,13 @@ Chooses which directory to run deft in. Courtesy of [[http://pragmaticemacs.com/
     (kill-this-buffer)
     (deft))
 #+END_SRC
+** projects
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/recipes ()
+    (interactive)
+    (hesam/deft-director "~/Dropbox/org/recipes"))
+
+  (defun hesam/notes ()
+    (interactive)
+    (hesam/deft-director "~/Dropbox/org/notes"))
+#+END_SRC
