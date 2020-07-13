@@ -1048,3 +1048,17 @@ Saving bookmarks to Dropbox and auto-saving upon change.
         ;; num changes before saving bookmark
         bookmark-save-flag 1)
 #+END_SRC
+* deft
+** setup
+#+BEGIN_SRC emacs-lisp
+  (use-package deft
+    :commands (deft)
+    :config  (setq deft-file-naming-rules	;; use dots as delimiters in filename and downcase
+                   '((noslash . ".")
+                     (nospace . ".")
+                     (case-fn . downcase))
+                   deft-use-filename-as-title nil
+                   deft-use-filter-string-for-filename t
+                   deft-extensions '("org")
+                   deft-default-extension "org"))
+#+END_SRC
