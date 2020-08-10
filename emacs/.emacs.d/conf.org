@@ -529,6 +529,7 @@ in the dispatcher.
   (leader-super-spc
     "b" 'hesam/book-folder-selector
     "p" 'macro/projectile
+    "r" 'hesam/recipes
     "s" 'shell
     "v" 'vterm
     "c" 'hesam/start-calibre
