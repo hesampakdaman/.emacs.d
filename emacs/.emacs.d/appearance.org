@@ -1,0 +1,111 @@
+Settings for the feel and look of Emacs.
+* Theme
+#+BEGIN_SRC emacs-lisp
+  (use-package modus-operandi-theme)
+  (use-package modus-vivendi-theme)
+
+  (defvar light-theme 'modus-operandi)
+  (defvar dark-theme 'modus-vivendi)
+  (defvar global-current-theme light-theme)
+  (defvar global-next-theme dark-theme)
+
+  ;; theme based on time of day
+  (cond ((> (string-to-number (format-time-string "%H")) 18)
+         (setq global-current-theme dark-theme) (setq global-next-theme light-theme)))
+
+  (load-theme global-current-theme t)
+
+  (defun hesam/switch-theme (current-theme next-theme)
+    (disable-theme current-theme)
+    (load-theme next-theme t)
+    (setq global-current-theme next-theme)
+    (setq global-next-theme current-theme))
+
+  (defun hesam/theme-toggle ()
+    (interactive)
+    (hesam/switch-theme global-current-theme global-next-theme))
+
+  (defun hesam/switch-theme-dark ()
+    (if (eq global-current-theme light-theme)
+        (hesam/theme-toggle)))
+
+  (defun hesam/switch-theme-light ()
+    (if (eq global-current-theme dark-theme)
+        (hesam/theme-toggle)))
+#+END_SRC
+* Bar-mode
+#+BEGIN_SRC emacs-lisp
+  (scroll-bar-mode -1)
+  (show-paren-mode t)
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
+#+END_SRC
+* Fonts
+#+BEGIN_SRC emacs-lisp
+  (setq hesam-default-hires-height 185)
+  (setq hesam-default-lowres-height 110)
+  (setq hesam-modeline-hires-height (- hesam-default-hires-height 10))
+  (setq hesam-modeline-lowres-height hesam-default-lowres-height)
+
+  (set-face-attribute 'default nil
+                      :family "Fira Code Light"
+                      :height hesam-default-lowres-height)
+  (set-face-attribute 'fixed-pitch nil :family "Fira Code Light")
+  (set-face-attribute 'variable-pitch nil
+                      :family "Libre Baskerville"
+                      :height 1.2)
+
+  (defun hesam/font-monitors ()
+    "Loops through every frame and adjusts font size according to dimensions
+          of the monitor it is attached to"
+    (interactive)
+    (if (display-graphic-p)			; check X-window
+        (progn
+          (dolist (elem (frame-list))	; for all frames
+            (if (> (car (last (assq 'geometry (frame-monitor-attributes elem)))) 2000)
+                (progn
+                  (set-face-attribute 'default elem :height hesam-default-hires-height)
+                  (set-face-attribute 'mode-line elem :height hesam-modeline-hires-height)
+                  (set-face-attribute 'mode-line-inactive elem :height hesam-modeline-hires-height))
+              (progn
+                (set-face-attribute 'default elem :height hesam-default-lowres-height)
+                (set-face-attribute 'mode-line elem :height hesam-modeline-lowres-height)
+                (set-face-attribute 'mode-line-inactive elem :height hesam-modeline-lowres-height)
+                )))))
+    (exwm-randr-refresh))
+
+  (add-hook 'exwm-randr-screen-change-hook 'hesam/font-monitors)
+
+  (defun hesam/font-per-display (frame)
+    "Will change the font according to the dimensions of the monitor of focused
+            frame"
+    (select-frame frame)
+    (if (display-graphic-p) 			; check X-window
+        (progn
+          (if (> (car (last (assq 'geometry (frame-monitor-attributes frame)))) 2000)
+              (set-face-attribute 'default frame :height hesam-default-hires-height)
+            (set-face-attribute 'default frame :height hesam-default-lowres-height)))))
+
+  (add-hook 'after-make-frame-functions 'hesam/font-per-display)
+
+  (setq ring-bell-function 'ignore)
+#+END_SRC
+* Cursor
+#+BEGIN_SRC emacs-lisp
+  (blink-cursor-mode 0)
+  (defun hesam/cursor ()
+    (hl-line-mode t))
+  (add-hook 'prog-mode-hook 'hesam/cursor)
+#+END_SRC
+* Display-time
+#+BEGIN_SRC emacs-lisp
+  (setq display-time-24hr-format t)
+  (setq display-time-day-and-date nil)
+  (setq display-time-default-load-average nil)
+  (display-time)
+#+END_SRC
+* Hideshow
+#+BEGIN_SRC emacs-lisp
+  (set-display-table-slot standard-display-table
+                          'selective-display (string-to-vector " [+] "))
+#+END_SRC
