@@ -48,9 +48,12 @@ Settings for the feel and look of Emacs.
   (setq hesam-modeline-lowres-height hesam-default-lowres-height)
 
   (set-face-attribute 'default nil
-                      :family "Fira Code Light"
+                      :family "Fira Code"
+                      :weight 'light
                       :height hesam-default-lowres-height)
-  (set-face-attribute 'fixed-pitch nil :family "Fira Code Light")
+  (set-face-attribute 'fixed-pitch nil
+                      :family "Fira Code"
+                      :weight 'light)
   (set-face-attribute 'variable-pitch nil
                       :family "Libre Baskerville"
                       :height 1.2)
@@ -109,3 +112,12 @@ Settings for the feel and look of Emacs.
   (set-display-table-slot standard-display-table
                           'selective-display (string-to-vector " [+] "))
 #+END_SRC
+** Fira Code Ligatures
+Package for showing the ligatures in Fira Code correctly. Uses a font named Fira
+Code Symbols where custom unicodes are defined so that we can find them
+correctly.
+#+begin_src emacs-lisp
+  (use-package fira-code-mode
+    :custom (fira-code-mode-disabled-ligatures '("[]" "x")) ;; List of ligatures to turn off
+    :hook prog-mode) ;; Enables fira-code-mode automatically for programming major modes
+#+end_src
