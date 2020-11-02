@@ -1,0 +1,14 @@
+Config { font = "xft:Fira Code:size=9.5"
+        , borderColor = "black"
+        , border = TopB
+        , bgColor = "#282a36"
+        , fgColor = "#ff79c6"
+        , position = TopW L 100
+        , commands = [ Run Weather "ESSB" ["-t","<tempC>C <skyCondition>" ] 36000
+                      , Run Date "%a %_d %b %Y %H:%M" "date" 50
+                      , Run StdinReader
+		      ]
+        , sepChar = "%"
+        , alignSep = "}{"
+        , template = "%StdinReader%  }{<fc=#bd93f9>%date%</fc> "
+        }

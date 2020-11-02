@@ -12,5 +12,6 @@ if [ -f $HOME/.xbindkeysrc ]; then
     xbindkeys -p
 fi
 
-# emacs with EXWM
-exec emacs
+feh --no-fehbg --bg-scale '/home/hesam/Dropbox/wallpaper.png' &
+picom --config $HOME/.config/picom/picom.conf &
+exec xmonad

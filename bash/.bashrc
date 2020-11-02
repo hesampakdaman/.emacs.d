@@ -3,14 +3,16 @@
 #
 
 # env
-EDITOR=emacsclient
+EDITOR="emacsclient -nc"
+VISUAL="emacsclient -nc"
+SUDO_EDITOR="emacsclient -nc"
+
 GREP_COLOR="1;31"
 HISTFILE=~/.bash_history
 LC_ALL=en_US.UTF-8
 PATH=$PATH:$HOME/.local/bin/
-SUDO_EDITOR=emacsclient
 TERM=screen-256color
-VISUAL=emacsclient
+
 dotfiles=$HOME/dotfiles
 
 # simple prompt that goes well

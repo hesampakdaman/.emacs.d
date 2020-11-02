@@ -4,33 +4,6 @@
     :init
     (general-auto-unbind-keys))
 #+END_SRC
-* exwm
-** setup
-#+BEGIN_SRC emacs-lisp
-  (use-package exwm)
-  (use-package dmenu)
-
-  (require 'exwm-config)
-  (exwm-config-default)
-  (ido-mode -1)				; (exwm-default-config) loads ido
-
-  ;; workspace
-  (setq exwm-workspace-show-all-buffers t   ; show buffers on other workspaces
-        exwm-layout-show-all-buffers t)	; switch to buffers on other workspaces
-#+END_SRC
-** xrandr
-*** Olivia
-#+BEGIN_SRC emacs-lisp
-  (if (string-equal system-name "olivia")
-      (progn
-        (require 'exwm-randr)
-        (setq exwm-randr-workspace-output-plist '(1 "DP-2" 2 "eDP-1" 3 "DP-1"))
-        (add-hook 'exwm-randr-refresh-hook
-                  (lambda ()
-                    (start-process-shell-command
-                     "xrandr" nil "xrandr --output DP-2 --left-of eDP-1 --auto --rate 30; xrandr --output DP-1 --right-of eDP-1 --auto")))
-        (exwm-randr-enable)))
-#+END_SRC
 * emms
 #+BEGIN_SRC emacs-lisp
   (use-package emms
@@ -478,70 +451,6 @@ Bindings to control screen luminance.
    :prefix "C-x"
    "C-f" 'counsel-find-file)
 #+END_SRC
-
-* EXWM
-*** window
-#+BEGIN_SRC emacs-lisp
-(exwm-input-set-key (kbd "s-h") 'windmove-left)
-(exwm-input-set-key (kbd "s-j") 'windmove-down)
-(exwm-input-set-key (kbd "s-k") 'windmove-up)
-(exwm-input-set-key (kbd "s-l") 'windmove-right)
-(exwm-input-set-key (kbd "s-K") 'buf-move-up)
-(exwm-input-set-key (kbd "s-J") 'buf-move-down)
-(exwm-input-set-key (kbd "s-H") 'buf-move-left)
-(exwm-input-set-key (kbd "s-L") 'buf-move-right)
-(exwm-input-set-key (kbd "s-s") 'split-window-horizontally)
-(exwm-input-set-key (kbd "s-v") 'split-window-vertically)
-(exwm-input-set-key (kbd "s-d") 'kill-buffer-and-window)
-(exwm-input-set-key (kbd "s-K") 'buf-move-up)
-(exwm-input-set-key (kbd "s-J") 'buf-move-down)
-(exwm-input-set-key (kbd "s-H") 'buf-move-left)
-(exwm-input-set-key (kbd "s-L") 'buf-move-right)
-(exwm-input-set-key (kbd "s-f") 'exwm-reset)
-#+END_SRC
-*** general binds
-#+BEGIN_SRC emacs-lisp
-  ;; So that General package to be used in EXWM window
-  (push ?\s-\  exwm-input-prefix-keys)
-  (push ?\s-a exwm-input-prefix-keys)
-  (push ?\s-r exwm-input-prefix-keys)
-#+END_SRC
-*** keyboard toggler
-#+BEGIN_SRC emacs-lisp
-  ;; toggle layout
-  (defun hesam/keybr-toggle-layout ()
-    (interactive)
-    (setq current-dir default-directory)
-    (cd "~")
-    (shell-command "source ~/Dropbox/keys.sh")
-    (shell-command "(setxkbmap -query | grep -q 'layout:.*us') && setxkbmap se || setxkbmap us")
-    (message nil)				; suppress shell-cmd msg
-    ;; echo new layout in use
-    (message (shell-command-to-string "setxkbmap -query | grep 'layout.*' | tr '\n' ' '"))
-    (cd current-dir))
-
-  ;; bind fn to s-t
-  (exwm-input-set-key (kbd "s-t") 'hesam/keybr-toggle-layout)
-#+END_SRC
-*** simulation keys
-#+BEGIN_SRC emacs-lisp
-  (setq exwm-input-simulation-keys
-        '(([?\C-b] . [left])
-          ([?\C-f] . [right])
-          ([?\C-p] . [up])
-          ([?\C-n] . [down])
-          ([?\C-a] . [home])
-          ([?\C-e] . [end])
-          ([?\M-v] . [prior])
-          ([?\C-v] . [next])
-          ([?\C-d] . [delete])
-          ([?\C-k] . [S-end delete])))
-#+END_SRC
-*** applications
-#+BEGIN_SRC emacs-lisp
-  (exwm-input-set-key (kbd "s-b") 'hesam/start-browser)
-  (exwm-input-set-key (kbd "s-w") 'counsel-linux-app)
-#+END_SRC
 ** global
 #+BEGIN_SRC emacs-lisp
   ;; completion suggestions
@@ -843,18 +752,12 @@ Enable region narrowing.
 #+BEGIN_SRC emacs-lisp
   (savehist-mode 1)
 #+END_SRC
-* purpose
-Dedicate windows to only display certain types of buffers.
+* frames-only
+Opens new buffers in a new frame. Place nicely with tiling wms.
 #+BEGIN_SRC emacs-lisp
-  (use-package window-purpose
+  (use-package frames-only-mode
     :config
-    (add-to-list 'purpose-user-mode-purposes '(python-mode . py))
-    (add-to-list 'purpose-user-mode-purposes '(org-mode . org))
-    (add-to-list 'purpose-user-mode-purposes '(shell-mode . shell))
-    (add-to-list 'purpose-user-regexp-purposes '("Org" . org))
-    (add-to-list 'purpose-user-name-purposes '("Chromium" . chrome))
-    (purpose-compile-user-configuration)
-    (purpose-mode t))
+    (frames-only-mode t))
 #+END_SRC
 * ediff
 EXWM does not like the default option when using =ediff=,
