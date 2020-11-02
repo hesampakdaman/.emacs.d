@@ -3,15 +3,16 @@ Settings for the feel and look of Emacs.
 #+BEGIN_SRC emacs-lisp
   (use-package modus-operandi-theme)
   (use-package modus-vivendi-theme)
+  (use-package dracula-theme)
 
   (defvar light-theme 'modus-operandi)
-  (defvar dark-theme 'modus-vivendi)
-  (defvar global-current-theme light-theme)
-  (defvar global-next-theme dark-theme)
+  (defvar dark-theme 'dracula)
+  (defvar global-current-theme dark-theme)
+  (defvar global-next-theme light-theme)
 
   ;; theme based on time of day
-  (cond ((> (string-to-number (format-time-string "%H")) 18)
-         (setq global-current-theme dark-theme) (setq global-next-theme light-theme)))
+  ;; (cond ((> (string-to-number (format-time-string "%H")) 18)
+  ;;        (setq global-current-theme dark-theme) (setq global-next-theme light-theme)))
 
   (load-theme global-current-theme t)
 
@@ -95,17 +96,13 @@ Settings for the feel and look of Emacs.
 #+END_SRC
 * Cursor
 #+BEGIN_SRC emacs-lisp
-  (blink-cursor-mode 0)
-  (defun hesam/cursor ()
-    (hl-line-mode t))
-  (add-hook 'prog-mode-hook 'hesam/cursor)
+  (blink-cursor-mode)
 #+END_SRC
 * Display-time
 #+BEGIN_SRC emacs-lisp
   (setq display-time-24hr-format t)
   (setq display-time-day-and-date nil)
   (setq display-time-default-load-average nil)
-  (display-time)
 #+END_SRC
 * Hideshow
 #+BEGIN_SRC emacs-lisp

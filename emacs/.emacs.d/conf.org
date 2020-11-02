@@ -826,9 +826,7 @@ Shell based on libvterm
 * run-at-time
 ** appearance
 #+BEGIN_SRC emacs-lisp
-  (run-at-time "04:00" 86400 #'hesam/switch-theme-light)
   (run-at-time "04:00" 86400 #'hesam/day)
-  (run-at-time "18:00" 86400 #'hesam/switch-theme-dark)
   (run-at-time "20:00" 86400 #'hesam/night)
 #+END_SRC
 * minions
@@ -878,3 +876,11 @@ Chooses which directory to run deft in. Courtesy of [[http://pragmaticemacs.com/
     (interactive)
     (hesam/deft-director "~/Dropbox/org/notes"))
 #+END_SRC
+* backups
+Saves all backups to =~/.emacs.d/backups= and in addition creates numbered
+#+begin_src emacs-lisp
+  (setq backup-directory-alist `(("." . "~/.emacs.d/backups")))
+  (setq delete-old-versions t
+        kept-new-versions 5
+        version-control t)
+#+end_src
