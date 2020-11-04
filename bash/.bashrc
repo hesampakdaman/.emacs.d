@@ -2,29 +2,29 @@
 # ~/.bashrc
 #
 
-# env
+## env
+
+### editor
 EDITOR="emacsclient -nc"
-VISUAL="emacsclient -nc"
 SUDO_EDITOR="emacsclient -nc"
+VISUAL="emacsclient -nc"
 
-GREP_COLOR="1;31"
-HISTFILE=~/.bash_history
-LC_ALL=en_US.UTF-8
-PATH=$PATH:$HOME/.local/bin/
-TERM=screen-256color
-
-dotfiles=$HOME/dotfiles
-
-# simple prompt that goes well
-# with TRAMP
-PROMPT_DIRTRIM=2		# shorten dir in prompt
-export PS1="[\t][\h][\w]$ "
-
-# history
-HISTFILE=~/.bash_history
+### history
 HISTCONTROL=ignoreboth
+HISTFILE=~/.bash_history
 HISTSIZE=9999
 shopt -s histappend
+
+### misc
+TERM="xterm-256color"
+GREP_COLOR="32"
+LC_ALL=en_US.UTF-8
+PATH=$PATH:$HOME/.local/bin/
+dotfiles=$HOME/dotfiles
+
+# simple prompt that goes well with TRAMP
+PROMPT_DIRTRIM=2
+export PS1="\e[35;1m[\t][\h][\w]$ \e[m"
 
 # alias
 if [ -d $dotfiles ]; then
