@@ -18,6 +18,7 @@ myKeys = [
   , ("M-n", moveTo Next NonEmptyWS)
   , ("M-y", spawn kbdToggler)
   , ("M-s", spawn "kitty")
+  , ("M-S-q", spawn "xsecurelock")
   , ("M-S-<Space>", spawn "rofi -combi-modi drun,ssh -font 'Fira Code 12' -show combi")
   , ("M-<Tab>", toggleWS)
   ]
