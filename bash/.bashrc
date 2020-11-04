@@ -37,12 +37,3 @@ fi
 
 # disable freeze C-s
 [[ $- == *i* ]] && stty -ixon
-
-if command -v fasd &> /dev/null; then
-    eval "$(fasd --init auto)"
-fi
-
-# LS_COLRS=$LS_COLORS:'ex=1;32:ln=0;35:di=1;34:ow=1;34'
-if [ -f $dotfiles/bash/.dircolors ]; then
-    eval `dircolors -b $dotfiles/bash/.dircolors`
-fi
