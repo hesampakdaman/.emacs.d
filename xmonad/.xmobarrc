@@ -11,5 +11,5 @@ Config { font = "xft:Fira Code:size=9.5"
 		      ]
         , sepChar = "%"
         , alignSep = "}{"
-        , template = "%StdinReader%  }{<fc=#bd93f9>%kbd%</fc> | <fc=#bd93f9>%date%</fc> "
+        , template = "%StdinReader%  }{ <fc=#50fa7b>%kbd%</fc> / %date%"
         }
