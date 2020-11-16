@@ -12,6 +12,7 @@ if [ -f $HOME/.xbindkeysrc ]; then
     xbindkeys -p
 fi
 
+xsetroot -cursor_name left_ptr &
 feh --no-fehbg --bg-scale '/home/hesam/Dropbox/wallpaper.png' &
 picom --config $HOME/.config/picom/picom.conf &
 exec xmonad
