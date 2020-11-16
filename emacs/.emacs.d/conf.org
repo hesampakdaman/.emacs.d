@@ -386,10 +386,10 @@ in the dispatcher.
 #+END_SRC
 * bindings
 ** general
-*** s-SPC (general)
+*** M-SPC (general)
 #+BEGIN_SRC emacs-lisp
   (general-create-definer leader-super-spc
-    :prefix "s-SPC")
+    :prefix "M-SPC")
 
   (leader-super-spc
     "b" 'hesam/book-folder-selector
