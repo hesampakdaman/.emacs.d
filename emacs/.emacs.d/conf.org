@@ -403,22 +403,19 @@ in the dispatcher.
 #+END_SRC
 *** s-a (agenda)
 #+BEGIN_SRC emacs-lisp
-  (general-create-definer leader-super-agenda
-    :prefix "s-a")
+  (leader-super-spc
+    "M-a a" 'org-agenda
+    "M-a c" 'org-capture
+    "M-a g" 'hesam/gtd
+    "M-a l" 'hesam/ledger
+    "M-a i" 'hesam/inbox
+    "M-a s" 'hesam/someday
+    "M-a t" 'hesam/tickler
+    "M-a x" 'org-archive-subtree)
 
-  (leader-super-agenda
-    "a" 'org-agenda
-    "c" 'org-capture
-    "g" 'hesam/gtd
-    "l" 'hesam/ledger
-    "i" 'hesam/inbox
-    "s" 'hesam/someday
-    "t" 'hesam/tickler
-    "x" 'org-archive-subtree)
-
-  (leader-super-agenda
+  (leader-super-spc
     :keymaps 'org-mode-map
-    "r" 'org-refile)
+    "M-a r" 'org-refile)
 #+END_SRC
 *** s-r
 Bindings to control screen luminance.
