@@ -1,6 +1,6 @@
 [options]
-    font = Hack 12
-    cursor_blink = off
+    font = Fira Code 12
+    cursor_blink = on
     mouse_autohide = true
     allow_bold = true
 [colors]
