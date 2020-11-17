@@ -681,18 +681,6 @@ For reading epubs in beautiful format.
     :ensure t)
 #+END_SRC
 * programs
-** startup
-#+BEGIN_SRC emacs-lisp
-  (call-process-shell-command "sleep 10; dropbox &" nil 0)
-  (call-process-shell-command "unclutter --timeout 1 &" nil 0)
-  (call-process-shell-command "flameshot &" nil 0)
-#+END_SRC
-** browser
-#+BEGIN_SRC emacs-lisp
-  (defun hesam/start-browser ()
-    (interactive)
-    (start-process "" nil "firefox"))
-#+END_SRC
 ** screenshot
 #+BEGIN_SRC emacs-lisp
   (defun hesam/start-flameshot ()
