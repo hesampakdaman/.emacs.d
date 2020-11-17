@@ -462,7 +462,9 @@ Bindings to control screen luminance.
 #+END_SRC
 * server
 #+BEGIN_SRC emacs-lisp
-  (server-start)
+  (require 'server)
+  (unless (server-running-p)
+    (server-start))
 #+END_SRC
 * ivy and friends
 #+BEGIN_SRC emacs-lisp
