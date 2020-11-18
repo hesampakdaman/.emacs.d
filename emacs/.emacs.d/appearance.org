@@ -66,7 +66,7 @@ Settings for the feel and look of Emacs.
     (if (display-graphic-p)			; check X-window
         (progn
           (dolist (elem (frame-list))	; for all frames
-            (if (> (car (last (assq 'geometry (frame-monitor-attributes elem)))) 2000)
+            (if (> (car (last (frame-monitor-attribute 'geometry elem))) 1080)
                 (progn
                   (set-face-attribute 'default elem :height hesam-default-hires-height)
                   (set-face-attribute 'mode-line elem :height hesam-modeline-hires-height)
@@ -74,21 +74,20 @@ Settings for the feel and look of Emacs.
               (progn
                 (set-face-attribute 'default elem :height hesam-default-lowres-height)
                 (set-face-attribute 'mode-line elem :height hesam-modeline-lowres-height)
-                (set-face-attribute 'mode-line-inactive elem :height hesam-modeline-lowres-height)
-                )))))
-    (exwm-randr-refresh))
-
-  (add-hook 'exwm-randr-screen-change-hook 'hesam/font-monitors)
+                (set-face-attribute 'mode-line-inactive elem :height hesam-modeline-lowres-height)))))))
 
   (defun hesam/font-per-display (frame)
     "Will change the font according to the dimensions of the monitor of focused
             frame"
     (select-frame frame)
-    (if (display-graphic-p) 			; check X-window
-        (progn
-          (if (> (car (last (assq 'geometry (frame-monitor-attributes frame)))) 2000)
-              (set-face-attribute 'default frame :height hesam-default-hires-height)
-            (set-face-attribute 'default frame :height hesam-default-lowres-height)))))
+    (frame-monitor-attribute 'geometry frame)
+    (cond ((> (car (last (frame-monitor-attribute 'geometry frame))) 1080)
+           (set-face-attribute 'default frame :height hesam-default-hires-height)
+           (set-face-attribute 'mode-line frame :height hesam-modeline-hires-height)
+           (set-face-attribute 'mode-line-inactive frame :height hesam-modeline-hires-height))
+          (t (set-face-attribute 'default frame :height hesam-default-lowres-height)
+             (set-face-attribute 'mode-line frame :height hesam-modeline-lowres-height)
+             (set-face-attribute 'mode-line-inactive frame :height hesam-modeline-lowres-height))))
 
   (add-hook 'after-make-frame-functions 'hesam/font-per-display)
 
