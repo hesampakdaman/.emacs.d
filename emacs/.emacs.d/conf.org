@@ -752,14 +752,21 @@ EXWM does not like the default option when using =ediff=,
 #+BEGIN_SRC emacs-lisp
   (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 #+END_SRC
-* external files
+* Loading untracked settings
+Helper function hesam/load-if-exists to load any files if they
+exist. These are not meant to be tracked by git. We also set the
+custom-file variable to notifty emacs customization options not
+tracked by git shall be saved there, instead of default in the init
+file.
 #+BEGIN_SRC emacs-lisp
-  (setq custom-file "~/.emacs.d/custom.el")
-  (load custom-file)
-  (load "~/dotfiles/emacs/.emacs.d/macros.el")
-  (if (file-exists-p "~/.emacs.d/local.el")
-      (progn (load "~/.emacs.d/local.el")))
+  (defun hesam/load-if-exists (path)
+    (if (file-exists-p path)
+        (progn (load path))))
 
+  (setq custom-file "~/.emacs.d/emacs-custom.el")
+  (hesam/load-if-exists custom-file)
+  (hesam/load-if-exists "~/.emacs.d/macros.el")
+  (hesam/load-if-exists "~/.emacs.d/local.el")
 #+END_SRC
 * flyspell
 ** flyspell-correct-popup
