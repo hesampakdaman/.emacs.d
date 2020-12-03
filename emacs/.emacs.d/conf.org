@@ -704,32 +704,6 @@ Consider completions other than for binaries.
 #+BEGIN_SRC emacs-lisp
   (setq shell-completion-execonly nil)
 #+END_SRC
-** history
-This will load remote's bash history using TRAMP. Taken from [[https://stackoverflow.com/a/55614646/8412414][stackoverflow]].
-#+BEGIN_SRC emacs-lisp
-  (defun hesam/history-shell-mode-hook ()
-    (setq comint-input-ring-file-name
-          (if (file-remote-p default-directory)
-              (with-parsed-tramp-file-name default-directory nil
-                (tramp-make-tramp-file-name
-                 (tramp-file-name-method v)
-                 (tramp-file-name-user v)
-                 (tramp-file-name-domain v)
-                 (tramp-file-name-host v)
-                 (tramp-file-name-port v)
-                 "~/.bash_history"))
-            "~/.bash_history"))
-    (comint-read-input-ring 'silent))
-
-  (setq cominqt-input-ring-size 9999)
-  (add-hook 'shell-mode-hook #'hesam/history-shell-mode-hook)
-  (add-hook 'kill-buffer-hook #'comint-write-input-ring)
-  (add-hook 'projectile-kill-buffers #'comint-write-input-ring)
-  (add-hook 'kill-emacs-hook
-            (lambda ()
-              (--each (buffer-list)
-                (with-current-buffer it (comint-write-input-ring)))))
-#+END_SRC
 * narrow
 Enable region narrowing.
 #+BEGIN_SRC emacs-lisp
