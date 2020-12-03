@@ -96,7 +96,10 @@ Settings for the feel and look of Emacs.
 #+END_SRC
 * Cursor
 #+BEGIN_SRC emacs-lisp
+  ;; cursor blinks in focused buffer for 10 times
   (blink-cursor-mode)
+  ;; overrides default value and blinks forever
+  (setq blink-cursor-blinks 0)
 #+END_SRC
 * Display-time
 #+BEGIN_SRC emacs-lisp
