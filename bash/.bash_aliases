@@ -2,32 +2,21 @@
 alias alice="$EDITOR ~/dotfiles/bash/.bash_aliases"
 alias bashenv="$EDITOR ~/dotfiles/bash/.bash_profile"
 alias bashrc="$EDITOR ~/dotfiles/bash/.bashrc"
-alias i3rc="$EDITOR ~/dotfiles/i3/.config/i3/config"
-alias nvimrc="n$EDITOR ~/.config/nvim/init.vim"
 alias sshrc="$EDITOR ~/.ssh/config"
 alias termiterc="$EDITOR ~/dotfiles/termite/.config/termite/config"
 alias xinitrc="$EDITOR ~/dotfiles/xinit/.xinitrc"
 alias vimrc="$EDITOR ~/dotfiles/vim/.vimrc"
-alias emacsrc="$EDITOR ~/dotfiles/emacs/.emacs.d/emacs.org"
+alias emacsrc="$EDITOR ~/dotfiles/emacs/.emacs.d/conf.org"
 
 # source
 alias salice="source ~/dotfiles/bash/.bash_aliases"
 alias sbashprofile="source ~/dotfiles/bash/.bash_profile"
 alias sbashrc="source ~/dotfiles/bash/.bashrc"
 
-# dtach
-alias dta='dtach -A'
-
-# find
-alias fn='find -L -iname'
-alias fr='find -L -regex'
-alias fp="find -L -path"
-alias fd='find -L -type d -iname'
-alias countfiles="find -type f | wc -l"
-
 # emacs
-alias ec='emacsclient -n'
-alias ce='emacsclient -n'
+alias e='emacsclient -nc'
+alias ec='emacsclient -nc'
+alias ce='emacsclient -nc'
 alias magit="emacsclient -n -e '(magit-status)'"
 
 # vim
@@ -49,9 +38,6 @@ alias lla="ll -a --color=auto"
 # date
 alias week="date +%V"
 alias cal="cal -wm"
-
-#tar
-alias tgz='tar -zxvf'
 
 # redshift
 alias day='redshift -x'
