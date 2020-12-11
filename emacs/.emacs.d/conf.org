@@ -791,12 +791,6 @@ Shell based on libvterm
     (interactive)
     (flush-lines "^$"))
 #+END_SRC
-* run-at-time
-** appearance
-#+BEGIN_SRC emacs-lisp
-  (run-at-time "04:00" 86400 #'hesam/day)
-  (run-at-time "20:00" 86400 #'hesam/night)
-#+END_SRC
 * minions
 Will hide all minor-modes, shown in mode-line, in a list.
 #+BEGIN_SRC emacs-lisp
