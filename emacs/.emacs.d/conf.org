@@ -43,13 +43,6 @@
 #+BEGIN_SRC emacs-lisp
   (winner-mode 1)
 #+END_SRC
-** elisp
-*** paredit
-#+BEGIN_SRC emacs-lisp
-  (use-package paredit
-     :config
-    (add-hook 'emacs-lisp-mode-hook #'paredit-mode))
-#+END_SRC
 ** prog
 *** highlight
 **** whitespace
