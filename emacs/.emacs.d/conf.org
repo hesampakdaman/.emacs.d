@@ -467,12 +467,11 @@ Bindings to control screen luminance.
     (counsel-mode 1)
     (setq ivy-re-builders-alist
           '((ivy-switch-buffer . ivy--regex-fuzzy)
-            (swiper . ivy--regex)
             (t . ivy--regex-fuzzy))
           ivy-initial-inputs-alist nil
           enable-recursive-minibuffers t
           ivy-use-virtual-buffers t
-          ivy-count-format "%d/%d "))
+          ivy-count-format ""))
 
   (use-package amx
     :after ivy
