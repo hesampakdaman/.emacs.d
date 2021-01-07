@@ -389,7 +389,6 @@ in the dispatcher.
     "p" 'macro/projectile
     "r" 'hesam/recipes
     "s" 'shell
-    "v" 'vterm
     "c" 'hesam/start-calibre
     "t" 'hesam/theme-toggle
     "]" 'hesam/start-flameshot)
@@ -771,11 +770,6 @@ Plain text double-entry bookkeeping.
   (defun hesam/ledger ()
     (interactive)
     (find-file-other-window "~/Dropbox/ledger/ledger.dat"))
-#+END_SRC
-* vterm
-Shell based on libvterm
-#+BEGIN_SRC emacs-lisp
-  (use-package vterm)
 #+END_SRC
 * flush-lines
 #+BEGIN_SRC emacs-lisp
