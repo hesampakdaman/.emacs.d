@@ -59,24 +59,6 @@ Settings for the feel and look of Emacs.
                       :family "Libre Baskerville"
                       :height 1.2)
 
-  (defun hesam/font-monitors (frame)
-    "Loops through every frame and adjusts font size according to dimensions
-          of the monitor it is attached to"
-    (select-frame frame)
-    (if (display-graphic-p)			; check X-window
-        (progn
-          (dolist (elem (frame-list))	; for all frames
-            (if (> (car (last (frame-monitor-attribute 'geometry elem))) 1080)
-                (progn
-                  (set-face-attribute 'default elem :height hesam-default-hires-height)
-                  (set-face-attribute 'mode-line elem :height hesam-modeline-hires-height)
-                  (set-face-attribute 'mode-line-inactive elem :height hesam-modeline-hires-height))
-              (progn
-                (set-face-attribute 'default elem :height hesam-default-lowres-height)
-                (set-face-attribute 'mode-line elem :height hesam-modeline-lowres-height)
-                (set-face-attribute 'mode-line-inactive elem :height hesam-modeline-lowres-height)))))))
-  (add-hook 'move-frame-functions 'hesam/font-per-display)
-
   (defun hesam/font-per-display (frame)
     "Will change the font according to the dimensions of the monitor of focused
             frame"
@@ -91,6 +73,7 @@ Settings for the feel and look of Emacs.
              (set-face-attribute 'mode-line-inactive frame :height hesam-modeline-lowres-height))))
 
   (add-hook 'after-make-frame-functions 'hesam/font-per-display)
+  (add-hook 'move-frame-functions 'hesam/font-per-display)
 
   (setq ring-bell-function 'ignore)
 #+END_SRC
