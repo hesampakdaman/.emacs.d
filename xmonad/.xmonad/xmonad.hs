@@ -17,7 +17,7 @@ myKeys = [
   , ("M-p", moveTo Prev NonEmptyWS)
   , ("M-n", moveTo Next NonEmptyWS)
   , ("M-y", spawn kbdToggler)
-  , ("M-s", spawn "kitty")
+  , ("M-s", spawn "gnome-terminal")
   , ("M-S-q", spawn "xsecurelock")
   , ("M-S-<Space>", spawn "rofi -combi-modi drun,ssh -font 'Fira Code 12' -show combi")
   , ("M-<Tab>", toggleWS)
@@ -41,7 +41,7 @@ myPP = def { ppCurrent = xmobarColor "#50fa7b" "" . wrap "[" "]",
 toggleStrutsKey XConfig {XMonad.modMask = modMask} = (modMask, xK_b)
 
 -- Main configuration, override the defaults to your liking.
-myConfig = def { terminal = "kitty"
+myConfig = def { terminal = "gnome-terminal"
                , layoutHook = mylayoutHook
                , modMask = mod4Mask
                , focusFollowsMouse = False
