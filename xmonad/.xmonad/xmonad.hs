@@ -12,13 +12,13 @@ mylayoutHook = mySpacing (Tall 1 (3/100) (1/2)  ||| ThreeCol 1 (3/100) (1/3))
 
 myKeys = [
     ("M-a", spawn "emacsclient -nc")
-  , ("M-c", spawn "chromium")
+  , ("M-c", spawn "firefox")
   , ("M-d", kill)
   , ("M-p", moveTo Prev NonEmptyWS)
   , ("M-n", moveTo Next NonEmptyWS)
   , ("M-y", spawn kbdToggler)
   , ("M-s", spawn "gnome-terminal")
-  , ("M-S-q", spawn "xsecurelock")
+  , ("M-S-q", spawn "dm-tool switch-to-greeter")
   , ("M-S-<Space>", spawn "rofi -combi-modi drun,ssh -font 'Fira Code 12' -show combi")
   , ("M-<Tab>", toggleWS)
   ]
