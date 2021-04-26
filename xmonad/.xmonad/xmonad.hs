@@ -12,7 +12,8 @@ mylayoutHook = mySpacing (Tall 1 (3/100) (1/2)  ||| ThreeCol 1 (3/100) (1/3))
 
 myKeys = [
     ("M-a", spawn "emacsclient -nc")
-  , ("M-c", spawn "firefox")
+  , ("M-c", spawn "firefox -new-window google.com")
+  , ("M-S-c", spawn "firefox -new-window about:logins")
   , ("M-d", kill)
   , ("M-p", moveTo Prev NonEmptyWS)
   , ("M-n", moveTo Next NonEmptyWS)
