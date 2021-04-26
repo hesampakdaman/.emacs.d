@@ -5,15 +5,18 @@
 ## env
 
 ### editor
-EDITOR="emacsclient -nc"
-SUDO_EDITOR="emacsclient -nc"
-VISUAL="emacsclient -nc"
+export EDITOR="emacsclient -c"
+export SUDO_EDITOR="emacsclient -c"
+export VISUAL="emacsclient -c"
 
 ### history
 HISTCONTROL=ignoreboth
 HISTFILE=~/.bash_history
 HISTSIZE=9999
 shopt -s histappend
+
+# update window size after each line
+shopt -s checkwinsize
 
 ### misc
 TERM="xterm-256color"
@@ -29,10 +32,6 @@ export PS1="\e[35;1m[\t][\h][\w]$ \e[m"
 # alias
 if [ -d $dotfiles ]; then
     source $dotfiles/bash/.bash_aliases
-fi
-
-if [ -f $HOME/.profile ]; then
-    source $HOME/.profile
 fi
 
 # disable freeze C-s

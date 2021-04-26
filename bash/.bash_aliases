@@ -14,10 +14,9 @@ alias sbashprofile="source ~/dotfiles/bash/.bash_profile"
 alias sbashrc="source ~/dotfiles/bash/.bashrc"
 
 # emacs
-alias e='emacsclient -nc'
-alias ec='emacsclient -nc'
-alias ce='emacsclient -nc'
-alias magit="emacsclient -n -e '(magit-status)'"
+alias e='emacsclient -t'
+alias ec='emacsclient -t'
+alias ce='emacsclient -t'
 
 # vim
 alias vi="vim"
