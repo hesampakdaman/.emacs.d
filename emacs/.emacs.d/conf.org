@@ -50,7 +50,7 @@ Colorize characters for long lines in python and C.
 #+BEGIN_SRC emacs-lisp
   (use-package whitespace
     :config
-    (setq whitespace-line-column 81)
+    (setq whitespace-line-column 120)
     (setq whitespace-style '(face lines-tail))
     (add-hook 'c-mode-hook 'whitespace-mode)
     (add-hook 'c++-mode-hook 'whitespace-mode)
