@@ -203,12 +203,6 @@ Will add closing brackets and indent code accordingly.
   (add-hook 'visual-line-mode-hook #'visual-fill-column-mode)
   (setq fill-column 80)
 #+END_SRC
-** hungry deletion
-#+BEGIN_SRC emacs-lisp
-  (use-package hungry-delete
-    :ensure t
-    :config (global-hungry-delete-mode))
-#+END_SRC
 ** search
 *** anzu
 #+BEGIN_SRC emacs-lisp
