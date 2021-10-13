@@ -16,7 +16,6 @@
 (setq vc-follow-symlinks t)
 
 ;; load emacs settings
-(ido-mode -1)				; ivy-mode instead
 (require 'org)
 (org-babel-load-file
  (expand-file-name "conf.org" user-emacs-directory))
