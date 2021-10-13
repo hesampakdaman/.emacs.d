@@ -633,12 +633,12 @@ For reading epubs in beautiful format.
 
   (defun hesam/night ()
     (interactive)
-    (shell-command "redshift -x; redshift -O 2800 -b 0.5")
+    (shell-command "redshift -x; redshift -O 6500 -b 0.50")
     (message nil))
 
   (defun hesam/dark ()
     (interactive)
-    (shell-command "redshift -x; redshift -O 2000 -b 0.2")
+    (shell-command "redshift -x; redshift -O 6500 -b 0.30")
     (message nil))
 
   ;;; redshift mode based on time of day
