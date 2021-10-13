@@ -1,10 +1,7 @@
 Settings for the feel and look of Emacs.
 * Theme
 #+BEGIN_SRC emacs-lisp
-  (use-package modus-operandi-theme)
-  (use-package modus-vivendi-theme)
   (use-package dracula-theme)
-
   (defvar light-theme 'modus-operandi)
   (defvar dark-theme 'dracula)
   (defvar global-current-theme dark-theme)
