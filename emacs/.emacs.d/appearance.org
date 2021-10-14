@@ -98,7 +98,7 @@ Code Symbols where custom unicodes are defined so that we can find them
 correctly.
 #+begin_src emacs-lisp
   (use-package fira-code-mode
-    :if window-system
+    :unless window-system
     :custom (fira-code-mode-disabled-ligatures '("[]" "x")) ;; List of ligatures to turn off
     :hook prog-mode) ;; Enables fira-code-mode automatically for programming major modes
 #+end_src
