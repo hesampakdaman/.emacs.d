@@ -5,13 +5,13 @@ import XMonad.Layout.IndependentScreens
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Spacing
 import XMonad.Layout.ThreeColumns
+import XMonad.Layout.Reflect
 import XMonad.Util.EZConfig
 import qualified Data.Map as M
 import qualified XMonad.StackSet as W
 import Data.Maybe (isJust)
 
-mylayoutHook = mySpacing (Tall 1 (3/100) (1/2)  ||| ThreeCol 1 (3/100) (1/3))
-  ||| noBorders Full
+mylayoutHook = mySpacing (Tall 1 (3/100) (1/2)  ||| ThreeCol 1 (3/100) (1/3) ||| reflectVert (Mirror (Tall 1 (3/100) (1/5)))) ||| noBorders Full
   where mySpacing = spacingRaw False (Border 15 0 15 0) True (Border 0 15 0 15) True
 
 myKeys = [
