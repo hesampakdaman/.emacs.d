@@ -413,26 +413,6 @@ Bindings to control screen luminance.
     "d" 'hesam/day
     "n" 'hesam/night
     "s" 'hesam/dark)
-
-#+END_SRC
-
-*** C-c
-**** ivy
-#+BEGIN_SRC emacs-lisp
-  (general-define-key
-   :prefix "C-c"
-   "g" 'counsel-git
-   "j" 'counsel-git-grep
-   "k" 'counsel-ag
-   "l" 'counsel-locate)
-#+END_SRC
-
-*** C-x
-**** ivy
-#+BEGIN_SRC emacs-lisp
-  (general-define-key
-   :prefix "C-x"
-   "C-f" 'counsel-find-file)
 #+END_SRC
 ** global
 #+BEGIN_SRC emacs-lisp
@@ -452,28 +432,6 @@ Bindings to control screen luminance.
   (unless (server-running-p)
     (server-start))
 #+END_SRC
-* ivy and friends
-#+BEGIN_SRC emacs-lisp
-  (use-package ivy
-    :config
-    (ivy-mode 1)
-    (counsel-mode 1)
-    (setq ivy-re-builders-alist
-          '((ivy-switch-buffer . ivy--regex-fuzzy)
-            (t . ivy--regex-fuzzy))
-          ivy-initial-inputs-alist nil
-          enable-recursive-minibuffers t
-          ivy-use-virtual-buffers t
-          ivy-count-format ""))
-
-  (use-package amx
-    :after ivy
-    :custom
-    (amx-backend 'auto)
-    :config
-    (amx-mode 1))
-#+END_SRC
-
 * which-key
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
@@ -484,18 +442,12 @@ Bindings to control screen luminance.
 * projectile
 #+BEGIN_SRC emacs-lisp
   (use-package projectile
-    :ensure t
     :init
     (setq projectile-keymap-prefix (kbd "C-c p")
-          projectile-completion-system 'ivy
+          projectile-completion-system 'default
           projectile-indexing-method 'alien)
     :config
     (projectile-global-mode))
-
-  (use-package counsel-projectile
-    :ensure t
-    :config
-    (counsel-projectile-mode 1))
 #+END_SRC
 * disabled
 #+BEGIN_SRC emacs-lisp
@@ -826,3 +778,75 @@ Saves all backups to =~/.emacs.d/backups= and in addition creates numbered
         kept-new-versions 5
         version-control t)
 #+end_src
+* orderless
+#+BEGIN_SRC emacs-lisp
+  (use-package orderless
+    :init
+    (setq completion-styles '(orderless)
+          completion-category-defaults nil
+          completion-category-overrides '((file (styles partial-completion)))))
+#+END_SRC
+* vertico
+#+BEGIN_SRC emacs-lisp
+  (use-package vertico
+    :init
+    (vertico-mode))
+
+  ;; Use `consult-completion-in-region' if Vertico is enabled.
+  ;; Otherwise use the default `completion--in-region' function.
+  (setq completion-in-region-function
+        (lambda (&rest args)
+          (apply (if vertico-mode
+                     #'consult-completion-in-region
+                   #'completion--in-region)
+                 args)))
+#+END_SRC
+* consult
+#+BEGIN_SRC emacs-lisp
+  (use-package consult
+    ;; Replace bindings. Lazily loaded due by `use-package'.
+    :bind (;; C-c bindings (mode-specific-map)
+           ("C-c k" . consult-kmacro)
+           ;; C-x bindings (ctl-x-map)
+           ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+           ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+           ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
+           ;; Custom M-# bindings for fast register access
+           ;; Other custom bindings
+           ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+           ;; M-g bindings (goto-map)
+           ("M-g e" . consult-compile-error)
+           ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
+           ("M-g g" . consult-goto-line)             ;; orig. goto-line
+           ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+           ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
+           ("M-g m" . consult-mark)
+           ("M-g k" . consult-global-mark)
+           ("M-g i" . consult-imenu)
+           ("M-g I" . consult-imenu-multi)
+           ;; M-s bindings (search-map)
+           ("M-s f" . consult-find)
+           ("M-s F" . consult-locate)
+           ("M-s g" . consult-grep)
+           ("M-s G" . consult-git-grep)
+           ("M-s r" . consult-ripgrep)
+           ("M-s l" . consult-line)
+           ("M-s L" . consult-line-multi)
+           ("M-s m" . consult-multi-occur)
+           ("M-s k" . consult-keep-lines)
+           ("M-s u" . consult-focus-lines)
+           ;; Isearch integration
+           ("M-s e" . consult-isearch)
+           :map isearch-mode-map
+           ("M-e" . consult-isearch)                 ;; orig. isearch-edit-string
+           ("M-s e" . consult-isearch)               ;; orig. isearch-edit-string
+           ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
+           ("M-s L" . consult-line-multi))           ;; needed by consult-line to detect isearch
+    :init
+    ;; Optionally replace `completing-read-multiple' with an enhanced version.
+    (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple)
+
+    ;; Use Consult to select xref locations with preview
+    (setq xref-show-xrefs-function #'consult-xref
+          xref-show-definitions-function #'consult-xref))
+#+END_SRC
