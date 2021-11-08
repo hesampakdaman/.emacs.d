@@ -8,10 +8,6 @@ alias xinitrc="$EDITOR ~/dotfiles/xinit/.xinitrc"
 alias vimrc="$EDITOR ~/dotfiles/vim/.vimrc"
 alias emacsrc="$EDITOR ~/dotfiles/emacs/.emacs.d/conf.org"
 
-# python
-alias python="python3"
-alias pytest="pytest-3"
-
 # source
 alias salice="source ~/dotfiles/bash/.bash_aliases"
 alias sbashprofile="source ~/dotfiles/bash/.bash_profile"
@@ -36,5 +32,8 @@ alias ls='ls --color=auto'
 alias ll="ls -l --color=auto"
 alias lla="ll -a --color=auto"
 
-# subliminal
-alias sub="subliminal download -l"
+# python
+alias pytest="pytest-3"
+alias pycov="pytest-3 --cov"
+alias black="find . -iname '*py' -exec black -l 120 '{}' +;"
+alias isort="find . -iname '*py' -exec isort -l 120 -ns __init__.py '{}' +;"
