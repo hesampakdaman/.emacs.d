@@ -3,21 +3,22 @@ import XMonad.Actions.CycleWS
 import XMonad.Hooks.DynamicLog
 import XMonad.Layout.IndependentScreens
 import XMonad.Layout.NoBorders
+import XMonad.Layout.Reflect
 import XMonad.Layout.Spacing
 import XMonad.Layout.ThreeColumns
-import XMonad.Layout.Reflect
 import XMonad.Util.EZConfig
 import qualified Data.Map as M
 import qualified XMonad.StackSet as W
-import Data.Maybe (isJust)
 
-mylayoutHook = mySpacing (Tall 1 (3/100) (1/2)  ||| ThreeCol 1 (3/100) (1/3) ||| reflectVert (Mirror (Tall 1 (3/100) (1/5)))) ||| noBorders Full
+
+mylayoutHook = mySpacing (Tall 1 (3/100) (1/2)  ||| reflectVert (Mirror (Tall 1 (3/100) (1/5)))) ||| noBorders Full
   where mySpacing = spacingRaw False (Border 15 0 15 0) True (Border 0 15 0 15) True
 
 myKeys = [
     ("M-a", spawn "emacsclient -nc")
   , ("M-c", spawn "firefox -new-window google.com")
   , ("M-S-c", spawn "firefox -new-window about:logins")
+  , ("M-f", spawn "flatpak run com.github.johnfactotum.Foliate")
   , ("M-d", kill)
   , ("M-p", moveTo Prev spacesOnCurrentScreen)
   , ("M-n", moveTo Next spacesOnCurrentScreen)
