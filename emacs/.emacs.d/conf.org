@@ -338,7 +338,7 @@ in the dispatcher.
 *** misc
 #+BEGIN_SRC emacs-lisp
   (setq org-startup-indented t
-        org-pretty-entities t
+        ;; org-pretty-entities t
         org-hide-emphasis-markers t
         org-agenda-block-separator ""
         org-fontify-whole-heading-line t
