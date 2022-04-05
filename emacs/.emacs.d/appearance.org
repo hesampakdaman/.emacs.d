@@ -53,8 +53,8 @@ Settings for the feel and look of Emacs.
                       :family "Fira Code"
                       :weight 'light)
   (set-face-attribute 'variable-pitch nil
-                      :family "Libre Baskerville"
-                      :height 1.2)
+                      :family "EBGaramond"
+                      :height 1.5)
 
   (defun hesam/font-per-display (frame)
     "Will change the font according to the dimensions of the monitor of focused
