@@ -41,7 +41,7 @@ Settings for the feel and look of Emacs.
 * Fonts
 #+BEGIN_SRC emacs-lisp
   (setq hesam-default-hires-height 140)
-  (setq hesam-default-lowres-height 105)
+  (setq hesam-default-lowres-height 100)
   (setq hesam-modeline-hires-height (- hesam-default-hires-height 10))
   (setq hesam-modeline-lowres-height hesam-default-lowres-height)
 
