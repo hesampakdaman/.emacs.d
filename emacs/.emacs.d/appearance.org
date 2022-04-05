@@ -75,11 +75,9 @@ Settings for the feel and look of Emacs.
   (setq ring-bell-function 'ignore)
 #+END_SRC
 * Cursor
+Highlights current line.
 #+BEGIN_SRC emacs-lisp
-  ;; cursor blinks in focused buffer for 10 times
-  (blink-cursor-mode)
-  ;; overrides default value and blinks forever
-  (setq blink-cursor-blinks 0)
+  (global-hl-line-mode)
 #+END_SRC
 * Display-time
 #+BEGIN_SRC emacs-lisp
