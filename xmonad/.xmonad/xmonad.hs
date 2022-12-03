@@ -28,7 +28,7 @@ myKeys = [
   , ("M-S-<Space>", spawn "rofi -combi-modi drun,ssh -font 'Fira Code 12' -show combi")
   , ("M-<Tab>", toggleWS)
   ]
-  where kbdToggler = "(setxkbmap -query | grep -q \"layout:\\s\\+us\") && setxkbmap se || setxkbmap us; xmodmap ~/.Xmodmap"
+  where kbdToggler = "(setxkbmap -query | grep -q \"layout:\\s\\+us\") && setxkbmap se || setxkbmap us; xset r rate 180 80"
 
 
 isOnScreen :: ScreenId -> WindowSpace -> Bool
