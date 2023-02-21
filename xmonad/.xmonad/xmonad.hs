@@ -1,3 +1,4 @@
+import Graphics.X11.ExtraTypes.XF86
 import XMonad
 import XMonad.Actions.CycleWS
 import XMonad.Hooks.DynamicLog
@@ -24,9 +25,11 @@ myKeys = [
   , ("M-n", moveTo Next spacesOnCurrentScreen)
   , ("M-y", spawn kbdToggler)
   , ("M-s", spawn "gnome-terminal")
-  , ("M-S-q", spawn "dm-tool switch-to-greeter")
-  , ("M-S-<Space>", spawn "rofi -combi-modi drun,ssh -font 'Fira Code 12' -show combi")
+  , ("M-S-q", spawn "i3lock")
+  , ("M-S-<Space>", spawn "rofi -combi-modi drun,ssh -font 'Fira Code 16' -show combi")
   , ("M-<Tab>", toggleWS)
+  , ("<XF86MonBrightnessUp>", spawn "lux -a 10%")
+  , ("<XF86MonBrightnessDown>", spawn "lux -s 10%")
   ]
   where kbdToggler = "(setxkbmap -query | grep -q \"layout:\\s\\+us\") && setxkbmap se || setxkbmap us; xset r rate 180 80"
 
