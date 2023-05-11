@@ -57,9 +57,9 @@ Settings for the feel and look of Emacs.
 * Fonts
 #+BEGIN_SRC emacs-lisp
   (setq hesam-default-hires-height 180)
-  (setq hesam-default-lowres-height 150)
+  (setq hesam-default-lowres-height 120)
   (setq hesam-modeline-hires-height (- hesam-default-hires-height 10))
-  (setq hesam-modeline-lowres-height hesam-default-lowres-height)
+  (setq hesam-modeline-lowres-height (- hesam-default-lowres-height 5))
 
   (set-face-attribute 'default nil
                       :family "IosevkaTerm Nerd Font"
