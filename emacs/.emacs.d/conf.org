@@ -448,11 +448,17 @@ Bindings to control screen luminance.
 General completion system.
 #+BEGIN_SRC emacs-lisp
   (use-package company
-    :ensure t
     :general
     ("C-c n" 'company-complete)
-    :config
-    (add-hook 'after-init-hook 'global-company-mode))
+    :custom
+    (company-idle-delay 0.5) ;; how long to wait until popup
+    (company-shell-dont-fetch-meta t) ;; fixes macos slowness
+    :bind
+    (:map company-active-map
+                ("C-n". company-select-next)
+                ("C-p". company-select-previous)
+                ("M-<". company-select-first)
+                ("M->". company-select-last)))
 #+END_SRC
 ** company-shell
 Specific module for shell scripting.
