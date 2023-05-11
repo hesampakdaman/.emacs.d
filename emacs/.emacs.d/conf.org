@@ -635,6 +635,12 @@ Consider completions other than for binaries.
 #+BEGIN_SRC emacs-lisp
   (setq shell-completion-execonly nil)
 #+END_SRC
+** exec-path-from-shell
+#+BEGIN_SRC emacs-lisp
+  (use-package exec-path-from-shell
+    :config
+    (exec-path-from-shell-initialize))
+#+END_SRC
 * narrow
 Enable region narrowing.
 #+BEGIN_SRC emacs-lisp
