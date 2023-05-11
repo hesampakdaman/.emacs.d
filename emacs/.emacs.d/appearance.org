@@ -40,18 +40,18 @@ Settings for the feel and look of Emacs.
 #+END_SRC
 * Fonts
 #+BEGIN_SRC emacs-lisp
-  (setq hesam-default-hires-height 140)
-  (setq hesam-default-lowres-height 100)
+  (setq hesam-default-hires-height 180)
+  (setq hesam-default-lowres-height 150)
   (setq hesam-modeline-hires-height (- hesam-default-hires-height 10))
   (setq hesam-modeline-lowres-height hesam-default-lowres-height)
 
   (set-face-attribute 'default nil
-                      :family "Fira Code"
-                      :weight 'light
+                      :family "IosevkaTerm Nerd Font"
+                      :weight 'regular
                       :height hesam-default-lowres-height)
   (set-face-attribute 'fixed-pitch nil
-                      :family "Fira Code"
-                      :weight 'light)
+                      :family "IosevkaTerm Nerd Font"
+                      :weight 'regular)
   (set-face-attribute 'variable-pitch nil
                       :family "EBGaramond"
                       :height 1.5)
@@ -90,13 +90,3 @@ Highlights current line.
   (set-display-table-slot standard-display-table
                           'selective-display (string-to-vector " [+] "))
 #+END_SRC
-* Fira Code Ligatures
-Package for showing the ligatures in Fira Code correctly. Uses a font named Fira
-Code Symbols where custom unicodes are defined so that we can find them
-correctly.
-#+begin_src emacs-lisp
-  (use-package fira-code-mode
-    :unless window-system
-    :custom (fira-code-mode-disabled-ligatures '("[]" "x")) ;; List of ligatures to turn off
-    :hook prog-mode) ;; Enables fira-code-mode automatically for programming major modes
-#+end_src
