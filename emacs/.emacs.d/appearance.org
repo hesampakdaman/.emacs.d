@@ -31,6 +31,22 @@ Settings for the feel and look of Emacs.
     (if (eq global-current-theme dark-theme)
         (hesam/theme-toggle)))
 #+END_SRC
+* Dracula
+#+BEGIN_SRC emacs-lisp
+  (defvar dracula-bg      "#282a36")
+  (defvar dracula-fg      "#f8f8f2")
+  (defvar dracula-current "#44475a")
+  (defvar dracula-comment "#6272a4")
+  (defvar dracula-cyan    "#8be9fd")
+  (defvar dracula-green   "#50fa7b")
+  (defvar dracula-orange  "#ffb86c")
+  (defvar dracula-pink    "#ff79c6")
+  (defvar dracula-purple  "#bd93f9")
+  (defvar dracula-red     "#ff5555")
+  (defvar dracula-yellow  "#f1fa8c")
+  (defvar dracula-white   "#f8f8f2")
+#+END_SRC
+
 * Bar-mode
 #+BEGIN_SRC emacs-lisp
   (scroll-bar-mode -1)
