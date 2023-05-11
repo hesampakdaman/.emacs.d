@@ -22,7 +22,6 @@ shopt -s checkwinsize
 TERM="xterm-256color"
 GREP_COLOR="32"
 LC_ALL=en_US.UTF-8
-PATH=$PATH:$HOME/.local/bin/
 dotfiles=$HOME/dotfiles
 
 # simple prompt that goes well with TRAMP
