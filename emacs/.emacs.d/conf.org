@@ -850,3 +850,71 @@ Saves all backups to =~/.emacs.d/backups= and in addition creates numbered
     (setq xref-show-xrefs-function #'consult-xref
           xref-show-definitions-function #'consult-xref))
 #+END_SRC
+* LSP
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-mode
+    :init
+    (setq lsp-keymap-prefix "C-c l")
+    :commands lsp
+    :custom
+
+    ;; Rust
+    (lsp-rust-analyzer-cargo-watch-command "check")
+    (lsp-idle-delay 0.6)
+    (lsp-rust-analyzer-server-display-inlay-hints t)
+    (lsp-rust-analyzer-display-chaining-hints t)
+    (lsp-rust-analyzer-display-closure-return-type-hints t)
+
+    :hook ((python-mode . lsp)
+           (rust-mode . lsp)
+           (lsp-mode . lsp-ui-mode))
+           (lsp-mode . lsp-enable-which-key-integration))
+
+  (use-package lsp-ui
+    :commands lsp-ui-mode
+    :custom
+    (lsp-ui-peek-always-show t)
+    (lsp-ui-sideline-mode t)
+    (lsp-ui-sideline-show-symbol nil))
+
+  (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+  (use-package dap-mode)
+#+END_SRC
+* python
+** pyenv
+#+BEGIN_SRC emacs-lisp
+  (use-package pyvenv)
+#+END_SRC
+** auto-virtualenv
+#+BEGIN_SRC emacs-lisp
+  (use-package auto-virtualenv
+    :hook ((python-mode . auto-virtualenv-set-virtualenv)
+           (projectile-after-switch-project . auto-virtualenv-set-virtualenv)))
+    ;; :config
+    ;; ((add-hook 'python-mode-hook 'auto-virtualenv-set-virtualenv)
+    ;; (add-hook 'projectile-after-switch-project-hook 'auto-virtualenv-set-virtualenv))
+
+#+END_SRC
+* Yas snippets
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+    :config
+    (yas-reload-all)
+    :hook
+    ((prog-mode . yas-minor-mode)
+     (text-mode .  yas-minor-mode)))
+#+END_SRC
+* Rust
+#+BEGIN_SRC emacs-lisp
+  (use-package rustic
+    :init
+    (setq rustic-ansi-faces (vector
+                             "black"
+                             dracula-red
+                             dracula-green
+                             dracula-yellow
+                             dracula-purple
+                             dracula-pink
+                             dracula-cyan
+                             dracula-white)))
+#+END_SRC
