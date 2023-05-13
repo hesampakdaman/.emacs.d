@@ -418,7 +418,8 @@ Bindings to control screen luminance.
     "l" 'windmove-display-right
     "f" 'windmove-display-new-frame
     "s" 'windmove-display-same-window
-    "t" 'windmove-display-new-tab)
+    "t" 'windmove-display-new-tab
+    "w" 'tab-close)
 
   (general-define-key
    "s-k" 'windmove-up
