@@ -998,8 +998,9 @@ Saves all backups to =~/.emacs.d/backups= and in addition creates numbered
 * LSP
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-mode
-    :init
+    :config
     (setq lsp-keymap-prefix "C-c l")
+    (setq lsp-headerline-breadcrumb-enable nil)
     :commands lsp
     :custom
 
@@ -1022,7 +1023,8 @@ Saves all backups to =~/.emacs.d/backups= and in addition creates numbered
     (lsp-ui-sideline-mode t)
     (lsp-ui-sideline-show-symbol nil))
 
-  (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+  (use-package lsp-treemacs
+    :commands lsp-treemacs-errors-list)
   (use-package dap-mode)
 #+END_SRC
 * python
