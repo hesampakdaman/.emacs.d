@@ -441,6 +441,8 @@ Bindings to control screen luminance.
     "P" 'hesam/tab-move-left
     "N" 'tab-move
     "w" 'tab-close
+    "f" 'find-file-other-tab
+    "r" 'tab-rename
     "0" 'hesam/tab-select-0
     "1" 'hesam/tab-select-1
     "2" 'hesam/tab-select-2
