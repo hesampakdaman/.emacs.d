@@ -360,6 +360,10 @@ in the dispatcher.
 (global-set-key (kbd "C-=") 'er/expand-region)
 #+END_SRC
 * bindings
+** repeat mode
+#+BEGIN_SRC emacs-lisp
+  (repeat-mode t)
+#+END_SRC
 ** general
 *** M-SPC (general)
 #+BEGIN_SRC emacs-lisp
@@ -427,18 +431,55 @@ Bindings to control screen luminance.
    "s-H" 'windmove-swap-states-left
    "s-L" 'windmove-swap-states-right)
 
+  ;; Defines the following for n in [1,8]
+  ;; (defun hesam/tab-select-n ()
+  ;;   (interactive)
+  ;;   (tab-select n))
+  (dotimes (n 8)
+    (let ((fn (intern (format "hesam/tab-select-%d" (1+ n)))))
+      (fset fn
+            (lambda ()
+              (interactive)
+              (tab-select (1+ n))))))
+
   (general-define-key
    :prefix "C-c"
    "0" 'tab-recent
    "9" 'tab-last
-   "1" '(lambda () (interactive) (tab-select 1))
-   "2" '(lambda () (interactive) (tab-select 2))
-   "3" '(lambda () (interactive) (tab-select 3))
-   "4" '(lambda () (interactive) (tab-select 4))
-   "5" '(lambda () (interactive) (tab-select 5))
-   "6" '(lambda () (interactive) (tab-select 6))
-   "7" '(lambda () (interactive) (tab-select 7))
-   "8" '(lambda () (interactive) (tab-select 8)))
+   "1" 'hesam/tab-select-1
+   "2" 'hesam/tab-select-2
+   "3" 'hesam/tab-select-3
+   "4" 'hesam/tab-select-4
+   "5" 'hesam/tab-select-5
+   "6" 'hesam/tab-select-6
+   "7" 'hesam/tab-select-7
+   "8" 'hesam/tab-select-8)
+
+  ;; Defines hesam/tab-select-n for in [1,8]
+  (dotimes (n 8)
+    (let* ((fn (intern (format "hesam/tab-select-%d" (1+ n))))
+           (tab-number (1+ n)))
+      (eval `(defun ,fn ()
+               (interactive)
+               (tab-select ',tab-number)))))
+
+  ;; Does the following for n in [1,8]
+  ;; (defvar tab-select-repeat-map
+  ;;   (let ((map (make-sparse-keymap)))
+  ;;     (define-key map "1" 'hesam/tab-select-1)
+  ;;      ...
+  (defvar tab-select-repeat-map
+    (let ((map (make-sparse-keymap)))
+      (dotimes (n 8)
+        (define-key map (kbd (format "%d" (1+ n)))
+          (intern (format "hesam/tab-select-%d" (1+ n)))))
+      map))
+
+  ;;Attach the repeat map to each command for n in [1,8]
+  ;; (put 'hesam/tab-select-1 'repeat-map 'tab-select-repeat-map)
+  (dotimes (n 8)
+    (let ((fn (intern (format "hesam/tab-select-%d" (1+ n)))))
+      (put fn 'repeat-map 'tab-select-repeat-map)))
 #+END_SRC
 ** global
 #+BEGIN_SRC emacs-lisp
@@ -489,7 +530,6 @@ General completion system.
     :general
     ("C-c n" 'company-complete)
     :config
-    (company-shell-dont-fetch-meta t) ;; fixes macos slowness
     (global-company-mode t)
     :bind
     (:map company-active-map
