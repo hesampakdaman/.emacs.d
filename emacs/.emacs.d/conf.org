@@ -404,16 +404,28 @@ Bindings to control screen luminance.
 #+END_SRC
 ** windmove
 #+BEGIN_SRC emacs-lisp
-  (general-define-key
-   "s-k" 'windmove-up
-   "s-j" 'windmove-down
-   "s-h" 'windmove-left
-   "s-l" 'windmove-right
+    (general-create-definer leader-windmove
+      :prefix "C-c w")
 
-   "s-K" 'windmove-swap-states-up
-   "s-J" 'windmove-swap-states-down
-   "s-H" 'windmove-swap-states-left
-   "s-L" 'windmove-swap-states-right)
+    (leader-windmove
+      "k" 'windmove-display-up
+      "j" 'windmove-display-down
+      "h" 'windmove-display-left
+      "l" 'windmove-display-right
+      "f" 'windmove-display-new-frame
+      "s" 'windmove-display-same-window
+      "t" 'windmove-display-new-tab)
+
+    (general-define-key
+     "s-k" 'windmove-up
+     "s-j" 'windmove-down
+     "s-h" 'windmove-left
+     "s-l" 'windmove-right
+
+     "s-K" 'windmove-swap-states-up
+     "s-J" 'windmove-swap-states-down
+     "s-H" 'windmove-swap-states-left
+     "s-L" 'windmove-swap-states-right)
 #+END_SRC
 ** global
 #+BEGIN_SRC emacs-lisp
