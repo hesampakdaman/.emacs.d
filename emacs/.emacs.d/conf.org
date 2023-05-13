@@ -211,6 +211,10 @@ Will add closing brackets and indent code accordingly.
   (global-set-key [remap query-replace] 'anzu-query-replace)
   (global-set-key [remap query-replace-regexp] 'anzu-query-replace-regexp)
 #+END_SRC
+** auto revert
+#+BEGIN_SRC emacs-lisp
+  (global-auto-revert-mode t)
+#+END_SRC
 * appearance
 #+begin_src emacs-lisp
   (org-babel-load-file
