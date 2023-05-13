@@ -118,3 +118,12 @@ Highlights current line.
                       :foreground (eval 'dracula-fg)
                       :height 0.9)
 #+END_SRC
+* Borders and margins
+#+BEGIN_SRC emacs-lisp
+  (defun set-internal-border-width (frame)
+    "Set the internal border width for the given FRAME."
+    (with-selected-frame frame
+      (set-frame-parameter nil 'internal-border-width 10)))
+
+  (add-hook 'after-make-frame-functions 'set-internal-border-width)
+#+END_SRC
