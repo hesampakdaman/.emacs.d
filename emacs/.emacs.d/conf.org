@@ -402,6 +402,19 @@ Bindings to control screen luminance.
     "n" 'hesam/night
     "s" 'hesam/dark)
 #+END_SRC
+** windmove
+#+BEGIN_SRC emacs-lisp
+  (general-define-key
+   "s-k" 'windmove-up
+   "s-j" 'windmove-down
+   "s-h" 'windmove-left
+   "s-l" 'windmove-right
+
+   "s-K" 'windmove-swap-states-up
+   "s-J" 'windmove-swap-states-down
+   "s-H" 'windmove-swap-states-left
+   "s-L" 'windmove-swap-states-right)
+#+END_SRC
 ** global
 #+BEGIN_SRC emacs-lisp
   ;; completion suggestions
@@ -645,13 +658,6 @@ Enable region narrowing.
 * history
 #+BEGIN_SRC emacs-lisp
   (savehist-mode 1)
-#+END_SRC
-* frames-only
-Opens new buffers in a new frame. Place nicely with tiling wms.
-#+BEGIN_SRC emacs-lisp
-  (use-package frames-only-mode
-    :config
-    (frames-only-mode t))
 #+END_SRC
 * ediff
 EXWM does not like the default option when using =ediff=,
