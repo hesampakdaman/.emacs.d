@@ -418,8 +418,7 @@ Bindings to control screen luminance.
     "l" 'windmove-display-right
     "f" 'windmove-display-new-frame
     "s" 'windmove-display-same-window
-    "t" 'windmove-display-new-tab
-    "w" 'tab-close)
+    "t" 'windmove-display-new-tab)
 
   (general-define-key
    "s-k" 'windmove-up
@@ -431,6 +430,48 @@ Bindings to control screen luminance.
    "s-J" 'windmove-swap-states-down
    "s-H" 'windmove-swap-states-left
    "s-L" 'windmove-swap-states-right)
+
+  (general-create-definer leader-tab
+    :prefix "C-c t")
+
+  (leader-tab
+    "w" 'tab-close
+    "p" 'tab-previous
+    "n" 'tab-next
+    "P" 'hesam/tab-move-left
+    "N" 'tab-move
+    "w" 'tab-close
+    "0" 'hesam/tab-select-0
+    "1" 'hesam/tab-select-1
+    "2" 'hesam/tab-select-2
+    "3" 'hesam/tab-select-3
+    "4" 'hesam/tab-select-4
+    "5" 'hesam/tab-select-5
+    "6" 'hesam/tab-select-6
+    "7" 'hesam/tab-select-7
+    "8" 'hesam/tab-select-8
+    "9" 'hesam/tab-select-9)
+
+  (defvar tab-cycle
+    (let ((map (make-sparse-keymap)))
+      (define-key map (kbd "p") #'tab-previous)
+      (define-key map (kbd "n") #'tab-next)
+      (define-key map (kbd "w") #'tab-close)
+      (define-key map (kbd "P") #'hesam/tab-move-left)
+      (define-key map (kbd "N") #'tab-move)
+      (dotimes (n 10)
+        (define-key map (kbd (format "%d" n))
+          (intern (format "hesam/tab-select-%d" n))))
+      map))
+
+  (defun hesam/tab-move-left (&optional arg)
+    "Move the current tab to the left.
+  With a prefix ARG, move the tab ARG positions to the left."
+    (interactive "p")
+    (tab-move (- (or arg 1))))
+
+  (dolist (cmd '(tab-previous tab-next tab-close tab-move hesam/tab-move-left))
+    (put cmd 'repeat-map 'tab-cycle))
 
   ;; Defines the following for n in [1,8]
   ;; (defun hesam/tab-select-n ()
@@ -445,8 +486,7 @@ Bindings to control screen luminance.
 
   (general-define-key
    :prefix "C-c"
-   "0" 'tab-recent
-   "9" 'tab-last
+   "0" 'hesam/tab-select-0
    "1" 'hesam/tab-select-1
    "2" 'hesam/tab-select-2
    "3" 'hesam/tab-select-3
@@ -454,7 +494,8 @@ Bindings to control screen luminance.
    "5" 'hesam/tab-select-5
    "6" 'hesam/tab-select-6
    "7" 'hesam/tab-select-7
-   "8" 'hesam/tab-select-8)
+   "8" 'hesam/tab-select-8
+   "9" 'hesam/tab-select-9)
 
   ;; Defines hesam/tab-select-n for in [1,8]
   (dotimes (n 8)
@@ -464,6 +505,14 @@ Bindings to control screen luminance.
                (interactive)
                (tab-select ',tab-number)))))
 
+  (defun hesam/tab-select-0 ()
+    (interactive)
+    (tab-recent))
+
+  (defun hesam/tab-select-9 ()
+    (interactive)
+    (tab-last))
+
   ;; Does the following for n in [1,8]
   ;; (defvar tab-select-repeat-map
   ;;   (let ((map (make-sparse-keymap)))
@@ -471,16 +520,17 @@ Bindings to control screen luminance.
   ;;      ...
   (defvar tab-select-repeat-map
     (let ((map (make-sparse-keymap)))
-      (dotimes (n 8)
-        (define-key map (kbd (format "%d" (1+ n)))
-          (intern (format "hesam/tab-select-%d" (1+ n)))))
+      (dotimes (n 10)
+        (define-key map (kbd (format "%d" n))
+          (intern (format "hesam/tab-select-%d" n))))
       map))
 
   ;;Attach the repeat map to each command for n in [1,8]
   ;; (put 'hesam/tab-select-1 'repeat-map 'tab-select-repeat-map)
-  (dotimes (n 8)
-    (let ((fn (intern (format "hesam/tab-select-%d" (1+ n)))))
-      (put fn 'repeat-map 'tab-select-repeat-map)))
+  (dotimes (n 9)
+    (let ((fn (intern (format "hesam/tab-select-%d" n))))
+      (put fn 'repeat-map 'tab-select-repeat-map)
+      (put fn 'repeat-map 'tab-cycle)))
 #+END_SRC
 ** global
 #+BEGIN_SRC emacs-lisp
