@@ -1063,8 +1063,15 @@ Saves all backups to =~/.emacs.d/backups= and in addition creates numbered
                              dracula-cyan
                              dracula-white)))
 #+END_SRC
+* Flycheck
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck
+    :init (global-flycheck-mode))
+#+END_SRC
+
 * Warnings
 #+BEGIN_SRC emacs-lisp
   ;; to avoid getting spammed with warnings
   (setq native-comp-async-report-warnings-errors 'silent)
 #+END_SRC
+
