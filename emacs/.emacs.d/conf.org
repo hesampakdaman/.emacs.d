@@ -402,30 +402,43 @@ Bindings to control screen luminance.
     "n" 'hesam/night
     "s" 'hesam/dark)
 #+END_SRC
-** windmove
+** window management
 #+BEGIN_SRC emacs-lisp
-    (general-create-definer leader-windmove
-      :prefix "C-c w")
+  (general-create-definer leader-windmove
+    :prefix "C-c w")
 
-    (leader-windmove
-      "k" 'windmove-display-up
-      "j" 'windmove-display-down
-      "h" 'windmove-display-left
-      "l" 'windmove-display-right
-      "f" 'windmove-display-new-frame
-      "s" 'windmove-display-same-window
-      "t" 'windmove-display-new-tab)
+  (leader-windmove
+    "k" 'windmove-display-up
+    "j" 'windmove-display-down
+    "h" 'windmove-display-left
+    "l" 'windmove-display-right
+    "f" 'windmove-display-new-frame
+    "s" 'windmove-display-same-window
+    "t" 'windmove-display-new-tab)
 
-    (general-define-key
-     "s-k" 'windmove-up
-     "s-j" 'windmove-down
-     "s-h" 'windmove-left
-     "s-l" 'windmove-right
+  (general-define-key
+   "s-k" 'windmove-up
+   "s-j" 'windmove-down
+   "s-h" 'windmove-left
+   "s-l" 'windmove-right
 
-     "s-K" 'windmove-swap-states-up
-     "s-J" 'windmove-swap-states-down
-     "s-H" 'windmove-swap-states-left
-     "s-L" 'windmove-swap-states-right)
+   "s-K" 'windmove-swap-states-up
+   "s-J" 'windmove-swap-states-down
+   "s-H" 'windmove-swap-states-left
+   "s-L" 'windmove-swap-states-right)
+
+  (general-define-key
+   :prefix "C-c"
+   "0" 'tab-recent
+   "9" 'tab-last
+   "1" '(lambda () (interactive) (tab-select 1))
+   "2" '(lambda () (interactive) (tab-select 2))
+   "3" '(lambda () (interactive) (tab-select 3))
+   "4" '(lambda () (interactive) (tab-select 4))
+   "5" '(lambda () (interactive) (tab-select 5))
+   "6" '(lambda () (interactive) (tab-select 6))
+   "7" '(lambda () (interactive) (tab-select 7))
+   "8" '(lambda () (interactive) (tab-select 8)))
 #+END_SRC
 ** global
 #+BEGIN_SRC emacs-lisp

@@ -110,6 +110,11 @@ Highlights current line.
 #+BEGIN_SRC emacs-lisp
   (setq tab-bar-show 1
         tab-bar-close-button-show nil
-        tab-bar-close-last-tab-choice 'tab-bar-mode-disable)
+        tab-bar-tab-hints t)
 
+  (set-face-attribute 'tab-bar nil
+                      :inherit 'default
+                      :background (eval 'dracula-bg)
+                      :foreground (eval 'dracula-fg)
+                      :height 0.9)
 #+END_SRC
