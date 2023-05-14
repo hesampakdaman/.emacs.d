@@ -382,8 +382,7 @@ in the dispatcher.
     "p" 'macro/projectile
     "r" 'hesam/recipes
     "s" 'vterm-other-window
-    "t" 'hesam/theme-toggle
-    )
+    "t" 'hesam/theme-toggle)
 #+END_SRC
 *** s-a (agenda)
 #+BEGIN_SRC emacs-lisp
@@ -467,6 +466,7 @@ Bindings to control screen luminance.
       (define-key map (kbd "w") #'tab-close)
       (define-key map (kbd "P") #'hesam/tab-move-left)
       (define-key map (kbd "N") #'tab-move)
+      (define-key map (kbd "o") #'tab-recent)
       (dotimes (n 10)
         (define-key map (kbd (format "%d" n))
           (intern (format "hesam/tab-select-%d" n))))
@@ -478,7 +478,7 @@ Bindings to control screen luminance.
     (interactive "p")
     (tab-move (- (or arg 1))))
 
-  (dolist (cmd '(tab-previous tab-next tab-close tab-move hesam/tab-move-left))
+  (dolist (cmd '(tab-previous tab-next tab-close tab-move hesam/tab-move-left tab-recent))
     (put cmd 'repeat-map 'tab-cycle))
 
   ;; Defines the following for n in [1,8]
