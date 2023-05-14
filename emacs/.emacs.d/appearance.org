@@ -91,7 +91,8 @@ Settings for the feel and look of Emacs.
 * Cursor
 Highlights current line.
 #+BEGIN_SRC emacs-lisp
-  (global-hl-line-mode)
+  (blink-cursor-mode t)
+  (add-hook 'prog-mode-hook 'hl-line-mode)
 #+END_SRC
 * Display-time
 #+BEGIN_SRC emacs-lisp
@@ -129,7 +130,7 @@ Highlights current line.
   (set-face-attribute 'mode-line-inactive nil
                       :background (eval 'dracula-bg)
                       :foreground (eval 'dracula-bg)
-                      :underline (eval 'dracula-current)
+                      :underline (list :color (eval 'dracula-current) :style 'line)
                       :height 1
                       :box nil)
 #+END_SRC
