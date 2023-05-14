@@ -126,4 +126,12 @@ Highlights current line.
       (set-frame-parameter nil 'internal-border-width 10)))
 
   (add-hook 'after-make-frame-functions 'set-internal-border-width)
+
+  (defun hesam/set-window-margins ()
+    "Set the window margins for the current buffer."
+    (setq left-margin-width 1)
+    (setq right-margin-width 1)
+    (set-window-buffer nil (current-buffer)))
+
+  (add-hook 'window-configuration-change-hook 'hesam/set-window-margins)
 #+END_SRC
