@@ -998,8 +998,9 @@ Saves all backups to =~/.emacs.d/backups= and in addition creates numbered
 * LSP
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-mode
-    :config
+    :init
     (setq lsp-keymap-prefix "C-c l")
+    :config
     (setq lsp-headerline-breadcrumb-enable nil)
     :commands lsp
     :custom
