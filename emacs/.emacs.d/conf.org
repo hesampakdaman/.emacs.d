@@ -375,13 +375,15 @@ in the dispatcher.
     :prefix "M-SPC")
 
   (leader-super-spc
+    "]" 'hesam/start-flameshot
     "b" 'hesam/book-folder-selector
+    "c" 'hesam/start-calibre
+    "o" 'tab-recent
     "p" 'macro/projectile
     "r" 'hesam/recipes
     "s" 'vterm-other-window
-    "c" 'hesam/start-calibre
     "t" 'hesam/theme-toggle
-    "]" 'hesam/start-flameshot)
+    )
 #+END_SRC
 *** s-a (agenda)
 #+BEGIN_SRC emacs-lisp
