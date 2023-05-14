@@ -440,14 +440,14 @@ Bindings to control screen luminance.
     :prefix "C-c t")
 
   (leader-tab
-    "w" 'tab-close
-    "p" 'tab-previous
-    "n" 'tab-next
-    "P" 'hesam/tab-move-left
     "N" 'tab-move
-    "w" 'tab-close
+    "P" 'hesam/tab-move-left
     "f" 'find-file-other-tab
+    "n" 'tab-next
+    "p" 'tab-previous
     "r" 'tab-rename
+    "w" 'tab-close
+    "o" 'tab-recent
     "0" 'hesam/tab-select-0
     "1" 'hesam/tab-select-1
     "2" 'hesam/tab-select-2
