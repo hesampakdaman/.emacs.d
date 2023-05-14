@@ -793,7 +793,9 @@ Consider completions other than for binaries.
 #+END_SRC
 ** vterm
 #+BEGIN_SRC emacs-lisp
-  (use-package vterm)
+  (use-package vterm
+    :config
+    (define-key vterm-mode-map (kbd "M-SPC") nil))
 #+END_SRC
 * narrow
 Enable region narrowing.
