@@ -72,16 +72,18 @@ Settings for the feel and look of Emacs.
                       :family "EBGaramond"
                       :height 1.5)
 
-  (defun hesam/font-per-display (frame)
-    "Will change the font according to the dimensions of the monitor of focused
-            frame"
-    (select-frame frame)
-    (frame-monitor-attribute 'geometry frame)
-    (cond ((> (car (last (frame-monitor-attribute 'geometry frame))) 1200)
-           (set-face-attribute 'default frame :height hesam-default-hires-height)
-           (set-face-attribute 'mode-line frame :height hesam-modeline-hires-height))
-          (t (set-face-attribute 'default frame :height hesam-default-lowres-height)
-             (set-face-attribute 'mode-line frame :height hesam-modeline-lowres-height))))
+    (defun hesam/font-per-display (frame)
+      "Will change the font according to the dimensions of the monitor of focused
+              frame"
+      (select-frame frame)
+      (frame-monitor-attribute 'geometry frame)
+      (cond ((> (car (last (frame-monitor-attribute 'geometry frame))) 1200)
+             (set-face-attribute 'default frame :height hesam-default-hires-height)
+             (set-face-attribute 'mode-line frame :height hesam-modeline-hires-height)
+             (set-face-attribute 'mode-line-inactive frame :height hesam-modeline-hires-height))
+            (t (set-face-attribute 'default frame :height hesam-default-lowres-height)
+               (set-face-attribute 'mode-line frame :height hesam-modeline-lowres-height)
+               (set-face-attribute 'mode-line-inactive frame :height hesam-modeline-lowres-height))))
 
   (add-hook 'after-make-frame-functions 'hesam/font-per-display)
   (add-hook 'move-frame-functions 'hesam/font-per-display)
@@ -123,14 +125,4 @@ Highlights current line.
   (dolist (frame-option '((undecorated . t) (internal-border-width . 10) (drag-internal-border . 1)))
     (add-to-list 'default-frame-alist frame-option))
   (setq-default left-margin-width 1 right-margin-width 1)
-#+END_SRC
-* Mode-line
-** Inactive
-#+BEGIN_SRC emacs-lisp
-  (set-face-attribute 'mode-line-inactive nil
-                      :background (eval 'dracula-bg)
-                      :foreground (eval 'dracula-bg)
-                      :underline (list :color (eval 'dracula-current) :style 'line)
-                      :height 1
-                      :box nil)
 #+END_SRC
