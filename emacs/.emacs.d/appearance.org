@@ -117,7 +117,7 @@ Highlights current line.
                       :inherit 'default
                       :background (eval 'dracula-bg)
                       :foreground (eval 'dracula-fg)
-                      :height 0.9)
+                      :height 0.95)
 #+END_SRC
 * Borders and margins
 #+BEGIN_SRC emacs-lisp
