@@ -18,5 +18,4 @@
 ;; load emacs settings
 (require 'org)
 (org-babel-load-file
- (expand-file-name "conf.org" user-emacs-directory))
-(put 'scroll-left 'disabled nil)
+ (expand-file-name "start.org" user-emacs-directory))
