@@ -7,17 +7,26 @@ if we use git to reset recent changes.
 
 * Autosave and Backups
 Saves all backups to user's Emacs directory and in addition creates
-numbered backups. If we wanted to keep only the 100th latest revisions
-are kept then add the following
-```
-        delete-old-versions t
-        kept-new-versions 100
-```
-below.
+numbered backups.
 #+BEGIN_SRC emacs-lisp
   (setq backup-directory-alist `(("." . ,(concat (eval user-emacs-directory) "backups/")))
-        backup-by-copying t
-        version-control t)
+        version-control t		  ; Use version numbers for backups.
+        vc-make-backup-files t	  ; Make backups for git files
+        kept-new-versions 1000	  ; Number of newest versions to keep.
+        kept-old-versions 0	  ; Number of oldest versions to keep.
+        delete-old-versions t ; Don't ask to delete excess backup versions.
+        backup-by-copying t)  ; Copy all files, don't rename them.
+#+END_SRC
+
+But backups are only created once when the buffer is visited. We want
+to save backups on each save. We do so by resetting the flag that
+tells Emacs that the file has been backed up. Adding a hook to do that
+after each save will make Emacs backup the file since the counter has
+been reset.
+#+BEGIN_SRC emacs-lisp
+  (defun force-backup-of-buffer ()
+    (setq buffer-backed-up nil))
+  (add-hook 'before-save-hook  'force-backup-of-buffer)
 #+END_SRC
 
 We also make sure to organize our autosaves in user's Emacs directory.
