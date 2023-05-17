@@ -36,16 +36,9 @@ environment.
                              dracula-pink
                              dracula-cyan
                              dracula-white))
-    :hook (rustic-mode . rustic-mode-auto-save-hook)) ; function defined below
+    :config
+    (setq rustic-format-on-save t))
   #+END_SRC
-
-`rustic` can use `rustfmt` after we save buffers which we hooked above.
-#+BEGIN_SRC emacs-lisp
-  (defun rustic-mode-auto-save-hook ()
-    "Enable auto-saving in rustic-mode buffers."
-    (when buffer-file-name
-      (setq-local compilation-ask-about-save nil)))
-#+END_SRC
 
 ** Python
 Python-specific settings and packages.
@@ -74,10 +67,10 @@ Setup Language Server Protocol (LSP) for different programming languages.
     (setq lsp-headerline-breadcrumb-enable nil)
     :commands lsp
     :custom
+    (lsp-idle-delay 0.25)
 
     ;; Rust
     (lsp-rust-analyzer-cargo-watch-command "check")
-    (lsp-idle-delay 0.25)
     (lsp-rust-analyzer-server-display-inlay-hints t)
     (lsp-rust-analyzer-display-chaining-hints t)
     (lsp-rust-analyzer-display-closure-return-type-hints t)
@@ -85,6 +78,7 @@ Setup Language Server Protocol (LSP) for different programming languages.
     :hook ((python-mode . lsp)
            (rust-mode . lsp)
            (lsp-mode . lsp-ui-mode))
+
     (lsp-mode . lsp-enable-which-key-integration))
 
   (use-package lsp-ui
