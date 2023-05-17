@@ -1,0 +1,144 @@
+* Introduction
+Settings for the feel and look of Emacs. We may also have some options
+configured elsewhere which affects the look of Emacs. One such example
+is the face `hideshow` minor mode uses, which we have put in
+`programming.org` because it's directly related to programming.
+
+* Theme switcher
+#+BEGIN_SRC emacs-lisp
+  (defvar light-theme 'modus-operandi)
+  (defvar dark-theme 'dracula)
+  (defvar global-current-theme dark-theme)
+  (defvar global-next-theme light-theme)
+
+  (load-theme global-current-theme t)
+
+  (defun hesam/switch-theme (current-theme next-theme)
+    (disable-theme current-theme)
+    (load-theme next-theme t)
+    (setq global-current-theme next-theme)
+    (setq global-next-theme current-theme))
+
+  (defun hesam/theme-toggle ()
+    (interactive)
+    (hesam/switch-theme global-current-theme global-next-theme))
+
+  (defun hesam/switch-theme-dark ()
+    (if (eq global-current-theme light-theme)
+        (hesam/theme-toggle)))
+
+  (defun hesam/switch-theme-light ()
+    (if (eq global-current-theme dark-theme)
+        (hesam/theme-toggle)))
+#+END_SRC
+* Frame customization and decorations
+Remove the menu, scroll and toolbar from Emacs frame.
+#+BEGIN_SRC emacs-lisp
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
+#+END_SRC
+Use an undecorated frame to remove OS titlebar. We also add internal
+border around the whole Emacs frame which pads the frame from all
+sides.
+
+The `drag-internal` settings is for using the mouse to drag/resize the
+Emacs frame, useful for when we have an undecorated frame.
+#+BEGIN_SRC emacs-lisp
+  (dolist (frame-option
+           '((undecorated . t) (internal-border-width . 10) (drag-internal-border . 1)))
+    (add-to-list 'default-frame-alist frame-option))
+#+END_SRC
+
+Lastly we use a little margin on both sides. Mainly because we want
+some padding between buffers. Recall that `internal-border` option is
+only around the frame and does not apply in areas that do not touch a
+frame edge.
+#+BEGIN_SRC emacs-lisp
+  (setq-default left-margin-width 1 right-margin-width 1)
+#+END_SRC
+
+* Fonts
+We set the default, fixed-pitch and variable-pitch fonts here. In
+order to get good size we make configure the font size depending on
+screen resolution.
+#+BEGIN_SRC emacs-lisp
+  (setq hesam-default-hires-height 180)
+  (setq hesam-default-lowres-height 120)
+  (setq hesam-modeline-hires-height (- hesam-default-hires-height 10))
+  (setq hesam-modeline-lowres-height (- hesam-default-lowres-height 5))
+
+  (set-face-attribute 'default nil
+                      :family "IosevkaTerm Nerd Font"
+                      :weight 'regular
+                      :height hesam-default-lowres-height)
+  (set-face-attribute 'fixed-pitch nil
+                      :family "IosevkaTerm Nerd Font"
+                      :weight 'regular)
+  (set-face-attribute 'variable-pitch nil
+                      :family "EBGaramond"
+                      :height 1.5)
+#+END_SRC
+
+If we drag an Emacs frame between screens with different resolutions
+we have to update all font sizes in that frame. The
+`hesam/font-per-display` achieves that and we let it be run each time
+a new frame is created and whenever it's moved.
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/font-per-display (frame)
+    "Will change the font according to the dimensions of the FRAME."
+    (select-frame frame)
+    (frame-monitor-attribute 'geometry frame)
+    (cond ((> (car (last (frame-monitor-attribute 'geometry frame))) 1200)
+           (set-face-attribute 'default frame :height hesam-default-hires-height)
+           (set-face-attribute 'mode-line frame :height hesam-modeline-hires-height)
+           (set-face-attribute 'mode-line-inactive frame :height hesam-modeline-hires-height))
+          (t (set-face-attribute 'default frame :height hesam-default-lowres-height)
+             (set-face-attribute 'mode-line frame :height hesam-modeline-lowres-height)
+             (set-face-attribute 'mode-line-inactive frame :height hesam-modeline-lowres-height))))
+  (add-hook 'after-make-frame-functions 'hesam/font-per-display)
+  (add-hook 'move-frame-functions 'hesam/font-per-display)
+
+  (setq ring-bell-function 'ignore)
+#+END_SRC
+
+* Cursor
+We always want the cursor to always blink so we can easily find it.
+#+BEGIN_SRC emacs-lisp
+  (blink-cursor-mode t)
+  (setq blink-cursor-blinks 0) ;; blink forever
+#+END_SRC
+
+Highlights current line in programming buffers, ie. in `prog-mode`
+activated buffers.
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'prog-mode-hook 'hl-line-mode)
+#+END_SRC
+
+* Tabs
+Configure the behavior of the tab bar, for example we hide the close
+tab button.
+#+BEGIN_SRC emacs-lisp
+  (setq tab-bar-show 1                ; show the tab bar if we have more than 1 tab
+        tab-bar-close-button-show nil
+        tab-bar-tab-hints t)          ; prefixes tab bar with its associated number
+
+#+END_SRC
+
+Use Dracula theme colors for the tab bar; we prefer it to be slighly
+smaller than surrounding text. Otherwise inherit face attributes from
+`'default`.
+#+BEGIN_SRC emacs-lisp
+  (set-face-attribute 'tab-bar nil
+                      :inherit 'default
+                      :background (eval 'dracula-bg)
+                      :foreground (eval 'dracula-fg)
+                      :height 0.95)
+#+END_SRC
+
+* Minions
+Will hide all minor-modes, shown in mode-line, in a list.
+#+BEGIN_SRC emacs-lisp
+  (use-package minions
+    :config (minions-mode 1))
+#+END_SRC

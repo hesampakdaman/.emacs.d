@@ -1,0 +1,63 @@
+* Introduction
+For configuring autocompleting options. We begin with the a built-in
+hippie-expand by binding it
+
+#+BEGIN_SRC emacs-lisp
+  (general-define-key
+   "C-c h" 'hippie-expand)
+#+END_SRC
+
+* Company
+General autocompletion system, but mostly used in programming
+contexts. We bind it to `C-c n` for usage across emacs.
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :general
+    ("C-c n" 'company-complete)
+    :config
+    (global-company-mode t)
+    :bind
+    (:map company-active-map
+                ("C-n". company-select-next)
+                ("C-p". company-select-previous)
+                ("M-<". company-select-first)
+                ("M->". company-select-last)))
+#+END_SRC
+** company-shell
+Associated package specific module for shell scripting.
+#+BEGIN_SRC emacs-lisp
+  (use-package company-shell
+    :config
+    (add-to-list 'company-backends 'company-shell))
+#+END_SRC
+
+* Orderless
+Provides completion styles to be used on top-of a completion packages
+such as `Vertico` or certain `Consult` functions. If we do `C-x C-f`
+and have two files `languages-and-modes.org` and `general.org` then
+the search string `g l` will match both if we have set `'orderless`
+style (ie. the order of your serach words does not matter).
+#+BEGIN_SRC emacs-lisp
+  (use-package orderless
+    :custom
+    (completion-styles '(orderless))
+    (completion-category-overrides '((file (styles partial-completion)))))
+#+END_SRC
+
+* Vertico
+Minibuffer completion system. It will display a vertical scrolling
+minibuffer in modes like `M-x` or `(find-file)`.
+#+BEGIN_SRC emacs-lisp
+  (use-package vertico
+    :init
+    (vertico-mode)
+    :config
+    ;; Use `consult-completion-in-region' if Vertico is enabled.
+    ;; Otherwise use the default `completion--in-region' function.
+    (setq completion-in-region-function
+          (lambda (&rest args)
+            (apply (if vertico-mode
+                       #'consult-completion-in-region
+                     #'completion--in-region)
+                   args))))
+#+END_SRC

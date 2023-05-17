@@ -1,0 +1,99 @@
+* anzu
+#+BEGIN_SRC emacs-lisp
+  (use-package anzu
+    :bind (([remap query-replace] . anzu-query-replace)
+           ([remap query-replace-regexp] . anzu-query-replace-regexp)))
+#+END_SRC
+
+* consult
+#+BEGIN_SRC emacs-lisp
+  (use-package consult
+    ;; Replace bindings. Lazily loaded due by `use-package'.
+    :bind (;; C-c bindings (mode-specific-map)
+           ("C-c k" . consult-kmacro)
+           ;; C-x bindings (ctl-x-map)
+           ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+           ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+           ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
+           ;; Custom M-# bindings for fast register access
+           ;; Other custom bindings
+           ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+           ;; M-g bindings (goto-map)
+           ("M-g e" . consult-compile-error)
+           ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
+           ("M-g g" . consult-goto-line)             ;; orig. goto-line
+           ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+           ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
+           ("M-g m" . consult-mark)
+           ("M-g k" . consult-global-mark)
+           ("M-g i" . consult-imenu)
+           ("M-g I" . consult-imenu-multi)
+           ;; M-s bindings (search-map)
+           ("M-s f" . consult-find)
+           ("M-s F" . consult-locate)
+           ("M-s g" . consult-grep)
+           ("M-s G" . consult-git-grep)
+           ("M-s r" . consult-ripgrep)
+           ("M-s l" . consult-line)
+           ("M-s L" . consult-line-multi)
+           ("M-s m" . consult-multi-occur)
+           ("M-s k" . consult-keep-lines)
+           ("M-s u" . consult-focus-lines)
+           ;; Isearch integration
+           ("M-s e" . consult-isearch)
+           :map isearch-mode-map
+           ("M-e" . consult-isearch)                 ;; orig. isearch-edit-string
+           ("M-s e" . consult-isearch)               ;; orig. isearch-edit-string
+           ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
+           ("M-s L" . consult-line-multi))           ;; needed by consult-line to detect isearch
+    :init
+    ;; Optionally replace `completing-read-multiple' with an enhanced version.
+    (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple)
+
+    ;; Use Consult to select xref locations with preview
+    (setq xref-show-xrefs-function #'consult-xref
+          xref-show-definitions-function #'consult-xref))
+#+END_SRC
+
+* deft
+** setup
+#+BEGIN_SRC emacs-lisp
+  (use-package deft
+    :commands (deft)
+    :config  (setq deft-file-naming-rules	;; use dots as delimiters in filename and downcase
+                   '((noslash . ".")
+                     (nospace . ".")
+                     (case-fn . downcase))
+                   deft-use-filename-as-title nil
+                   deft-use-filter-string-for-filename t
+                   deft-extensions '("org")
+                   deft-default-extension "org"))
+#+END_SRC
+** director
+Chooses which directory to run deft in. Courtesy of [[http://pragmaticemacs.com/category/deft/][bjm]].
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/deft-director (dir)
+    "Run deft in directory DIR"
+    (setq deft-directory dir)
+    (switch-to-buffer "*Deft*")
+    (kill-this-buffer)
+    (deft))
+#+END_SRC
+** projects
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/recipes ()
+    (interactive)
+    (hesam/deft-director "~/Dropbox/org/recipes"))
+
+  (defun hesam/notes ()
+    (interactive)
+    (hesam/deft-director "~/Dropbox/org/notes"))
+#+END_SRC
+
+
+* Regexp is default search
+#+BEGIN_SRC emacs-lisp
+  (general-def
+    "C-s" 'isearch-forward-regexp
+    "C-r" 'isearch-backward-regexp)
+#+END_SRC

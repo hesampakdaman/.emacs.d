@@ -1,0 +1,58 @@
+* Introduction
+In this file we define global variables to be consumed in other
+files. For example, the `leader-meta-spc` is global leader key used in
+many places and theming variables for colors too.
+
+* The package `general`
+Simplifies setting keybindings and has advanced features for
+prefix/leader keys.
+#+BEGIN_SRC emacs-lisp
+  (use-package general
+    :init
+    (general-auto-unbind-keys))
+#+END_SRC
+
+* Leaders Keys
+Here we define leaders to be used throughout emacs. We have other
+leader-keys that could be defined elsewhere because they are related
+to a specifc file. For example as `leader-agenda-gtd` could be placed
+in `org-mode.org`. But we prefer to put them here to have all leaders
+in one place.
+
+
+#+BEGIN_SRC emacs-lisp
+  ;; Prefix to be used for all kinds of stuff
+  (general-create-definer leader-meta-spc
+    :prefix "M-SPC")
+
+  ;; Sub-leader for agenda & GTD
+  (general-create-definer leader-agenda-gtd
+    :prefix "M-SPC a")
+
+  ;; Sub-leader for redshift
+  (general-create-definer leader-super-r
+    :prefix "M-SPC r")
+
+  ;; Leader for editing text
+  (general-create-definer leader-editing
+    :prefix "C-c e")
+#+END_SRC
+
+* Dracula Theme
+Use the Dracula theme for Emacs and define the palette here so we can
+use its values in our configuration elsewhere.
+#+BEGIN_SRC emacs-lisp
+  (use-package dracula-theme)
+  (defvar dracula-bg      "#282a36")
+  (defvar dracula-fg      "#f8f8f2")
+  (defvar dracula-current "#44475a")
+  (defvar dracula-comment "#6272a4")
+  (defvar dracula-cyan    "#8be9fd")
+  (defvar dracula-green   "#50fa7b")
+  (defvar dracula-orange  "#ffb86c")
+  (defvar dracula-pink    "#ff79c6")
+  (defvar dracula-purple  "#bd93f9")
+  (defvar dracula-red     "#ff5555")
+  (defvar dracula-yellow  "#f1fa8c")
+  (defvar dracula-white   "#f8f8f2")
+#+END_SRC

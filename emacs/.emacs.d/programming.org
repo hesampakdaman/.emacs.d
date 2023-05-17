@@ -1,0 +1,181 @@
+* Introduction
+Programming related settings and packages defined here. Language
+Server Protocol (LSP) provides IDE-like features and is configured
+here. Some relevant minor modes also set here, including their look
+and feel if appropriate.
+
+* Programming Languages Modes
+** C
+Style settings for C-programming language.
+
+*** style
+Set the default style for C programming.
+#+BEGIN_SRC emacs-lisp
+  (setq c-default-style '((java-mode . "java")
+                          (awk-mode . "awk")
+                          (other . "k&r")))
+#+END_SRC
+
+** Rust
+Rust-specific settings and packages. First install the major mode
+#+BEGIN_SRC emacs-lisp
+  (use-package rust-mode)
+#+END_SRC
+
+Now install `rustic` package which provides a rich Rust development
+environment.
+#+BEGIN_SRC emacs-lisp
+  (use-package rustic
+    :init
+    (setq rustic-ansi-faces (vector
+                             "black"
+                             dracula-red
+                             dracula-green
+                             dracula-yellow
+                             dracula-purple
+                             dracula-pink
+                             dracula-cyan
+                             dracula-white))
+    :hook (rustic-mode . rustic-mode-auto-save-hook)) ; function defined below
+  #+END_SRC
+
+`rustic` can use `rustfmt` after we save buffers which we hooked above.
+#+BEGIN_SRC emacs-lisp
+  (defun rustic-mode-auto-save-hook ()
+    "Enable auto-saving in rustic-mode buffers."
+    (when buffer-file-name
+      (setq-local compilation-ask-about-save nil)))
+#+END_SRC
+
+** Python
+Python-specific settings and packages.
+*** pyenv
+Use `pyvenv` to manage Python virtual environments.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package pyvenv)
+#+END_SRC
+
+*** auto-virtualenv
+Automatically activate Python virtual environments with `auto-virtualenv`.
+#+BEGIN_SRC emacs-lisp
+  (use-package auto-virtualenv
+    :hook ((python-mode . auto-virtualenv-set-virtualenv)
+           (projectile-after-switch-project . auto-virtualenv-set-virtualenv)))
+#+END_SRC
+
+* Language Server Protocol
+Setup Language Server Protocol (LSP) for different programming languages.
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-mode
+    :init
+    (setq lsp-keymap-prefix "C-c l")
+    :config
+    (setq lsp-headerline-breadcrumb-enable nil)
+    :commands lsp
+    :custom
+
+    ;; Rust
+    (lsp-rust-analyzer-cargo-watch-command "check")
+    (lsp-idle-delay 0.25)
+    (lsp-rust-analyzer-server-display-inlay-hints t)
+    (lsp-rust-analyzer-display-chaining-hints t)
+    (lsp-rust-analyzer-display-closure-return-type-hints t)
+
+    :hook ((python-mode . lsp)
+           (rust-mode . lsp)
+           (lsp-mode . lsp-ui-mode))
+    (lsp-mode . lsp-enable-which-key-integration))
+
+  (use-package lsp-ui
+    :commands lsp-ui-mode
+    :custom
+    (lsp-ui-peek-always-show t)
+    (lsp-ui-sideline-mode t)
+    (lsp-ui-sideline-show-symbol nil))
+
+  (use-package lsp-treemacs
+    :commands lsp-treemacs-errors-list)
+  (use-package dap-mode)
+  #+END_SRC
+
+* Modes
+** electric mode
+Automatically add closing brackets and indent code in `prog-mode`.
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/electric ()
+    (electric-pair-local-mode t)
+    (electric-indent-local-mode t))
+  (add-hook 'prog-mode-hook #'hesam/electric)
+#+END_SRC
+
+** hideshow
+Set up the `hideshow` minor mode for `prog-mode`.
+#+BEGIN_SRC emacs-lisp
+  (setq hs-allow-nesting t)
+  (eval-after-load 'prog-mode
+    '(define-key prog-mode-map (kbd "C-<return>") 'hs-toggle-hiding))
+#+END_SRC
+
+Another symbol to be used for collapsed text.
+#+BEGIN_SRC emacs-lisp
+  (set-display-table-slot standard-display-table
+                          'selective-display (string-to-vector " [+] "))
+#+END_SRC
+
+** row/column/line numbers
+Shows column number in `mode-line` in addtion to row number.
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'prog-mode-hook 'column-number-mode)
+#+END_SRC
+
+** Show parent
+Highlights matching parens in prog-mode.
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'prog-mode-hook 'show-paren-mode)
+#+END_SRC
+
+* Flycheck
+Flycheck is a modern syntax checker for Emacs to be used everywhere,
+but it's stronlgy linked to programming and that is why we define it
+here but enable it globally.
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck
+    :init (global-flycheck-mode))
+#+END_SRC
+
+* Magit
+git porcelain
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :bind ("C-c g" . magit-status))
+#+END_SRC
+
+* Whitespace
+Colorize whitespace characters for prog mode.
+#+BEGIN_SRC emacs-lisp
+  (use-package whitespace
+    :config
+    (setq whitespace-line-column 120)
+    (setq whitespace-style '(face lines-tail))
+    :hook (prog-mode . whitespace-mode))
+#+END_SRC
+
+* WS-butler
+Removes trailing space and tabs from this user modified lines.
+#+BEGIN_SRC emacs-lisp
+  (use-package ws-butler
+    :hook ((prog-mode . ws-butler-mode)
+           (org-mode . ws-butler-mode)
+           (text-mode . ws-butler-mode)))
+#+END_SRC
+
+* Yasnippet
+Enables snippets for progamming and text modes.
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+    :config
+    (yas-reload-all)
+    :hook ((prog-mode . yas-minor-mode)
+           (text-mode .  yas-minor-mode)))
+#+END_SRC

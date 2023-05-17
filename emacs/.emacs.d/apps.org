@@ -1,0 +1,38 @@
+* Introduction
+Here we keep a list of functions that's main purpose is to start an
+external program or run a shell command. These are all namespaced
+`apps/` and `commands/` respectively.
+
+Make sure that relevant binaries already exists in the system.
+
+* Calibre
+Book library app Calibre
+#+BEGIN_SRC emacs-lisp
+  (defun apps/calibre ()
+    (interactive)
+    (start-process "" nil "calibre"))
+#+END_SRC
+
+* Redshift
+Controlling screen brightness and its warmness.
+#+BEGIN_SRC emacs-lisp
+  (defun commands/redshift-day ()
+    (interactive)
+    (start-process-shell-command "" nil "redshift -x"))
+
+  (defun commands/redshift-night ()
+    (interactive)
+    (start-process-shell-command "" nil "redshift -x; redshift -O 6500 -b 0.50"))
+
+  (defun commands/redshift-dark ()
+    (interactive)
+    (start-process-shell-command "" nil "redshift -x; redshift -O 6500 -b 0.30"))
+#+END_SRC
+
+* Flameshot
+Screenshot capturing tool.
+#+BEGIN_SRC emacs-lisp
+  (defun apps/flameshot ()
+    (interactive)
+    (start-process-shell-command "" nil "flameshot gui"))
+#+END_SRC

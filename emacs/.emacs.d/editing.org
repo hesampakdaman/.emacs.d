@@ -1,0 +1,72 @@
+* Custom editing functions
+Here we define custom functions that we use for editing simple
+text. We first declare all their keybindings and make sure they are
+easily accessible without a leader
+** Bindings
+#+BEGIN_SRC emacs-lisp
+    (general-define-key
+     :prefix "C-c"
+     "d" 'edit/delete-a-word
+     "C-k" 'edit/copy-lines)
+#+END_SRC
+
+And some more under an edit leader defined in `keybindings.org`.
+#+BEGIN_SRC emacs-lisp
+  (leader-editing
+    "b" 'edit/remove-blank-lines)
+
+#+END_SRC
+
+** Function definitions
+Now we define the functionality we bound above. For copying several
+lines of text this function below is a snipppet found on the Internet.
+#+BEGIN_SRC emacs-lisp
+  (defun edit/copy-line (arg)
+    "Copy lines (as many as prefix argument) in the kill ring.
+        Ease of use features:
+        - Move to start of next line.
+        - Appends the copy on sequential calls.
+        - Use newline as last char even on the last line of the buffer.
+        - If region is active, copy its lines."
+    (interactive "p")
+    (let ((beg (line-beginning-position))
+          (end (line-end-position arg)))
+      (when mark-active
+        (if (> (point) (mark))
+            (setq beg (save-excursion (goto-char (mark)) (line-beginning-position)))
+          (setq end (save-excursion (goto-char (mark)) (line-end-position)))))
+      (if (eq last-command 'copy-line)
+          (kill-append (buffer-substring beg end) (< end beg))
+        (kill-ring-save beg end)))
+    (kill-append "\n" nil)
+    (beginning-of-line (or (and arg (1+ arg)) 2))
+    (if (and arg (not (= 1 arg))) (message "%d lines copied" arg)))
+#+END_SRC
+
+For vim-like deletion of a single word like we define this function
+#+BEGIN_SRC emacs-lisp
+  (defun edit/delete-a-word (&optional args)
+    "Vim-like deletion of a single word.
+    Takes an optional integer argument ARGS to delete ARGS many
+    words."
+    (interactive "p")
+    (forward-char 1)			;if at beg. of word
+    (backward-word 1)
+    (kill-word args))
+#+END_SRC
+
+Simple function to delete blank lines from cursor downwards.
+#+BEGIN_SRC emacs-lisp
+  (defun edit/remove-blank-lines ()
+    (interactive)
+    (flush-lines "^$"))
+#+END_SRC
+
+* Packages
+** sudo-edit
+When buffer is locked for editing due to permissons we can use this
+package to make editing with sudo access easily. We extensively use
+either `(sudo-edit-current-file)` or `(sudo-edit-find-file)`.
+#+BEGIN_SRC emacs-lisp
+  (use-package sudo-edit)
+#+END_SRC

@@ -1,0 +1,46 @@
+* Introduction
+Here we define misc shortcuts to other programs or commands. We first
+define a set of leaders that can be defined throught emacs. Then we
+try and organize bindings depending on what they are used for.
+
+All bindings are not defined here, rather we define leaders and misc
+keybindings (like shortcuts to external programs). Instead we have the
+another philosophy of creating bindings where packages are defined.
+
+As such we make extensive use of `use-package` and its `:bind`
+feature.
+
+* C-c and C-x prefix bindings
+For built-in modes that need no use-package or enabling of modes. We
+separate between custom commands prefixed by `C-c` and shadowing emacs
+default bindings defined with `C-x`.
+** Custom C-c bindings
+#+BEGIN_SRC emacs-lisp
+;; empty
+#+END_SRC
+
+** Shadowing emacs' C-x bindings
+#+BEGIN_SRC emacs-lisp
+  (general-define-key
+   :prefix "C-x"
+   "C-b" 'ibuffer)
+#+END_SRC
+
+* Unset bindings
+We want to unbind default bindings that aren't useful to us, such as
+suspending.
+#+BEGIN_SRC emacs-lisp
+  (global-unset-key (kbd "C-z"))
+  (global-unset-key (kbd "C-x C-z"))
+#+END_SRC
+
+* Misc
+Different sorts of keybindings like starting an external program.
+#+BEGIN_SRC emacs-lisp
+  (leader-meta-spc
+    "]" 'hesam/start-flameshot
+    "b" 'hesam/book-folder-selector
+    "c" 'hesam/start-calibre
+    "p" 'macro/projectile
+    "r" 'hesam/recipes)
+#+END_SRC

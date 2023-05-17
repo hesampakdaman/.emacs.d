@@ -1,0 +1,62 @@
+* Transpose frame
+Enables window manipulation, for example rotaing or flipping frames.
+#+BEGIN_SRC emacs-lisp
+  (use-package transpose-frame)
+  (general-define-key
+   :prefix "C-c t"
+   "f" 'transpose-frame
+   "h" 'flop-frame
+   "v" 'flip-frame)
+#+END_SRC
+* Windmove and Winner binds
+Enable `winner-mode` everywhere which will allow undo and redo for
+tabs and windows. Windmove allows for easy navigation inside a
+window. We configure windmove to wrap around when moving buffers
+around (windmove is enabled by default).
+#+BEGIN_SRC emacs-lisp
+  (winner-mode t)
+  (setq windmove-wrap-around t)
+#+END_SRC
+
+Under prefix `C-c w` we define keybindings for windmov's display
+feature and winner mode. We are inspired by Vim bindings to allow for
+fast display of next buffers. Winner mode is naturally bound to `u`
+and `r`.
+#+BEGIN_SRC emacs-lisp
+(general-define-key
+   :prefix "C-c w"
+   "k" 'windmove-display-up
+   "j" 'windmove-display-down
+   "h" 'windmove-display-left
+   "l" 'windmove-display-right
+   "f" 'windmove-display-new-frame
+   "s" 'windmove-display-same-window
+   "r" 'winner-redo
+   "u" 'winner-undo)
+#+END_SRC
+
+Here we bind convenient bindings for easy traversal between buffers in
+a window. Additionally we define keys for swapping buffer locations.
+#+BEGIN_SRC emacs-lisp
+  (general-define-key
+   "s-k" 'windmove-up
+   "s-j" 'windmove-down
+   "s-h" 'windmove-left
+   "s-l" 'windmove-right
+
+   "s-K" 'windmove-swap-states-up
+   "s-J" 'windmove-swap-states-down
+   "s-H" 'windmove-swap-states-left
+   "s-L" 'windmove-swap-states-right)
+#+END_SRC
+
+* Tabs
+We want to repeat closing tabs. Hence we insert it in the repeat-map
+table.
+#+BEGIN_SRC emacs-lisp
+  (defvar tab-close-repeat-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map (kbd "0") #'tab-close)
+      map))
+  (put 'tab-close 'repeat-map 'tab-close-repeat-map)
+#+END_SRC
