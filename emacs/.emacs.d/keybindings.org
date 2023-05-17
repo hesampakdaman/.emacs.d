@@ -42,5 +42,6 @@ Different sorts of keybindings like starting an external program.
     "b" 'hesam/book-folder-selector
     "c" 'hesam/start-calibre
     "p" 'macro/projectile
-    "r" 'hesam/recipes)
+    "r" 'hesam/recipes
+    "v" 'vterm-other-window)
 #+END_SRC
