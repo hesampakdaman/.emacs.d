@@ -107,7 +107,6 @@ A package that helps with opening files in an external app, such as
 opening `.doc` files in `libreoffice`.
 #+BEGIN_SRC emacs-lisp
   (use-package openwith
-    :ensure t
     :config
     (setq openwith-associations
           (list
@@ -115,7 +114,7 @@ opening `.doc` files in `libreoffice`.
                   '("mpg" "mpeg" "mp3" "mp4"
                     "avi" "wmv" "wav" "mov" "flv"
                     "ogm" "ogg" "mkv" "rar"))
-                 "mpv"
+                 "mpv --no-border"
                  '(file))
            (list (openwith-make-extension-regexp
                   '("doc" "xls" "ppt" "odt" "ods" "odg" "odp"))
