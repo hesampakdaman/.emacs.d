@@ -159,13 +159,18 @@ project and includes integration with magit.
 #+BEGIN_SRC emacs-lisp
   (use-package treemacs
     :defer t
+    :config
+    (setq treemacs-no-png-images t)
+    ;; adjust root face as it's otherwise bold and bigger
+    (set-face-attribute 'treemacs-root-face nil
+                        :inherit font-lock-constant-face)
     :bind (("C-c t b"   . treemacs-select-window)
            ("C-c t 1"   . treemacs-delete-other-windows)
            ("C-c t B"   . treemacs-bookmark)
            ("C-c t C-t" . treemacs-find-file)
-           ("C-c t M-t" . treemacs-find-tag))
+           ("C-c t M-t" . treemacs-find-tag)
            ("C-c t d"   . treemacs-select-directory)
-           ("C-c t t"   . treemacs))
+           ("C-c t t"   . treemacs)))
 
   (use-package treemacs-magit
     :after (treemacs magit))
@@ -174,6 +179,7 @@ project and includes integration with magit.
     :after (treemacs)
     :config (treemacs-set-scope-type 'Tabs))
 #+END_SRC
+
 * Whitespace
 Colorize whitespace characters for prog mode.
 #+BEGIN_SRC emacs-lisp
