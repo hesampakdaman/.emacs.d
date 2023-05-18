@@ -136,14 +136,26 @@ smaller than surrounding text. Otherwise inherit face attributes from
                       :height 0.95)
 #+END_SRC
 
-* Packages
-** Minions
-Will hide all minor-modes, shown in mode-line, in a list.
+* Mode-line
+We like a compact mode-line
+#+BEGIN_SRC emacs-lisp
+  (setq mode-line-compact t)
+#+END_SRC
+
+and to remove the precentage and All/Top/Bottom indicator
+#+BEGIN_SRC emacs-lisp
+  (setq mode-line-percent-position nil)
+#+END_SRC
+
+To further clean-up the mode-line we will install `minions` that hides
+them under the major mode. Now all relevant minor modes are shown
+under a hidden list.
 #+BEGIN_SRC emacs-lisp
   (use-package minions
     :config (minions-mode 1))
 #+END_SRC
 
+* Packages
 ** Which-key
 Displays available key chords after partially input. Hence, if we
 input `C-x t` to Emacs then `which-key` will display all defined key
