@@ -7,9 +7,6 @@ and feel if appropriate.
 * Programming Languages Modes
 ** C
 Style settings for C-programming language.
-
-*** style
-Set the default style for C programming.
 #+BEGIN_SRC emacs-lisp
   (setq c-default-style '((java-mode . "java")
                           (awk-mode . "awk")
@@ -83,20 +80,25 @@ Setup Language Server Protocol (LSP) for different programming languages.
 
     :hook ((python-mode . lsp)
            (rust-mode . lsp)
-           (lsp-mode . lsp-ui-mode))
+           (lsp-mode . lsp-ui-mode)
+           (lsp-mode . lsp-enable-which-key-integration)))
+#+END_SRC
 
-    (lsp-mode . lsp-enable-which-key-integration))
-
+`lsp-ui` is an enhancement package that can show diagnostics and other
+helpful information directly in the buffer.
+#+BEGIN_SRC emacs-lisp
   (use-package lsp-ui
     :commands lsp-ui-mode
     :custom
     (lsp-ui-peek-always-show t)
     (lsp-ui-sideline-mode t)
     (lsp-ui-sideline-show-symbol nil))
+  #+END_SRC
 
+  Uses treemacs as tree renderer to show helpful LSP commands.
+  #+BEGIN_SRC emacs-lisp
   (use-package lsp-treemacs
     :commands lsp-treemacs-errors-list)
-  (use-package dap-mode)
   #+END_SRC
 
 * Modes
