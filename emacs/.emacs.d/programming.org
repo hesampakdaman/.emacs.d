@@ -42,19 +42,25 @@ environment.
 
 ** Python
 Python-specific settings and packages.
-*** pyenv
-Use `pyvenv` to manage Python virtual environments.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package pyvenv)
-#+END_SRC
-
 *** auto-virtualenv
 Automatically activate Python virtual environments with `auto-virtualenv`.
 #+BEGIN_SRC emacs-lisp
   (use-package auto-virtualenv
-    :hook ((python-mode . auto-virtualenv-set-virtualenv)
-           (projectile-after-switch-project . auto-virtualenv-set-virtualenv)))
+    :hook ((python-mode . auto-virtualenv-set-virtualenv))
+#+END_SRC
+
+*** black
+#+BEGIN_SRC emacs-lisp
+  (use-package python-black
+    :demand t
+    :after python
+    :hook (python-mode . python-black-on-save-mode-enable-dwim))
+#+END_SRC
+
+*** pyenv
+Use `pyvenv` to manage Python virtual environments.
+#+BEGIN_SRC emacs-lisp
+  (use-package pyvenv)
 #+END_SRC
 
 * Language Server Protocol
