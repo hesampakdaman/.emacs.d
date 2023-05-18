@@ -1,6 +1,6 @@
 ;; Increase garbage collection threshold to 100MB to delay GC during
 ;; startup
-(setq gc-cons-threshold (* 100 1000000))
+(setq gc-cons-threshold (* 100 (expt 10 6)))
 
 ;; Disable package.el initialization
 (setq package-enable-at-startup nil)
@@ -9,4 +9,4 @@
 ;; impact of GC during normal use
 (add-hook 'after-init-hook
           (lambda ()
-            (setq gc-cons-threshold (* 1000000))))
+            (setq gc-cons-threshold (* 1 (expt 10 6)))))
