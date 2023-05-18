@@ -1,10 +1,3 @@
-* Auto-revert
-Will automatically load changed buffers, this can for example happen
-if we use git to reset recent changes.
-#+BEGIN_SRC emacs-lisp
-  (global-auto-revert-mode t)
-#+END_SRC**
-
 * Autosave and Backups
 Saves all backups to user's Emacs directory and in addition creates
 numbered backups.
@@ -137,6 +130,19 @@ we do "C-x t o" twice. But with repeat mode it suffices to do "C-x t
 o" once and followed by arbitrarily many "o".
 #+BEGIN_SRC emacs-lisp
   (repeat-mode t)
+#+END_SRC
+
+* Reverting
+Will automatically load changed buffers, this can for example happen
+if we use git to reset recent changes.
+#+BEGIN_SRC emacs-lisp
+  (global-auto-revert-mode t)
+#+END_SRC
+
+And make use of the quick revert setting when reverting files with
+`C-x x g`
+#+BEGIN_SRC emacs-lisp
+  (setq revert-buffer-quick-short-answers t)
 #+END_SRC
 
 * Savehist mode
