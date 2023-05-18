@@ -8,16 +8,6 @@ package. But it makes sense to have it there since it has a clear
 connection with programming. Another package `general` is declared in
 `bindings.org` since it's used to for defining keybindings easily.
 
-* which-key
-Displays available key chords after partially input. Hence, if we
-input `C-x t` to Emacs then `which-key` will display all defined key
-chords that are prefixed with `C-x t`.
-#+BEGIN_SRC emacs-lisp
-  (use-package which-key
-    :config
-    (which-key-mode))
-#+END_SRC
-
 * expand region
 Will expand mark in regions that makes sense, ie. is context aware.
 #+BEGIN_SRC emacs-lisp

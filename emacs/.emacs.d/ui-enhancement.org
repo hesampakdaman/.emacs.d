@@ -136,9 +136,20 @@ smaller than surrounding text. Otherwise inherit face attributes from
                       :height 0.95)
 #+END_SRC
 
-* Minions
+* Packages
+** Minions
 Will hide all minor-modes, shown in mode-line, in a list.
 #+BEGIN_SRC emacs-lisp
   (use-package minions
     :config (minions-mode 1))
+#+END_SRC
+
+** Which-key
+Displays available key chords after partially input. Hence, if we
+input `C-x t` to Emacs then `which-key` will display all defined key
+chords that are prefixed with `C-x t`.
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+    :config
+    (which-key-mode))
 #+END_SRC
