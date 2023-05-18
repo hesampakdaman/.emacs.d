@@ -161,6 +161,13 @@ initialize emacs after login.
     (server-start))
 #+END_SRC
 
+When we connect to the server Emacs will display about how to exit
+with `C-x 5 0`. As we are already familiar with this command we
+inhibit it.
+#+BEGIN_SRC emacs-lisp
+  (setq server-client-instructions nil)
+#+END_SRC
+
 * Subword
 Allows for moving over a word based on the subwords in the table
 below. From the manual we have a table to show us the meaning of this
