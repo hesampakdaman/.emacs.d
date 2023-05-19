@@ -102,6 +102,7 @@ helpful information directly in the buffer.
   #+END_SRC
 
 * Modes
+Many of these mode are activated by adding a hook to `prog-mode-hook`.
 ** electric mode
 Automatically add closing brackets and indent code in `prog-mode`.
 #+BEGIN_SRC emacs-lisp
@@ -115,6 +116,7 @@ Automatically add closing brackets and indent code in `prog-mode`.
 Set up the `hideshow` minor mode for `prog-mode`.
 #+BEGIN_SRC emacs-lisp
   (setq hs-allow-nesting t)
+  (add-hook 'prog-mode-hook 'hs-minor-mode)
   (eval-after-load 'prog-mode
     '(define-key prog-mode-map (kbd "C-<return>") 'hs-toggle-hiding))
 #+END_SRC
