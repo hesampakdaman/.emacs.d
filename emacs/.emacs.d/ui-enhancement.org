@@ -4,61 +4,20 @@ configured elsewhere which affects the look of Emacs. One such example
 is the face `hideshow` minor mode uses, which we have put in
 `programming.org` because it's directly related to programming.
 
-* Theme switcher
+* Cursor
+We always want the cursor to always blink so we can easily find it.
 #+BEGIN_SRC emacs-lisp
-  (defvar light-theme 'modus-operandi)
-  (defvar dark-theme 'dracula)
-  (defvar global-current-theme dark-theme)
-  (defvar global-next-theme light-theme)
-
-  (load-theme global-current-theme t)
-
-  (defun hesam/switch-theme (current-theme next-theme)
-    (disable-theme current-theme)
-    (load-theme next-theme t)
-    (setq global-current-theme next-theme)
-    (setq global-next-theme current-theme))
-
-  (defun hesam/theme-toggle ()
-    (interactive)
-    (hesam/switch-theme global-current-theme global-next-theme))
-
-  (defun hesam/switch-theme-dark ()
-    (if (eq global-current-theme light-theme)
-        (hesam/theme-toggle)))
-
-  (defun hesam/switch-theme-light ()
-    (if (eq global-current-theme dark-theme)
-        (hesam/theme-toggle)))
-#+END_SRC
-* Frame customization and decorations
-Remove the menu, scroll and toolbar from Emacs frame.
-#+BEGIN_SRC emacs-lisp
-  (scroll-bar-mode -1)
-  (tool-bar-mode -1)
-  (menu-bar-mode -1)
-#+END_SRC
-Use an undecorated frame to remove OS titlebar. We also add internal
-border around the whole Emacs frame which pads the frame from all
-sides.
-
-The `drag-internal` settings is for using the mouse to drag/resize the
-Emacs frame, useful for when we have an undecorated frame.
-#+BEGIN_SRC emacs-lisp
-  (dolist (frame-option
-           '((undecorated . t) (internal-border-width . 10) (drag-internal-border . 1)))
-    (add-to-list 'default-frame-alist frame-option))
+  (blink-cursor-mode t)
+  (setq blink-cursor-blinks 0) ;; blink forever
 #+END_SRC
 
-Lastly we use a little margin on both sides. Mainly because we want
-some padding between buffers. Recall that `internal-border` option is
-only around the frame and does not apply in areas that do not touch a
-frame edge.
+Highlights current line in programming buffers, ie. in `prog-mode`
+activated buffers.
 #+BEGIN_SRC emacs-lisp
-  (setq-default left-margin-width 1 right-margin-width 1)
+  (add-hook 'prog-mode-hook 'hl-line-mode)
 #+END_SRC
 
-* Fonts
+* Faces and Fonts
 We set the default, fixed-pitch and variable-pitch fonts here. In
 order to get good size we make configure the font size depending on
 screen resolution.
@@ -102,17 +61,50 @@ a new frame is created and whenever it's moved.
   (setq ring-bell-function 'ignore)
 #+END_SRC
 
-* Cursor
-We always want the cursor to always blink so we can easily find it.
+* Frame customization and decorations
+Remove the menu, scroll and toolbar from Emacs frame.
 #+BEGIN_SRC emacs-lisp
-  (blink-cursor-mode t)
-  (setq blink-cursor-blinks 0) ;; blink forever
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
+#+END_SRC
+Use an undecorated frame to remove OS titlebar. We also add internal
+border around the whole Emacs frame which pads the frame from all
+sides.
+
+The `drag-internal` settings is for using the mouse to drag/resize the
+Emacs frame, useful for when we have an undecorated frame.
+#+BEGIN_SRC emacs-lisp
+  (dolist (frame-option
+           '((undecorated . t) (internal-border-width . 10) (drag-internal-border . 1)))
+    (add-to-list 'default-frame-alist frame-option))
 #+END_SRC
 
-Highlights current line in programming buffers, ie. in `prog-mode`
-activated buffers.
+Lastly we use a little margin on both sides. Mainly because we want
+some padding between buffers. Recall that `internal-border` option is
+only around the frame and does not apply in areas that do not touch a
+frame edge.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'prog-mode-hook 'hl-line-mode)
+  (setq-default left-margin-width 1 right-margin-width 1)
+#+END_SRC
+
+* Mode-line
+We like a compact mode-line
+#+BEGIN_SRC emacs-lisp
+  (setq mode-line-compact t)
+#+END_SRC
+
+and to remove the precentage and All/Top/Bottom indicator
+#+BEGIN_SRC emacs-lisp
+  (setq mode-line-percent-position nil)
+#+END_SRC
+
+To further clean-up the mode-line we will install `minions` that hides
+them under the major mode. Now all relevant minor modes are shown
+under a hidden list.
+#+BEGIN_SRC emacs-lisp
+  (use-package minions
+    :config (minions-mode 1))
 #+END_SRC
 
 * Tabs
@@ -136,25 +128,33 @@ smaller than surrounding text. Otherwise inherit face attributes from
                       :height 0.95)
 #+END_SRC
 
-* Mode-line
-We like a compact mode-line
+* Theme switcher
 #+BEGIN_SRC emacs-lisp
-  (setq mode-line-compact t)
-#+END_SRC
+  (defvar light-theme 'modus-operandi)
+  (defvar dark-theme 'dracula)
+  (defvar global-current-theme dark-theme)
+  (defvar global-next-theme light-theme)
 
-and to remove the precentage and All/Top/Bottom indicator
-#+BEGIN_SRC emacs-lisp
-  (setq mode-line-percent-position nil)
-#+END_SRC
+  (load-theme global-current-theme t)
 
-To further clean-up the mode-line we will install `minions` that hides
-them under the major mode. Now all relevant minor modes are shown
-under a hidden list.
-#+BEGIN_SRC emacs-lisp
-  (use-package minions
-    :config (minions-mode 1))
-#+END_SRC
+  (defun hesam/switch-theme (current-theme next-theme)
+    (disable-theme current-theme)
+    (load-theme next-theme t)
+    (setq global-current-theme next-theme)
+    (setq global-next-theme current-theme))
 
+  (defun hesam/theme-toggle ()
+    (interactive)
+    (hesam/switch-theme global-current-theme global-next-theme))
+
+  (defun hesam/switch-theme-dark ()
+    (if (eq global-current-theme light-theme)
+        (hesam/theme-toggle)))
+
+  (defun hesam/switch-theme-light ()
+    (if (eq global-current-theme dark-theme)
+        (hesam/theme-toggle)))
+#+END_SRC
 * Packages
 ** Which-key
 Displays available key chords after partially input. Hence, if we
