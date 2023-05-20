@@ -27,12 +27,6 @@ works best in PDF tools which is why we explicitly set it for
     ("C-r" . isearch-backward))
 #+END_SRC
 
-
-#+BEGIN_SRC emacs-lisp
-  (general-define-key
-)
-#+END_SRC
-
 ** auxtex
 TeX should be open with PDF tools.
 #+BEGIN_SRC emacs-lisp
