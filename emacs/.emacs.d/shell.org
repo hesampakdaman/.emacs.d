@@ -46,7 +46,7 @@ The custom function `hesam/vterm-project-shell` is for usage with
 long because we want to make sure vterm is started in `project-root`
 and have requirements on how and when a new window is created.
 #+BEGIN_SRC emacs-lisp
-  (defun hesam/vterm-project-shell (arg)
+  (defun hesam/vterm-project-shell (&optional arg)
     "Run `vterm' in the current project's root.
 
   If the VTerm buffer for this project exists and is visible, switch to it.
@@ -59,7 +59,7 @@ and have requirements on how and when a new window is created.
     (if (fboundp 'project-root)
         (let* ((root (project-root (project-current t)))
                (dir-name (file-name-nondirectory (directory-file-name root)))
-               (buffer-name (format "*vterm %s*%s" dir-name (if (> arg 1) (format "<%d>" arg) "")))
+               (buffer-name (format "*vterm %s*%s" dir-name (if (and arg (> arg 1)) (format "<%d>" arg) "")))
                (existing-buffer (get-buffer buffer-name)))
           (if existing-buffer
               (let ((buffer-window (get-buffer-window existing-buffer)))
