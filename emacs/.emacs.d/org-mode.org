@@ -4,20 +4,8 @@ buffer as well.
 #+BEGIN_SRC emacs-lisp
   (use-package org
     :init
-    (setq org-src-window-setup 'current-window)
-    (setq org-directory "~/Dropbox/org"))
-#+END_SRC
-
-* Templates
-Storage for Org capture is set to Dropbox to provide syncing between
-devices.
-#+BEGIN_SRC emacs-lisp
-  (setq org-capture-templates '(("t" "Todo [inbox]" entry
-                                 (file+headline "~/Dropbox/org/agenda/inbox.org" "Inbox")
-                                 "* TODO %i%?")
-                                ("T" "Tickler" entry
-                                 (file+headline "~/Dropbox/org/agenda/tickler.org" "Tickler")
-                                 "* %i%? \n %U")))
+    (setq org-src-window-setup 'current-window
+          org-directory "~/Dropbox/org"))
 #+END_SRC
 
 * Babel
@@ -31,54 +19,55 @@ What lanaguages to support for literal programming in Org buffers.
 #+END_SRC
 
 * Agenda and GTD
-Agenda files are stored in Dropbox under `org/agenda`.
-** Files and Keywords
+Agenda files are stored in Dropbox under `org/agenda`. If we put our
+GTD file inside `org-agenda-files`, then any dates in the GTD file
+will be seen by org agenda. We also define some nice tags to use so
+that we can filter on them in the Agenda view.
 #+BEGIN_SRC emacs-lisp
-  (setq gtd-directory (concat (eval org-directory) "/agenda/"))
-  (setq org-agenda-files '("~/Dropbox/org/agenda/gtd.org" "~/Dropbox/org/agenda/someday.org")
-        org-default-notes-file "~/Dropbox/org/notes.org")
-  (setq org-tag-alist '(("@work" . ?w) ("@home" . ?h)))
-  (setq org-refile-targets '(("~/Dropbox/org/agenda/gtd.org" :maxlevel . 3)
-                             ("~/Dropbox/org/agenda/someday.org" :level . 1)
-                             ("~/Dropbox/org/agenda/tickler.org" :maxlevel . 2)))
-  (setq org-refile-use-outline-path 'file)
-  ;; makes org-refile outline working with helm/ivy
-  (setq org-outline-path-complete-in-steps nil)
-  (setq org-refile-allow-creating-parent-nodes 'confirm)
+    (setq gtd-file (concat (eval org-directory) "/agenda/gtd.org"))
+    (setq org-agenda-files `(,gtd-file)
+          org-default-notes-file "~/Dropbox/org/notes.org"
+          org-tag-alist '(("@work" . ?w) ("@home" . ?h)))
 #+END_SRC
 
-** GTD
-Defines files used for GTD.
+`org-outline-path-complete-in-steps` when set to nil allows selection
+of the refile target using a single completion step, which will
+provide a faster selection method if you have deeply nested
+structures.
 #+BEGIN_SRC emacs-lisp
-  (defun gtd/inbox ()
-    "Access the GTD inbox.org file inside `gtd-directory'.
-    A place to quickly file initial tasks or thoughts to be later
-    categorized."
-    (interactive)
-    (find-file-other-window (concat gtd-directory "/inbox.org")))
+  (setq org-outline-path-complete-in-steps t)
+#+END_SRC
 
-  (defun gtd/doing ()
+When refiling target is GTD file we want to automatically save the
+buffer.
+#+BEGIN_SRC emacs-lisp
+  (defun my/org-refile-save (&rest _)
+    "Save the buffer after refiling.
+
+     This function checks if the current buffer is visiting 'gtd.org'.
+     If so, it saves the buffer. It is used as an advice to `org-refile`,
+     meaning it is called every time after `org-refile` is invoked."
+    (when (eq (current-buffer) (find-buffer-visiting "gtd.org"))
+      (save-buffer)))
+
+  (advice-add 'org-refile :after 'my/org-refile-save)
+#+END_SRC
+
+Defines a toggler to show our GTD file whenever it is not visible in
+the window and to hide it if it is.
+#+BEGIN_SRC emacs-lisp
+  (defun gtd/toggle-doing ()
     "Access the GTD gtd.org file inside `gtd-directory'.
-    The tasks in this file are actively working on."
+    The tasks in this file are actively working on. If the buffer
+    is visible then delete it, else open it in another window."
     (interactive)
-    (find-file-other-window (concat gtd-directory "/gtd.org")))
-
-  (defun gtd/tickler ()
-    "Access the GTD tickler.org file inside `gtd-directory'.
-    Put tasks here like a reminder for the future. Like saving
-    drafts or sending mails to yourself."
-    (interactive)
-    (find-file-other-window (concat gtd-directory "/tickler.org")))
-
-  (defun gtd/someday ()
-    "Access the GTD someday.org file inside `gtd-directory'.
-    Tasks here are cleary defined and are scheduled so that we get
-    reminders to do them when the time comes."
-    (interactive)
-    (find-file-other-window (concat gtd-directory "/someday.org")))
+    (let ((buf (get-buffer "gtd.org")))
+      (if (and buf (get-buffer-window buf))
+          (delete-window (get-buffer-window buf))
+        (find-file-other-window gtd-file))))
 #+END_SRC
 
-** view
+** View
 Start with current day and do not show tasks that are done.
 #+BEGIN_SRC emacs-lisp
   (setq org-agenda-start-on-weekday nil
@@ -114,13 +103,13 @@ From emacs cafe [[https://emacs.cafe/emacs/orgmode/gtd/2017/06/30/orgmode-gtd.ht
     (string= "TODO" (org-get-todo-state)))
 #+END_SRC
 
-** keybindings
+** Keybindings
 For accessing Org agenda and GTD quickly.
 #+BEGIN_SRC emacs-lisp
 (leader-org-mode
     "a" 'org-agenda
     "c" 'org-capture
-    "g" 'gtd/doing
+    "g" 'gtd/toggle-doing
     "l" 'org-store-link
     "i" 'gtd/inbox
     "s" 'gtd/someday
@@ -132,9 +121,20 @@ For accessing Org agenda and GTD quickly.
     "r" 'org-refile)
 #+END_SRC
 
+** Templates
+Storage for Org capture is set to Dropbox to provide syncing between
+devices.
+#+BEGIN_SRC emacs-lisp
+  (setq org-capture-templates
+        '(("i" "Inbox" entry
+           (file+headline gtd-file "Inbox") "* %U %i%?")
+          ("p" "Planned" entry
+           (file+headline gtd-file "Planned") "* %T %i%?")))
+#+END_SRC
+
 * Appearance
 Settings that related to how Org buffers are displayed.
-** org bullets
+** Org bullets
 These are prettier bullet points next to headers.
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
@@ -142,7 +142,7 @@ These are prettier bullet points next to headers.
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 #+END_SRC
 
-** misc
+** Misc
 #+BEGIN_SRC emacs-lisp
   (setq org-startup-indented t
         org-hide-emphasis-markers t
@@ -152,7 +152,7 @@ These are prettier bullet points next to headers.
         org-fontify-quote-and-verse-blocks t)
 #+END_SRC
 
-** prettify
+** Prettify
 Prettifies symbols recongized by Org mode, such as [X] in TODO lists.
 #+BEGIN_SRC emacs-lisp
   (add-hook 'org-mode-hook (lambda ()
