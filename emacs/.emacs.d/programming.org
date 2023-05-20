@@ -1,3 +1,5 @@
+#+TITLE: Progamming settings
+#+STARTUP: overview
 * Introduction
 Programming related settings and packages defined here. Language
 Server Protocol (LSP) provides IDE-like features and is configured
@@ -151,8 +153,10 @@ here but enable it globally.
 * Magit
 git porcelain
 #+BEGIN_SRC emacs-lisp
-  (use-package magit
-    :bind ("C-c g" . magit-status))
+        (use-package magit
+          :bind ("C-c g" . magit-status)
+          :config
+          (advice-add #'project-vc-dir :override #'magit-project-status))
 #+END_SRC
 
 * Treemacs
