@@ -56,7 +56,8 @@
 #+END_SRC
 
 * deft
-** setup
+deft is a roam-like utility for quickly creating notes and searching
+for them.
 #+BEGIN_SRC emacs-lisp
   (use-package deft
     :commands (deft)
@@ -80,16 +81,26 @@ Chooses which directory to run deft in. Courtesy of [[http://pragmaticemacs.com/
     (deft))
 #+END_SRC
 ** projects
+We define different projects under a common deft directory.
 #+BEGIN_SRC emacs-lisp
-  (defun hesam/recipes ()
-    (interactive)
-    (hesam/deft-director "~/Dropbox/org/recipes"))
-
-  (defun hesam/notes ()
-    (interactive)
-    (hesam/deft-director "~/Dropbox/org/notes"))
+  (setq hesam-deft-directory "~/Dropbox/org/deft")
 #+END_SRC
 
+Now we declare projects which invokes the director with the root to
+that project.
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/recipes ()
+    "Open the recipes project for searching and taking cooking-related notes.
+  This function uses hesam/deft-director to open the recipes project directory."
+    (interactive)
+    (hesam/deft-director (concat hesam-deft-directory "/recipes")))
+
+  (defun hesam/notes ()
+    "Open the notes project for general note-taking.
+  This function uses hesam/deft-director to open the notes project directory."
+    (interactive)
+    (hesam/deft-director (concat hesam-deft-directory "/notes")))
+#+END_SRC
 
 * Regexp is default search
 #+BEGIN_SRC emacs-lisp
