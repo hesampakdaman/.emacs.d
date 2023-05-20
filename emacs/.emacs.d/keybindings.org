@@ -34,14 +34,3 @@ suspending.
   (global-unset-key (kbd "C-x C-z"))
 #+END_SRC
 
-* Misc
-Different sorts of keybindings like starting an external program.
-#+BEGIN_SRC emacs-lisp
-  (leader-meta-spc
-    "]" 'hesam/start-flameshot
-    "b" 'hesam/book-folder-selector
-    "c" 'hesam/start-calibre
-    "p" 'macro/projectile
-    "r" 'hesam/recipes
-    "v" 'vterm-other-window)
-#+END_SRC
