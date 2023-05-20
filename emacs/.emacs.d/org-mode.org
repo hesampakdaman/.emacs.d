@@ -1,4 +1,6 @@
-* Package Declaration 
+#+TITLE: Org mode settings
+#+STARTUP: overview
+* Package Declaration
 Sets up org mode and defines several useful settings. Prettifies
 buffer as well.
 #+BEGIN_SRC emacs-lisp
@@ -41,7 +43,7 @@ structures.
 When refiling target is GTD file we want to automatically save the
 buffer.
 #+BEGIN_SRC emacs-lisp
-  (defun my/org-refile-save (&rest _)
+  (defun hesam/org-refile-save (&rest _)
     "Save the buffer after refiling.
 
      This function checks if the current buffer is visiting 'gtd.org'.
@@ -50,7 +52,7 @@ buffer.
     (when (eq (current-buffer) (find-buffer-visiting "gtd.org"))
       (save-buffer)))
 
-  (advice-add 'org-refile :after 'my/org-refile-save)
+  (advice-add 'org-refile :after 'hesam/org-refile-save)
 #+END_SRC
 
 Defines a toggler to show our GTD file whenever it is not visible in
