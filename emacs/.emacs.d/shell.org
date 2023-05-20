@@ -53,6 +53,7 @@ Powerful terminal emulator based on libvterm written in C.
     :after project
     :config
     (define-key vterm-mode-map (kbd "M-SPC") nil)
+    (add-to-list 'project-switch-commands '(hesam/vterm-project-shell "vterm" ?s))
     (advice-add #'project-shell :override #'hesam/vterm-project-shell))
 #+END_SRC
 
