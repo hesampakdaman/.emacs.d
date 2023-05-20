@@ -45,6 +45,10 @@ Python-specific settings and packages.
 Automatically activate Python virtual environments with `auto-virtualenv`.
 #+BEGIN_SRC emacs-lisp
   (use-package auto-virtualenv
+    :demand t
+    :after project
+    :config
+    (advice-add #'project-switch-to-buffer :after #'auto-virtualenv-set-virtualenv)
     :hook (python-mode . auto-virtualenv-set-virtualenv))
 #+END_SRC
 
