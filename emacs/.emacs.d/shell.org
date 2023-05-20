@@ -30,9 +30,30 @@ Emacs shells.
 * vterm
 Powerful terminal emulator based on libvterm written in C.
 #+BEGIN_SRC emacs-lisp
+  (defun hesam/vterm-project-shell (arg)
+    "Run `vterm' in the current project's root.
+  Switch to the existing VTerm buffer for this project if it exists,
+  otherwise create a new one."
+    (interactive "p")
+    (if (fboundp 'project-root)
+        (let* ((root (project-root (project-current t)))
+               (dir-name (file-name-nondirectory (directory-file-name root)))
+               (buffer-name (format "*vterm %s*%s" dir-name (if (> arg 1) (format "<%d>" arg) "")))
+               (existing-buffer (get-buffer buffer-name)))
+          (if existing-buffer
+              (progn
+                (split-window-below)
+                (switch-to-buffer-other-window existing-buffer))
+            (let ((new-buffer (vterm-other-window buffer-name)))
+              (with-current-buffer new-buffer
+                (cd root)))))))
+
   (use-package vterm
+    :demand t
+    :after project
     :config
-    (define-key vterm-mode-map (kbd "M-SPC") nil))
+    (define-key vterm-mode-map (kbd "M-SPC") nil)
+    (advice-add #'project-shell :override #'hesam/vterm-project-shell))
 #+END_SRC
 
 * xterm colors
