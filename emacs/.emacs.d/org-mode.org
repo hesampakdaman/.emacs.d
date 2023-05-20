@@ -122,9 +122,6 @@ For accessing Org agenda and GTD quickly.
     "c" 'org-capture
     "g" 'gtd/toggle-doing
     "l" 'org-store-link
-    "i" 'gtd/inbox
-    "s" 'gtd/someday
-    "t" 'gtd/tickler
     "x" 'org-archive-subtree)
 
   (leader-org-mode
