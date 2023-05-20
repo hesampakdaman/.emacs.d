@@ -11,7 +11,7 @@ As such we make extensive use of `use-package` and its `:bind`
 feature.
 
 * C-c and C-x prefix bindings
-For built-in modes that need no use-package or enabling of modes. We
+For built-in modes that need no `use-package` or enabling of modes. We
 separate between custom commands prefixed by `C-c` and shadowing emacs
 default bindings defined with `C-x`.
 ** Custom C-c bindings

@@ -3,10 +3,6 @@ Sets up org mode and defines several useful settings. Prettifies
 buffer as well.
 #+BEGIN_SRC emacs-lisp
   (use-package org
-    :general
-    ("C-c l" 'org-store-link)
-    ("C-c c" 'org-capture)
-    ("C-c a" 'org-agenda)
     :init
     (setq org-src-window-setup 'current-window)
     (setq org-directory "~/Dropbox/org"))
@@ -121,17 +117,17 @@ From emacs cafe [[https://emacs.cafe/emacs/orgmode/gtd/2017/06/30/orgmode-gtd.ht
 ** keybindings
 For accessing Org agenda and GTD quickly.
 #+BEGIN_SRC emacs-lisp
-(leader-agenda-gtd
+(leader-org-mode
     "a" 'org-agenda
     "c" 'org-capture
     "g" 'gtd/doing
-    "l" 'gtd/ledger
+    "l" 'org-store-link
     "i" 'gtd/inbox
     "s" 'gtd/someday
     "t" 'gtd/tickler
     "x" 'org-archive-subtree)
 
-  (leader-agenda-gtd
+  (leader-org-mode
     :keymaps 'org-mode-map
     "r" 'org-refile)
 #+END_SRC

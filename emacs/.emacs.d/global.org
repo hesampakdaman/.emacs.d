@@ -26,8 +26,8 @@ in one place.
     :prefix "M-SPC")
 
   ;; Sub-leader for agenda & GTD
-  (general-create-definer leader-agenda-gtd
-    :prefix "M-SPC a")
+  (general-create-definer leader-org-mode
+    :prefix "C-c o")
 
   ;; Sub-leader for redshift
   (general-create-definer leader-super-r
