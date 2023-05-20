@@ -105,6 +105,15 @@ From emacs cafe [[https://emacs.cafe/emacs/orgmode/gtd/2017/06/30/orgmode-gtd.ht
     (string= "TODO" (org-get-todo-state)))
 #+END_SRC
 
+And lastly to cleanup the Org agenda TODO view
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-prefix-format
+      '((agenda . " %i %-12:c%?-12t% s")
+        (todo   . " ")
+        (tags   . " %i %-12:c")
+        (search . " %i %-12:c")))
+#+END_SRC
+
 ** Keybindings
 For accessing Org agenda and GTD quickly.
 #+BEGIN_SRC emacs-lisp
