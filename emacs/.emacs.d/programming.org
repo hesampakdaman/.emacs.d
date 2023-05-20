@@ -153,10 +153,12 @@ here but enable it globally.
 * Magit
 git porcelain
 #+BEGIN_SRC emacs-lisp
-        (use-package magit
-          :bind ("C-c g" . magit-status)
-          :config
-          (advice-add #'project-vc-dir :override #'magit-project-status))
+  (use-package magit
+    :demand t
+    :after project
+    :bind ("C-c g" . magit-status)
+    :config
+    (advice-add #'project-vc-dir :override #'magit-project-status))
 #+END_SRC
 
 * Treemacs
