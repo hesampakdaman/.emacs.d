@@ -50,7 +50,7 @@ and have requirements on how and when a new window is created.
     "Run `vterm' in the current project's root.
 
   If the VTerm buffer for this project exists and is visible, switch to it.
-  If it exists but is not visible, split the window below and switch to it.
+  If it exists but is not visible, pop a new window and switch to it.
   If the buffer does not exist, create a new one and switch to it.
   A numeric prefix argument ARG does two things:
   - If a buffer associated with the prefix exists, switch to that buffer accordingly.
