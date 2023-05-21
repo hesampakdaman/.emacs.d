@@ -1,3 +1,5 @@
+#+TITLE: UI Enhancements
+#+STARTUP: OVERVIEW
 * Introduction
 Settings for the feel and look of Emacs. We may also have some options
 configured elsewhere which affects the look of Emacs. One such example
@@ -107,14 +109,13 @@ under a hidden list.
     :config (minions-mode 1))
 #+END_SRC
 
-* Tabs
+* Tabs and Windows
 Configure the behavior of the tab bar, for example we hide the close
 tab button.
 #+BEGIN_SRC emacs-lisp
   (setq tab-bar-show 1                ; show the tab bar if we have more than 1 tab
         tab-bar-close-button-show nil
         tab-bar-tab-hints t)          ; prefixes tab bar with its associated number
-
 #+END_SRC
 
 Use Dracula theme colors for the tab bar; we prefer it to be slighly
@@ -126,6 +127,31 @@ smaller than surrounding text. Otherwise inherit face attributes from
                       :background (eval 'dracula-bg)
                       :foreground (eval 'dracula-fg)
                       :height 0.95)
+#+END_SRC
+
+Define a function that kills all buffers associated with a frame
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/close-window-and-buffers ()
+    "Kill all buffers associated with the current window, and then delete the window if possible."
+    (interactive)
+    (let* ((current-window (selected-window))
+           (buffers (delq nil (mapcar (lambda (win)
+                                        (when (eq win current-window)
+                                          (window-buffer win)))
+                                      (window-list)))))
+      (mapc 'kill-buffer buffers)
+      (unless (one-window-p t)
+        (delete-window current-window))))
+#+END_SRC
+
+and build upon that to close the tab as well, bind this `C-x t k`.
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/kill-buffer-on-close-tab ()
+    (interactive)
+    (hesam/close-window-and-buffers)
+    (tab-close))
+  (general-define-key
+   "C-x t k" 'hesam/kill-buffer-on-close-tab)
 #+END_SRC
 
 * Theme switcher
