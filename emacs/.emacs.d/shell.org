@@ -46,7 +46,7 @@ The custom function `hesam/vterm-project-shell` is for usage with
 long because we want to make sure vterm is started in `project-root`
 and have requirements on how and when a new window is created.
 #+BEGIN_SRC emacs-lisp
-  (defun hesam/vterm-project-shell (&optional arg)
+  (defun hesam/vterm-project-shell ()
     "Run `vterm' in the current project's root.
 
   If the VTerm buffer for this project exists and is visible, switch to it.
@@ -55,22 +55,16 @@ and have requirements on how and when a new window is created.
   A numeric prefix argument ARG does two things:
   - If a buffer associated with the prefix exists, switch to that buffer accordingly.
   - Otherwise, create a new buffer with the prefix number in the name."
-    (interactive "p")
+    (interactive)
     (if (fboundp 'project-root)
         (let* ((root (project-root (project-current t)))
                (dir-name (file-name-nondirectory (directory-file-name root)))
-               (buffer-name (format "*vterm %s*%s" dir-name (if (and arg (> arg 1)) (format "<%d>" arg) "")))
+               (prefix-arg (if current-prefix-arg (format "<%d>"current-prefix-arg) ""))
+               (buffer-name (format "*%s*%s" (concat dir-name " vterm") prefix-arg))
                (existing-buffer (get-buffer buffer-name)))
           (if existing-buffer
-              (let ((buffer-window (get-buffer-window existing-buffer)))
-                (if buffer-window
-                    (select-window buffer-window)
-                  (progn
-                    (split-window-below)
-                    (switch-to-buffer-other-window existing-buffer))))
-            (let ((new-buffer (vterm-other-window buffer-name)))
-              (with-current-buffer new-buffer
-                (cd root)))))))
+              (pop-to-buffer existing-buffer)
+            (vterm-other-window buffer-name)))))
 #+END_SRC
 
 * xterm colors
