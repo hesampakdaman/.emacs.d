@@ -19,7 +19,7 @@ activated buffers.
   (add-hook 'prog-mode-hook 'hl-line-mode)
 #+END_SRC
 
-* Faces and Fonts
+* Fonts
 We set the default, fixed-pitch and variable-pitch fonts here. In
 order to get good size we make configure the font size depending on
 screen resolution.
@@ -134,8 +134,8 @@ smaller than surrounding text. Otherwise inherit face attributes from
 #+BEGIN_SRC emacs-lisp
   (set-face-attribute 'tab-bar nil
                       :inherit 'default
-                      :background (eval 'dracula-bg)
-                      :foreground (eval 'dracula-fg)
+                      :background (hesam/theme-color 'bg)
+                      :foreground (hesam/theme-color 'fg)
                       :height 0.95)
 #+END_SRC
 

@@ -42,21 +42,38 @@ in one place.
     :prefix "C-c w")
 #+END_SRC
 
-* Dracula Theme
+* Theme
 Use the Dracula theme for Emacs and define the palette here so we can
 use its values in our configuration elsewhere.
 #+BEGIN_SRC emacs-lisp
-  (use-package dracula-theme)
-  (defvar dracula-bg      "#282a36")
-  (defvar dracula-fg      "#f8f8f2")
-  (defvar dracula-current "#44475a")
-  (defvar dracula-comment "#6272a4")
-  (defvar dracula-cyan    "#8be9fd")
-  (defvar dracula-green   "#50fa7b")
-  (defvar dracula-orange  "#ffb86c")
-  (defvar dracula-pink    "#ff79c6")
-  (defvar dracula-purple  "#bd93f9")
-  (defvar dracula-red     "#ff5555")
-  (defvar dracula-yellow  "#f1fa8c")
-  (defvar dracula-white   "#f8f8f2")
+  (use-package dracula-theme
+    :config
+    ;; We don't like the match face provided by Dracula so we change it
+    ;; here -- as this should only be done if this theme is used.
+    (set-face-attribute 'match nil :background "#bd93f9"))
+#+END_SRC
+
+Throught our configuration we will supply an easy way of getting the
+colors. Note that if we change theme then most-likely we need to
+change the `hesam/theme-colrs-alist` as well. In this aspect it's a
+bit of a flaw because we cannot easily switch themes.
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/theme-color (color)
+    "Retrieve the color code for COLOR from `hesam/theme-colors-alist'."
+    (cdr (assoc color hesam/theme-colors-alist)))
+
+  (defvar hesam/theme-colors-alist
+    ;; Dracula palette
+    '((bg      . "#282a36")
+      (fg      . "#f8f8f2")
+      (current . "#44475a")
+      (comment . "#6272a4")
+      (cyan    . "#8be9fd")
+      (green   . "#50fa7b")
+      (orange  . "#ffb86c")
+      (pink    . "#ff79c6")
+      (purple  . "#bd93f9")
+      (red     . "#ff5555")
+      (yellow  . "#f1fa8c")
+      (white   . "#f8f8f2")))
 #+END_SRC

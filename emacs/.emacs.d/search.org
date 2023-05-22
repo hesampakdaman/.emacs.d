@@ -1,4 +1,4 @@
-#+TITLE: Search
+#+TITLE: Search settings
 #+STARTUP: OVERVIEW
 * Introduction
 Settings for searching buffers, notes and more.
