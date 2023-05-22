@@ -135,9 +135,9 @@ devices.
 #+BEGIN_SRC emacs-lisp
   (setq org-capture-templates
         '(("i" "Inbox" entry
-           (file+headline gtd-file "Inbox") "* %U %i%?")
+           (file+headline gtd-file "Inbox") "* %u %i%?")
           ("p" "Planned" entry
-           (file+headline gtd-file "Planned") "* %T %i%?")))
+           (file+headline gtd-file "Planned") "* %t %i%?")))
 #+END_SRC
 
 * Appearance
