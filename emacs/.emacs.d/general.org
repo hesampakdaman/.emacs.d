@@ -1,3 +1,5 @@
+#+TITLE: General Settings
+#+STARTUP: OVERVIEW
 * Autosave and Backups
 Saves all backups to user's Emacs directory and in addition creates
 numbered backups.
@@ -80,11 +82,13 @@ warning when these commands are run.
   (put 'suspend-frame 'disabled t)
   (put 'suspend-emacs 'disabled t)
 #+END_SRC
+
 * Inhibiting warnings
 #+BEGIN_SRC emacs-lisp
   ;; to avoid getting spammed with warnings
   (setq native-comp-async-report-warnings-errors 'silent)
 #+END_SRC
+
 * Loading untracked settings
 Helper function `hesam/load-if-exists` to load any files if they
 exist. These are not meant to be tracked by git. We also set the
@@ -94,7 +98,7 @@ file.
 #+BEGIN_SRC emacs-lisp
   (defun hesam/load-if-exists (path)
     (if (file-exists-p path)
-        (progn (load path))))
+        (load path)))
 
   (setq custom-file "~/.emacs.d/emacs-custom.el")
   (hesam/load-if-exists custom-file)
