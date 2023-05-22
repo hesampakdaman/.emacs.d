@@ -118,6 +118,16 @@ tab button.
         tab-bar-tab-hints t)          ; prefixes tab bar with its associated number
 #+END_SRC
 
+We want to repeat closing tabs. Hence we insert it in the repeat-map
+table.
+#+BEGIN_SRC emacs-lisp
+  (defvar tab-close-repeat-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map (kbd "0") #'tab-close)
+      map))
+  (put 'tab-close 'repeat-map 'tab-close-repeat-map)
+#+END_SRC
+
 Use Dracula theme colors for the tab bar; we prefer it to be slighly
 smaller than surrounding text. Otherwise inherit face attributes from
 `'default`.
@@ -129,7 +139,7 @@ smaller than surrounding text. Otherwise inherit face attributes from
                       :height 0.95)
 #+END_SRC
 
-Define a function that kills all buffers associated with a frame
+Define a function that kills all buffers associated with a window
 #+BEGIN_SRC emacs-lisp
   (defun hesam/close-window-and-buffers ()
     "Kill all buffers associated with the current window, and then delete the window if possible."
@@ -150,8 +160,72 @@ and build upon that to close the tab as well, bind this `C-x t k`.
     (interactive)
     (hesam/close-window-and-buffers)
     (tab-close))
+
+  ;; Usually we don't bind custom keys to C-x but make an exception this
+  ;; time to gather all tab commands with the one defined.
   (general-define-key
    "C-x t k" 'hesam/kill-buffer-on-close-tab)
+#+END_SRC
+
+But sometimes we just want to kill next window in cyclic order and to
+do that we make use of `other-window` function.
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/switch-and-close-next-window ()
+    "Switch to the next window in cyclic order, then kill the window."
+    (interactive)
+    (other-window 1)
+    (delete-window))
+
+  (leader-window
+    "0" 'hesam/switch-and-close-next-window)
+#+END_SRC
+
+Enable `winner-mode` everywhere which will allow undo and redo for
+tabs and windows. Windmove allows for easy navigation inside a
+window. We configure windmove to wrap around when moving buffers
+around (windmove is enabled by default).
+#+BEGIN_SRC emacs-lisp
+  (winner-mode t)
+  (setq windmove-wrap-around t)
+#+END_SRC
+
+Under prefix `C-c w` we define keybindings for windmov's display
+feature and winner mode. We are inspired by Vim bindings to allow for
+fast display of next buffers. Winner mode is naturally bound to `u`
+and `r`.
+#+BEGIN_SRC emacs-lisp
+  (leader-window
+     "k" 'windmove-display-up
+     "j" 'windmove-display-down
+     "h" 'windmove-display-left
+     "l" 'windmove-display-right
+     "s" 'windmove-display-same-window
+     "r" 'winner-redo
+     "u" 'winner-undo)
+#+END_SRC
+
+Sometimes we have two windows in a frame and want to change
+orientation from
+#+BEGIN_SRC emacs-lisp
+  (use-package transpose-frame
+    :config
+    (leader-window
+      "f" 'transpose-frame))
+#+END_SRC
+
+Here we bind convenient bindings for easy traversal between buffers in
+a window. Additionally we define keys for swapping buffer locations.
+#+BEGIN_SRC emacs-lisp
+  (general-define-key
+   "s-k" 'windmove-up
+   "s-j" 'windmove-down
+   "s-h" 'windmove-left
+   "s-l" 'windmove-right
+
+   "s-K" 'windmove-swap-states-up
+   "s-J" 'windmove-swap-states-down
+   "s-H" 'windmove-swap-states-left
+   "s-L" 'windmove-swap-states-right)
 #+END_SRC
 
 * Theme switcher

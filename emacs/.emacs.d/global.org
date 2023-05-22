@@ -36,6 +36,10 @@ in one place.
   ;; Leader for editing text
   (general-create-definer leader-editing
     :prefix "C-c e")
+
+  ;; Leader for window management
+  (general-create-definer leader-window
+    :prefix "C-c w")
 #+END_SRC
 
 * Dracula Theme

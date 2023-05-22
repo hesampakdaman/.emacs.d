@@ -71,11 +71,3 @@ assumed to exists in other configuration files.
   (org-babel-load-file
    (expand-file-name "ui-enhancement.org" user-emacs-directory))
 #+END_SRC
-
-* Window settings
-#+BEGIN_SRC emacs-lisp
-  (org-babel-load-file
-   (expand-file-name "window.org" user-emacs-directory))
-#+END_SRC
-
-
