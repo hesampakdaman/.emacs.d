@@ -1,3 +1,5 @@
+#+TITLE: Shell Settings
+#+STARTUP: OVERVIEW
 * Introduction
 Shell related packages and configurations. Our main emulator is
 vterm. In order to get all environment variables correctly we define
@@ -64,6 +66,7 @@ and have requirements on how and when a new window is created.
                (existing-buffer (get-buffer buffer-name)))
           (if existing-buffer
               (pop-to-buffer existing-buffer)
+            (cd root)
             (vterm-other-window buffer-name)))))
 #+END_SRC
 
