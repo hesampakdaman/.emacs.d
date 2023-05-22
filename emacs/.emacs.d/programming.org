@@ -1,5 +1,5 @@
-#+TITLE: Progamming settings
-#+STARTUP: overview
+#+TITLE: Progamming Settings
+#+STARTUP: OVERVIEW
 * Introduction
 Programming related settings and packages defined here. Language
 Server Protocol (LSP) provides IDE-like features and is configured
@@ -34,9 +34,7 @@ environment.
                              dracula-purple
                              dracula-pink
                              dracula-cyan
-                             dracula-white))
-    :config
-    (setq rustic-format-on-save t))
+                             dracula-white)))
   #+END_SRC
 
 ** Python
