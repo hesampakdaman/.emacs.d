@@ -83,7 +83,15 @@ warning when these commands are run.
   (put 'suspend-emacs 'disabled t)
 #+END_SRC
 
-* Inhibiting warnings
+* Inhibiting Bells and Warnings
+Finding it too annoying hearing beeping sounds and seeing visual we
+alamrs we turn all of them completely off.
+#+BEGIN_SRC emacs-lisp
+  ;; no beeping
+  (setq ring-bell-function 'ignore)
+#+END_SRC
+
+Inhibits native compilation warnings which happens intermittently.
 #+BEGIN_SRC emacs-lisp
   ;; to avoid getting spammed with warnings
   (setq native-comp-async-report-warnings-errors 'silent)

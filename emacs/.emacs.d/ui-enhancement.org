@@ -59,8 +59,6 @@ a new frame is created and whenever it's moved.
              (set-face-attribute 'mode-line-inactive frame :height hesam-modeline-lowres-height))))
   (add-hook 'after-make-frame-functions 'hesam/font-per-display)
   (add-hook 'move-frame-functions 'hesam/font-per-display)
-
-  (setq ring-bell-function 'ignore)
 #+END_SRC
 
 * Frame customization and decorations
