@@ -173,6 +173,7 @@ project and includes integration with magit.
     (setq treemacs-no-png-images t)
     ;; adjust root face as it's otherwise bold and bigger
     (set-face-attribute 'treemacs-root-face nil
+                        :height 1.0
                         :inherit font-lock-constant-face)
     :bind (("C-c t b"   . treemacs-select-window)
            ("C-c t 1"   . treemacs-delete-other-windows)
