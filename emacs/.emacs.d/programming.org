@@ -28,13 +28,13 @@ environment.
     :init
     (setq rustic-ansi-faces (vector
                              "black"
-                             dracula-red
-                             dracula-green
-                             dracula-yellow
-                             dracula-purple
-                             dracula-pink
-                             dracula-cyan
-                             dracula-white)))
+                             (hesam/theme-color 'red)
+                             (hesam/theme-color 'green)
+                             (hesam/theme-color 'yellow)
+                             (hesam/theme-color 'purple)
+                             (hesam/theme-color 'pink)
+                             (hesam/theme-color 'cyan)
+                             (hesam/theme-color 'white))))
   #+END_SRC
 
 ** Python
