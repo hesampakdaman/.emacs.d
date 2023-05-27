@@ -97,7 +97,7 @@ some padding between buffers. Recall that `internal-border` option is
 only around the frame and does not apply in areas that do not touch a
 frame edge.
 #+BEGIN_SRC emacs-lisp
-  (setq-default left-margin-width 1 right-margin-width 1)
+  (setq-default right-margin-width 1)
 #+END_SRC
 
 * Mode-line
