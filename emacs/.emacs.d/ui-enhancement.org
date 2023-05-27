@@ -123,8 +123,8 @@ returning a string).
   (setq tab-bar-format
         '(tab-bar-format-tabs         ; show tabs in the bar
           tab-bar-separator
-          tab-bar-format-align-right  ; render the bar across the frame
-          tab-bar-format-global))     ; show global strings from modeline
+          tab-bar-format-align-right)) ; render the bar across the frame
+
 #+END_SRC
 
 And then to quickly switch between tabs we bind convenient keys
