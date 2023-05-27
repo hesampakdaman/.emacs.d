@@ -265,33 +265,6 @@ a window. Additionally we define keys for swapping buffer locations.
    "s-L" 'windmove-swap-states-right)
 #+END_SRC
 
-* Theme switcher
-#+BEGIN_SRC emacs-lisp
-  (defvar light-theme 'modus-operandi)
-  (defvar dark-theme 'dracula)
-  (defvar global-current-theme dark-theme)
-  (defvar global-next-theme light-theme)
-
-  (load-theme global-current-theme t)
-
-  (defun hesam/switch-theme (current-theme next-theme)
-    (disable-theme current-theme)
-    (load-theme next-theme t)
-    (setq global-current-theme next-theme)
-    (setq global-next-theme current-theme))
-
-  (defun hesam/theme-toggle ()
-    (interactive)
-    (hesam/switch-theme global-current-theme global-next-theme))
-
-  (defun hesam/switch-theme-dark ()
-    (if (eq global-current-theme light-theme)
-        (hesam/theme-toggle)))
-
-  (defun hesam/switch-theme-light ()
-    (if (eq global-current-theme dark-theme)
-        (hesam/theme-toggle)))
-#+END_SRC
 * Packages
 ** Which-key
 Displays available key chords after partially input. Hence, if we
