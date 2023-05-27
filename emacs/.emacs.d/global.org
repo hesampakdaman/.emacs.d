@@ -48,6 +48,8 @@ use its values in our configuration elsewhere.
 #+BEGIN_SRC emacs-lisp
   (use-package dracula-theme
     :config
+    (load-theme 'dracula t)
+    (setq dracula-enlarge-headings nil)
     ;; We don't like the match face provided by Dracula so we change it
     ;; here -- as this should only be done if this theme is used.
     (set-face-attribute 'match nil :background "#bd93f9"))
