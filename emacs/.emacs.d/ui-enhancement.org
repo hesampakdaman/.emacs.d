@@ -6,6 +6,18 @@ configured elsewhere which affects the look of Emacs. One such example
 is the face `hideshow` minor mode uses, which we have put in
 `programming.org` because it's directly related to programming.
 
+The name of the theme is `dracula` -- dark, sleek and ubiquitous with
+lots of color!
+#+BEGIN_SRC emacs-lisp
+  (use-package dracula-theme
+    :config
+    (load-theme 'dracula t)
+    (setq dracula-enlarge-headings nil)
+    ;; We don't like the match face provided by Dracula so we change it
+    ;; here -- as this should only be done if this theme is used.
+    (set-face-attribute 'match nil :background "#bd93f9"))
+#+END_SRC
+
 * Cursor
 We always want the cursor to always blink so we can easily find it.
 #+BEGIN_SRC emacs-lisp

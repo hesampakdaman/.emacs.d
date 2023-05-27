@@ -42,23 +42,13 @@ in one place.
     :prefix "C-c w")
 #+END_SRC
 
-* Theme
-Use the Dracula theme for Emacs and define the palette here so we can
-use its values in our configuration elsewhere.
-#+BEGIN_SRC emacs-lisp
-  (use-package dracula-theme
-    :config
-    (load-theme 'dracula t)
-    (setq dracula-enlarge-headings nil)
-    ;; We don't like the match face provided by Dracula so we change it
-    ;; here -- as this should only be done if this theme is used.
-    (set-face-attribute 'match nil :background "#bd93f9"))
-#+END_SRC
-
+* Color theme list
 Throught our configuration we will supply an easy way of getting the
 colors. Note that if we change theme then most-likely we need to
 change the `hesam/theme-colrs-alist` as well. In this aspect it's a
 bit of a flaw because we cannot easily switch themes.
+
+The actual theme used can be find in [[file:ui-enhancement.org::*Introduction][UI Enhancements]].
 #+BEGIN_SRC emacs-lisp
   (defun hesam/theme-color (color)
     "Retrieve the color code for COLOR from `hesam/theme-colors-alist'."
