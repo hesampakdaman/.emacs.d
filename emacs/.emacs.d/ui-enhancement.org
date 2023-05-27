@@ -108,12 +108,30 @@ under a hidden list.
 #+END_SRC
 
 * Tabs and Windows
-Configure the behavior of the tab bar, for example we hide the close
-tab button.
+Start with configuring the behavior of the tab bar, for example we
+enable the functionality and hide the close tab button.
 #+BEGIN_SRC emacs-lisp
-  (setq tab-bar-show 1                ; show the tab bar if we have more than 1 tab
-        tab-bar-close-button-show nil
-        tab-bar-tab-hints t)          ; prefixes tab bar with its associated number
+  (setq tab-bar-show 1	      ; show the tab bar if we have more 1 tab
+        tab-bar-mode t
+        tab-bar-close-button-show nil)
+#+END_SRC
+
+Next we decide what to display in the tab bar. This is done by adding
+functions to a variable that does something in the tab bar (like
+returning a string).
+#+BEGIN_SRC emacs-lisp
+  (setq tab-bar-format
+        '(tab-bar-format-tabs         ; show tabs in the bar
+          tab-bar-separator
+          tab-bar-format-align-right  ; render the bar across the frame
+          tab-bar-format-global))     ; show global strings from modeline
+#+END_SRC
+
+And then to quickly switch between tabs we bind convenient keys
+#+BEGIN_SRC emacs-lisp
+  (general-define-key
+   "s-n" 'tab-next
+   "s-p" 'tab-previous)
 #+END_SRC
 
 We want to repeat closing tabs. Hence we insert it in the repeat-map
@@ -128,13 +146,34 @@ table.
 
 Use Dracula theme colors for the tab bar; we prefer it to be slighly
 smaller than surrounding text. Otherwise inherit face attributes from
-`'default`.
+`'default`. We'll also add a line across the Emacs frame to separate
+the tab bar from the buffer.
 #+BEGIN_SRC emacs-lisp
   (set-face-attribute 'tab-bar nil
                       :inherit 'default
-                      :background (hesam/theme-color 'bg)
+                      :height 0.95
                       :foreground (hesam/theme-color 'fg)
-                      :height 0.95)
+                      :background (hesam/theme-color 'bg)
+                      :underline (hesam/theme-color 'current)
+                      :box nil)
+#+END_SRC
+
+To differentiate between active/inactive tabs we make adjustments
+to the text weight and colors.
+#+BEGIN_SRC emacs-lisp
+  (set-face-attribute 'tab-bar-tab nil
+                      :inherit 'tab-bar
+                      :weight 'bold
+                      :foreground (hesam/theme-color 'pink)
+                      :background (hesam/theme-color 'bg)
+                      :underline (hesam/theme-color 'pink)
+                      :box `(:line-width (1 . 10) :color ,(hesam/theme-color 'bg) :style nil))
+
+  (set-face-attribute 'tab-bar-tab-inactive nil
+                      :inherit 'tab-bar
+                      :foreground (hesam/theme-color 'purple)
+                      :background (hesam/theme-color 'bg)
+                      :box `(:line-width (1 . 10) :color ,(hesam/theme-color 'bg) :style nil))
 #+END_SRC
 
 Define a function that kills all buffers associated with a window
