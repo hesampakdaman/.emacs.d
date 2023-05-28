@@ -71,7 +71,8 @@ Setup Language Server Protocol (LSP) for different programming languages.
     :init
     (setq lsp-keymap-prefix "C-c l")
     :config
-    (setq lsp-headerline-breadcrumb-enable nil)
+    (setq lsp-headerline-breadcrumb-enable nil
+          lsp-modeline-code-actions-segments '(count))
     :commands lsp
     :custom
     (lsp-idle-delay 0.25)

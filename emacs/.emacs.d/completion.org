@@ -16,12 +16,13 @@ contexts. We bind it to `C-c n` for usage across emacs.
     ("C-c n" 'company-complete)
     :config
     (global-company-mode t)
+    (setq company-minimum-prefix-length 1)
     :bind
     (:map company-active-map
-                ("C-n". company-select-next)
-                ("C-p". company-select-previous)
-                ("M-<". company-select-first)
-                ("M->". company-select-last)))
+          ("C-n". company-select-next)
+          ("C-p". company-select-previous)
+          ("M-<". company-select-first)
+          ("M->". company-select-last)))
 #+END_SRC
 ** company-shell
 Associated package specific module for shell scripting.
