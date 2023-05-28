@@ -100,6 +100,19 @@ frame edge.
   (setq-default right-margin-width 1)
 #+END_SRC
 
+Do not truncate lines and if we need it the default binding to toggle
+is `C-x x t`. A value of `t` means to NOT truncate lines.
+#+BEGIN_SRC emacs-lisp
+  (setq-default truncate-lines t)
+#+END_SRC
+
+Setting partial width windows to `nil` means to respect the value for
+`truncate-lines`, otherwise we will get truncated lines for
+horizontally split windows (ie. `C-x 3` windows).
+#+BEGIN_SRC emacs-lisp
+  (setq-default truncate-partial-width-windows nil)
+#+END_SRC
+
 * Mode-line
 We like a compact mode-line and since VC mode will display potentially
 long branch names we remove it from the mode-line.
