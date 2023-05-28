@@ -287,5 +287,6 @@ chords that are prefixed with `C-x t`.
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
     :config
-    (which-key-mode))
+    (which-key-mode)
+    (which-key-setup-minibuffer))
 #+END_SRC
