@@ -50,11 +50,12 @@ variables that depend on resolutions, high-res and low-res.
   (set-face-attribute 'fixed-pitch nil
                       :inherit 'default)
 
+  ;; we need to set it expclitly otherwise Emacs will display with
+  ;; this face with another font, see the start screen as an example
   (set-face-attribute 'variable-pitch nil
                       :family hesam-default-font-family
                       :inherit 'default)
 #+END_SRC
-
 
 If we drag an Emacs frame between screens with different resolutions
 we have to update all font sizes in that frame. The
