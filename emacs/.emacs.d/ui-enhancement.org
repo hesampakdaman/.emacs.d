@@ -32,26 +32,28 @@ activated buffers.
 #+END_SRC
 
 * Fonts
-We set the default, fixed-pitch and variable-pitch fonts here. In
-order to get good size we make configure the font size depending on
-screen resolution.
+We set the default, fixed-pitch and variable-pitch fonts here.  In
+order to get good font size across different screens we define
+variables that depend on resolutions, high-res and low-res.
 #+BEGIN_SRC emacs-lisp
-  (setq hesam-default-hires-height 180)
-  (setq hesam-default-lowres-height 120)
-  (setq hesam-modeline-hires-height (- hesam-default-hires-height 10))
-  (setq hesam-modeline-lowres-height (- hesam-default-lowres-height 5))
+  (setq hesam-default-font-family "IosevkaTerm Nerd Font"
+        hesam-default-hires-height 180
+        hesam-default-lowres-height 120
+        hesam-modeline-hires-height (- hesam-default-hires-height 10)
+        hesam-modeline-lowres-height (- hesam-default-lowres-height 5))
 
   (set-face-attribute 'default nil
-                      :family "IosevkaTerm Nerd Font"
+                      :family hesam-default-font-family
                       :weight 'regular
                       :height hesam-default-lowres-height)
+
   (set-face-attribute 'fixed-pitch nil
-                      :family "IosevkaTerm Nerd Font"
-                      :weight 'regular)
+                      :inherit 'default)
+
   (set-face-attribute 'variable-pitch nil
-                      :family "EBGaramond"
-                      :height 1.5)
+                      :family hesam-default-font-family)
 #+END_SRC
+
 
 If we drag an Emacs frame between screens with different resolutions
 we have to update all font sizes in that frame. The
@@ -184,6 +186,8 @@ frame to separate the tab bar from the buffer.
 #+BEGIN_SRC emacs-lisp
   (set-face-attribute 'tab-bar nil
                       :height 0.95
+                      :family hesam-default-font-family
+                      :weight 'regular
                       :foreground (hesam/theme-color 'fg)
                       :background (hesam/theme-color 'bg)
                       :underline (hesam/theme-color 'current)
