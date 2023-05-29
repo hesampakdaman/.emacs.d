@@ -135,11 +135,10 @@ under a hidden list.
 #+END_SRC
 
 * Tabs and Windows
-Start with configuring the behavior of the tab bar, for example we
-enable the functionality and hide the close tab button.
+Start with configuring the behavior and look of the tab bar, for
+example we enable the functionality and hide the close tab button.
 #+BEGIN_SRC emacs-lisp
-  (setq tab-bar-show 1	      ; show the tab bar if we have more 1 tab
-        tab-bar-mode t
+  (setq tab-bar-mode t
         tab-bar-close-button-show nil)
 #+END_SRC
 
@@ -180,12 +179,10 @@ table.
 #+END_SRC
 
 Use Dracula theme colors for the tab bar; we prefer it to be slighly
-smaller than surrounding text. Otherwise inherit face attributes from
-`'default`. We'll also add a line across the Emacs frame to separate
-the tab bar from the buffer.
+smaller than surrounding text. We'll also add a line across the Emacs
+frame to separate the tab bar from the buffer.
 #+BEGIN_SRC emacs-lisp
   (set-face-attribute 'tab-bar nil
-                      :inherit 'default
                       :height 0.95
                       :foreground (hesam/theme-color 'fg)
                       :background (hesam/theme-color 'bg)
