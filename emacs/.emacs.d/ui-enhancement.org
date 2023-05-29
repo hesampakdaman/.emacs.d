@@ -51,7 +51,8 @@ variables that depend on resolutions, high-res and low-res.
                       :inherit 'default)
 
   (set-face-attribute 'variable-pitch nil
-                      :family hesam-default-font-family)
+                      :family hesam-default-font-family
+                      :inherit 'default)
 #+END_SRC
 
 
