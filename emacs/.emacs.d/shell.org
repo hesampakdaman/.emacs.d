@@ -66,8 +66,11 @@ and have requirements on how and when a new window is created.
                (existing-buffer (get-buffer buffer-name)))
           (if existing-buffer
               (pop-to-buffer existing-buffer)
-            (cd root)
-            (vterm-other-window buffer-name)))))
+            (let ((new-buffer (vterm-other-window buffer-name)))
+              (with-current-buffer new-buffer
+                (vterm-send-string (concat "cd " root))
+                (vterm-send-return)
+                (vterm-send-C-l)))))))
 #+END_SRC
 
 * xterm colors
