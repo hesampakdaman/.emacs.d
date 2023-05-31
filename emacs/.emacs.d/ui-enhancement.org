@@ -82,16 +82,20 @@ we have to update all font sizes in that frame. The
 a new frame is created and whenever it's moved.
 #+BEGIN_SRC emacs-lisp
   (defun hesam/font-per-display (frame)
-    "Will change the font according to the dimensions of the FRAME."
-    (select-frame frame)
-    (frame-monitor-attribute 'geometry frame)
-    (cond ((> (car (last (frame-monitor-attribute 'geometry frame))) 1200)
-           (set-face-attribute 'default frame :height hesam-default-hires-height)
-           (set-face-attribute 'mode-line frame :height hesam-modeline-hires-height)
-           (set-face-attribute 'mode-line-inactive frame :height hesam-modeline-hires-height))
-          (t (set-face-attribute 'default frame :height hesam-default-lowres-height)
-             (set-face-attribute 'mode-line frame :height hesam-modeline-lowres-height)
-             (set-face-attribute 'mode-line-inactive frame :height hesam-modeline-lowres-height))))
+    "Adjust the font size based on the FRAME's resolution."
+    (let* ((geometry (frame-monitor-attribute 'geometry frame))
+           (resolution (car (last geometry))))
+      (select-frame frame)
+      (if (> resolution 1200)
+          (hesam/set-font-sizes frame hesam-default-hires-height hesam-modeline-hires-height)
+        (hesam/set-font-sizes frame hesam-default-lowres-height hesam-modeline-lowres-height))))
+
+  (defun hesam/set-font-sizes (frame default-height modeline-height)
+    "Helper function to set the font sizes of FRAME."
+    (set-face-attribute 'default frame :height default-height)
+    (set-face-attribute 'mode-line frame :height modeline-height)
+    (set-face-attribute 'mode-line-inactive frame :height modeline-height))
+
   (add-hook 'after-make-frame-functions 'hesam/font-per-display)
   (add-hook 'move-frame-functions 'hesam/font-per-display)
 #+END_SRC
