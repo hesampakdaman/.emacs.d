@@ -88,7 +88,10 @@ Chooses which directory to run deft in. Courtesy of [[http://pragmaticemacs.com/
 ** projects
 We define different projects under a common deft directory.
 #+BEGIN_SRC emacs-lisp
-  (setq hesam-deft-directory "~/Dropbox/org/deft")
+  (defcustom hesam-deft-directory "~/Dropbox/org/deft"
+    "Directory for Deft notes in Hesam's Emacs configuration."
+    :type 'directory
+    :group 'hesam)
 #+END_SRC
 
 Now we declare projects which invokes the director with the root to

@@ -42,6 +42,16 @@ in one place.
     :prefix "C-c w")
 #+END_SRC
 
+* Face group
+We define a customization group that we can use as a parent for all
+other `defcustom` commands. If we ever search for groups in
+`customize` we can easily find them.
+#+BEGIN_SRC emacs-lisp
+  (defgroup hesam nil
+    "Parent group for my personal Emacs customization settings."
+    :group 'emacs)
+#+END_SRC
+
 * Color theme list
 Throught our configuration we will supply an easy way of getting the
 colors. Note that if we change theme then most-likely we need to

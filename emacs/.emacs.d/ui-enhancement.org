@@ -36,11 +36,30 @@ We set the default, fixed-pitch and variable-pitch fonts here.  In
 order to get good font size across different screens we define
 variables that depend on resolutions, high-res and low-res.
 #+BEGIN_SRC emacs-lisp
-  (setq hesam-default-font-family "IosevkaTerm Nerd Font"
-        hesam-default-hires-height 180
-        hesam-default-lowres-height 120
-        hesam-modeline-hires-height (- hesam-default-hires-height 10)
-        hesam-modeline-lowres-height (- hesam-default-lowres-height 5))
+  (defcustom hesam-default-font-family "IosevkaTerm Nerd Font"
+    "Default font family."
+    :type 'string
+    :group 'hesam)
+
+  (defcustom hesam-default-hires-height 180
+    "Default high-resolution height."
+    :type 'integer
+    :group 'hesam)
+
+  (defcustom hesam-default-lowres-height 120
+    "Default low-resolution height."
+    :type 'integer
+    :group 'hesam)
+
+  (defcustom hesam-modeline-hires-height (- hesam-default-hires-height 10)
+    "Modeline high-resolution height."
+    :type 'integer
+    :group 'hesam)
+
+  (defcustom hesam-modeline-lowres-height (- hesam-default-lowres-height 5)
+    "Modeline low-resolution height."
+    :type 'integer
+    :group 'hesam)
 
   (set-face-attribute 'default nil
                       :family hesam-default-font-family
