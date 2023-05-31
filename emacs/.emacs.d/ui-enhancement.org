@@ -157,12 +157,19 @@ returning a string).
 #+END_SRC
 
 However, the tab bar format tabs string prepends a separator on the
-very left side. We'll remove it
+very left side. We'll remove it.
 #+BEGIN_SRC emacs-lisp
   (advice-add
-   'tab-bar-format-tabs
-   :around
-   (lambda (orig-fun) (cdr (funcall orig-fun))))
+   'tab-bar-format-tabs :around (lambda (orig-fun) (cdr (funcall orig-fun))))
+#+END_SRC
+
+Next we want all tabs to be displayed in UPCASE. The function that
+automatically names tabs is `tab-bar-tab-name-current` which we
+decorate.
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/uppercase-tab-name-current (original-function &rest args)
+    (upcase (apply original-function args)))
+  (advice-add 'tab-bar-tab-name-current :around #'hesam/uppercase-tab-name-current)
 #+END_SRC
 
 And to quickly switch between tabs we bind convenient keys
