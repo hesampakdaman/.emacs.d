@@ -217,6 +217,11 @@ Enables snippets for progamming and text modes.
   (use-package yasnippet
     :config
     (yas-reload-all)
+    :bind (:map yas-minor-mode-map
+                ("C-c y" . yas-expand))
     :hook ((prog-mode . yas-minor-mode)
            (text-mode .  yas-minor-mode)))
+
+  (use-package yasnippet-snippets
+    :after yasnippet)
 #+END_SRC
