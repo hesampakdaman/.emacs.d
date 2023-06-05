@@ -337,10 +337,12 @@ a window. Additionally we define keys for swapping buffer locations.
 ** Which-key
 Displays available key chords after partially input. Hence, if we
 input `C-x t` to Emacs then `which-key` will display all defined key
-chords that are prefixed with `C-x t`.
+chords that are prefixed with `C-x t`. Placement of which-key window
+is on the bottom and pagination is done by `C-h n` for next and `C-h
+p` for previous.
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
     :config
-    (which-key-mode)
-    (which-key-setup-minibuffer))
+    (which-key-mode t)
+    (which-key-setup-side-window-bottom))
 #+END_SRC
