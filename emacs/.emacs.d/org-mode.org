@@ -1,14 +1,11 @@
 #+TITLE: Org mode settings
 #+STARTUP: OVERVIEW
 * Introduction
-At this point we assume `Org` is installed and ready to go. This is
+At this point we assume `Org` is required and ready to go. This is
 safe because in our `init.el` we use babel to load all modules and
 therefore `Org` is required.
-#+BEGIN_SRC emacs-lisp
-  (require 'org)
-#+END_SRC
 
-Then just basically set up our org mode directory
+First set up our org mode directory
 #+BEGIN_SRC emacs-lisp
   (defcustom hesam-org-directory "~/Dropbox/org"
     "Default directory for where Org will look at put files."
@@ -17,7 +14,7 @@ Then just basically set up our org mode directory
   (setq org-directory hesam-org-directory)
 #+END_SRC
 
-Lastly, we want to display Org SRC code blocks in the same window
+We want to display Org SRC code blocks in the same window
 #+BEGIN_SRC emacs-lisp
   (setq org-src-window-setup 'current-window)
 #+END_SRC
