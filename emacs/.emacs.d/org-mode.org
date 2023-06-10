@@ -1,13 +1,21 @@
 #+TITLE: Org mode settings
 #+STARTUP: overview
-* Package Declaration
-Sets up org mode and defines several useful settings. Prettifies
-buffer as well.
+* Introduction
+At this point we assume `org` is installed and ready to go. This is
+safe because in our `init.el` we use babel to load all modules and
+therefore `org` is required.
+#+begin_src emacs-lisp :tangle yes
+  (require 'org)
+#+end_src
+
+Then just basically set up our org mode directory
 #+BEGIN_SRC emacs-lisp
-  (use-package org
-    :init
-    (setq org-src-window-setup 'current-window
-          org-directory "~/Dropbox/org"))
+  (defcustom hesam-org-directory "~/Dropbox/org"
+    "Default directory for where Org will look at put files."
+    :type 'directory
+    :group 'hesam)
+
+  (setq org-directory hesam-org-directory)
 #+END_SRC
 
 * Babel
