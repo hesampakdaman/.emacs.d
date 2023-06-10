@@ -149,32 +149,14 @@ devices.
 #+END_SRC
 
 * Appearance
-Settings that related to how Org buffers are displayed.
-** Org bullets
-These are prettier bullet points next to headers.
+We basically use org-modern for look and feel.
 #+BEGIN_SRC emacs-lisp
-  (use-package org-bullets
-  :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+  (use-package org-modern
+    :hook
+    (org-mode . org-modern-mode))
 #+END_SRC
 
-** Misc
+and want to display org src code blocks in the same window
 #+BEGIN_SRC emacs-lisp
-  (setq org-startup-indented t
-        org-hide-emphasis-markers t
-        org-agenda-block-separator ""
-        org-fontify-whole-heading-line t
-        org-fontify-done-headline t
-        org-fontify-quote-and-verse-blocks t)
+  (setq org-src-window-setup 'current-window)
 #+END_SRC
-
-** Prettify
-Prettifies symbols recongized by Org mode, such as [X] in TODO lists.
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'org-mode-hook (lambda ()
-     "Beautify Org Checkbox Symbol"
-     (push '("[X]" . "✓") prettify-symbols-alist)
-     (push '("[ ]" . "□") prettify-symbols-alist)
-     (prettify-symbols-mode)))
-#+END_SRC
-
