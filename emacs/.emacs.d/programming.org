@@ -132,13 +132,21 @@ Highlights matching parens in prog-mode.
   (add-hook 'prog-mode-hook 'show-paren-mode)
 #+END_SRC
 
-* Flycheck
-Flycheck is a modern syntax checker for Emacs to be used everywhere,
+* Flymake
+Flymake is an built-in syntax checker for Emacs to be used everywhere,
 but it's stronlgy linked to programming and that is why we define it
-here but enable it globally.
+here.
 #+BEGIN_SRC emacs-lisp
-  (use-package flycheck
-    :init (global-flycheck-mode))
+  (use-package flymake
+    :commands flymake-mode
+    :config
+    (setq flymake-fringe-indicator-position 'left-fringe
+          flymake-suppress-zero-counters t
+          flymake-start-on-flymake-mode t
+          flymake-no-changes-timeout nil
+          flymake-start-on-save-buffer t
+          flymake-proc-compilation-prevents-syntax-check t
+          flymake-wrap-around nil))
 #+END_SRC
 
 * Magit
@@ -163,6 +171,7 @@ project and includes integration with magit.
     ;; adjust root face as it's otherwise bold and bigger
     (set-face-attribute 'treemacs-root-face nil
                         :height 1.0
+                        :underline nil
                         :inherit font-lock-constant-face)
     :bind (("C-c t b"   . treemacs-select-window)
            ("C-c t 1"   . treemacs-delete-other-windows)
@@ -176,7 +185,7 @@ project and includes integration with magit.
     :after (treemacs magit))
 
   (use-package treemacs-tab-bar ;;treemacs-tab-bar if you use tab-bar-mode
-    :after (treemacs)
+    :after treemacs
     :config (treemacs-set-scope-type 'Tabs))
 #+END_SRC
 
