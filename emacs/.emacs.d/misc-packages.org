@@ -22,9 +22,9 @@ works best in PDF tools which is why we explicitly set it for
 #+BEGIN_SRC emacs-lisp
   (use-package pdf-tools
     :config (pdf-tools-install)
-    :bind-keymap
-    ("C-s" . isearch-forward)
-    ("C-r" . isearch-backward))
+    :bind (:map pdf-view-mode-map
+		("C-s" . isearch-forward)
+		("C-r" . isearch-backward)))
 #+END_SRC
 
 ** auxtex
