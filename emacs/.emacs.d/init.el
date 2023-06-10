@@ -1,15 +1,6 @@
-(require 'package)
-(package-initialize)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.org/packages/") t)
-(add-to-list 'package-archives
-             '("org" . "http://orgmode.org/elpa/") t)
-
-;; use-package
-;; install unless it is installed
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+(load-file (expand-file-name "elpaca.el" user-emacs-directory))
+(elpaca use-package)
+(elpaca-wait)
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
 
