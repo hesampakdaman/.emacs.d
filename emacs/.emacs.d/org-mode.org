@@ -1,12 +1,12 @@
 #+TITLE: Org mode settings
-#+STARTUP: overview
+#+STARTUP: OVERVIEW
 * Introduction
-At this point we assume `org` is installed and ready to go. This is
+At this point we assume `Org` is installed and ready to go. This is
 safe because in our `init.el` we use babel to load all modules and
-therefore `org` is required.
-#+begin_src emacs-lisp :tangle yes
+therefore `Org` is required.
+#+BEGIN_SRC emacs-lisp
   (require 'org)
-#+end_src
+#+END_SRC
 
 Then just basically set up our org mode directory
 #+BEGIN_SRC emacs-lisp
@@ -14,8 +14,12 @@ Then just basically set up our org mode directory
     "Default directory for where Org will look at put files."
     :type 'directory
     :group 'hesam)
-
   (setq org-directory hesam-org-directory)
+#+END_SRC
+
+Lastly, we want to display Org SRC code blocks in the same window
+#+BEGIN_SRC emacs-lisp
+  (setq org-src-window-setup 'current-window)
 #+END_SRC
 
 * Babel
@@ -149,14 +153,17 @@ devices.
 #+END_SRC
 
 * Appearance
-We basically use org-modern for look and feel.
+We basically use org-modern for look and feel. But using
+`org-modern-star` screws with navigation `C-n/p`. We therefore don't
+use it. [[https://github.com/minad/org-modern/issues/134][See this Github issue]].
 #+BEGIN_SRC emacs-lisp
   (use-package org-modern
-    :hook
-    (org-mode . org-modern-mode))
+    :config (setq org-modern-star nil)
+    :hook (org-mode . org-modern-mode))
 #+END_SRC
 
-and want to display org src code blocks in the same window
+So in order to get nice bullet points we use `org-bullets`.
 #+BEGIN_SRC emacs-lisp
-  (setq org-src-window-setup 'current-window)
+  (use-package org-bullets
+    :hook (org-mode . org-bullets-mode))
 #+END_SRC
