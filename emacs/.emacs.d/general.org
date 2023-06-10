@@ -2,15 +2,37 @@
 #+STARTUP: OVERVIEW
 * Autosave and Backups
 Saves all backups to user's Emacs directory and in addition creates
-numbered backups.
+numbered backups. First things first, we create autosave and backup
+directory where we put autosaves and backups respectevily.
 #+BEGIN_SRC emacs-lisp
-  (setq backup-directory-alist `(("." . ,(concat (eval user-emacs-directory) "backups/")))
-        version-control t		  ; Use version numbers for backups.
-        vc-make-backup-files t	  ; Make backups for git files
-        kept-new-versions 1000	  ; Number of newest versions to keep.
-        kept-old-versions 0	  ; Number of oldest versions to keep.
-        delete-old-versions t ; Don't ask to delete excess backup versions.
-        backup-by-copying t)  ; Copy all files, don't rename them.
+  (defcustom hesam-autosave-directory (expand-file-name "autosave/" user-emacs-directory)
+    "Directory where autosave and backups are put."
+    :type 'directory
+    :group 'hesam)
+
+  (defcustom hesam-backup-directory (expand-file-name "backup/" user-emacs-directory)
+    "Directory where autosave and backups are put."
+    :type 'directory
+    :group 'hesam)
+#+END_SRC
+
+Of course we need to make sure these directories exists
+#+BEGIN_SRC emacs-lisp
+  (dolist (dir (list hesam-autosave-directory hesam-backup-directory))
+    (unless (file-directory-p dir)
+      (make-directory dir)))
+#+END_SRC
+
+Use the directory for backups. There are some other sane settings used
+described below with comments.
+#+BEGIN_SRC emacs-lisp
+  (setq backup-directory-alist `(("." . ,hesam-backup-directory))
+	version-control t		  ; Use version numbers for backups.
+	vc-make-backup-files t	  ; Make backups for git files
+	kept-new-versions 1000	  ; Number of newest versions to keep.
+	kept-old-versions 0	  ; Number of oldest versions to keep.
+	delete-old-versions t ; Don't ask to delete excess backup versions.
+	backup-by-copying t)  ; Copy all files, don't rename them.
 #+END_SRC
 
 But backups are only created once when the buffer is visited. We want
@@ -27,7 +49,7 @@ been reset.
 We also make sure to organize our autosaves in user's Emacs directory.
 #+BEGIN_SRC emacs-lisp
   (setq auto-save-file-name-transforms
-        `((".*" ,(concat (eval user-emacs-directory) "autosaves/") t)))
+	`((".*" ,hesam-autosave-directory t)))
 #+END_SRC
 
 * Bookmarks
