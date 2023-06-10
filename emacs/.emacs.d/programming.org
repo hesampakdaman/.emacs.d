@@ -25,16 +25,18 @@ Now install `rustic` package which provides a rich Rust development
 environment.
 #+BEGIN_SRC emacs-lisp
   (use-package rustic
-    :init
-    (setq rustic-ansi-faces (vector
-                             "black"
-                             (hesam/theme-color 'red)
-                             (hesam/theme-color 'green)
-                             (hesam/theme-color 'yellow)
-                             (hesam/theme-color 'purple)
-                             (hesam/theme-color 'pink)
-                             (hesam/theme-color 'cyan)
-                             (hesam/theme-color 'white))))
+    :config
+    (setq rustic-format-on-save t
+	  rustic-lsp-client 'eglot
+	  rustic-ansi-faces (vector
+			     "black"
+			     (hesam/theme-color 'red)
+			     (hesam/theme-color 'green)
+			     (hesam/theme-color 'yellow)
+			     (hesam/theme-color 'purple)
+			     (hesam/theme-color 'pink)
+			     (hesam/theme-color 'cyan)
+			     (hesam/theme-color 'white))))
   #+END_SRC
 
 ** Python
@@ -65,46 +67,23 @@ Use `pyvenv` to manage Python virtual environments.
 #+END_SRC
 
 * Language Server Protocol
-Setup Language Server Protocol (LSP) for different programming languages.
+Setup Language Server Protocol (LSP) for different programming
+languages. We use eglot which is built-in >= Emacs 29.
 #+BEGIN_SRC emacs-lisp
-  (use-package lsp-mode
-    :init
-    (setq lsp-keymap-prefix "C-c l")
+  (use-package project)			; solves void project-name
+
+  (use-package eglot
+    :after project
+    :defer t
+    :hook ((rust-mode python-mode) . eglot-ensure))
+
+  (use-package eldoc-box
+    :after eglot
+    :defer t
     :config
-    (setq lsp-headerline-breadcrumb-enable nil
-          lsp-modeline-code-actions-segments '(count))
-    :commands lsp
-    :custom
-    (lsp-idle-delay 0.25)
-
-    ;; Rust
-    (lsp-rust-analyzer-cargo-watch-command "check")
-    (lsp-rust-analyzer-server-display-inlay-hints t)
-    (lsp-rust-analyzer-display-chaining-hints t)
-    (lsp-rust-analyzer-display-closure-return-type-hints t)
-
-    :hook ((python-mode . lsp)
-           (rust-mode . lsp)
-           (lsp-mode . lsp-ui-mode)
-           (lsp-mode . lsp-enable-which-key-integration)))
+    (set-face-attribute 'eldoc-box-body nil
+			:background (hesam/theme-color 'bg)))
 #+END_SRC
-
-`lsp-ui` is an enhancement package that can show diagnostics and other
-helpful information directly in the buffer.
-#+BEGIN_SRC emacs-lisp
-  (use-package lsp-ui
-    :commands lsp-ui-mode
-    :custom
-    (lsp-ui-peek-always-show t)
-    (lsp-ui-sideline-mode t)
-    (lsp-ui-sideline-show-symbol nil))
-  #+END_SRC
-
-  Uses treemacs as tree renderer to show helpful LSP commands.
-  #+BEGIN_SRC emacs-lisp
-  (use-package lsp-treemacs
-    :commands lsp-treemacs-errors-list)
-  #+END_SRC
 
 * Modes
 Many of these mode are activated by adding a hook to `prog-mode-hook`
