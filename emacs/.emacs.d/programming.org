@@ -192,16 +192,6 @@ project and includes integration with magit.
     :config (treemacs-set-scope-type 'Tabs))
 #+END_SRC
 
-* Whitespace
-Colorize whitespace characters for prog mode.
-#+BEGIN_SRC emacs-lisp
-  (use-package whitespace
-    :config
-    (setq whitespace-line-column 120)
-    (setq whitespace-style '(face lines-tail))
-    :hook (prog-mode . whitespace-mode))
-#+END_SRC
-
 * WS-butler
 Removes trailing space and tabs from this user modified lines.
 #+BEGIN_SRC emacs-lisp
