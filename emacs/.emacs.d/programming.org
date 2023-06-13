@@ -107,7 +107,16 @@ helpful information directly in the buffer.
   #+END_SRC
 
 * Modes
-Many of these mode are activated by adding a hook to `prog-mode-hook`.
+Many of these mode are activated by adding a hook to `prog-mode-hook`
+or is highly associated with programming.
+** ediff
+Ediff is used for viewing diffs and acting upon them. We want the
+control that normally displays in another frame to be place in the
+same window.
+#+BEGIN_SRC emacs-lisp
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+#+END_SRC
+
 ** electric mode
 Automatically add closing brackets and indent code in `prog-mode`.
 #+BEGIN_SRC emacs-lisp
