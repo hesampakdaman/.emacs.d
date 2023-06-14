@@ -336,8 +336,18 @@ a window. Additionally we define keys for swapping buffer locations.
    "s-L" 'windmove-swap-states-right)
 #+END_SRC
 
-* Packages
-** Which-key
+* Marginalia
+This package displays helpful descriptions of on the margins in
+certains instances. For example: invoking `M-x` displays all commands
+that can be called interactively. `Marginalia` will show their
+descriptions on the right hand side -- at the margin if you will.
+#+BEGIN_SRC emacs-lisp
+  (use-package marginalia
+    :config
+    (marginalia-mode))
+#+END_SRC
+
+* Which-key
 Displays available key chords after partially input. Hence, if we
 input `C-x t` to Emacs then `which-key` will display all defined key
 chords that are prefixed with `C-x t`. Placement of which-key window
