@@ -207,6 +207,15 @@ project and includes integration with magit.
     :config (treemacs-set-scope-type 'Tabs))
 #+END_SRC
 
+* vundo
+In this excellet [[https://archive.casouri.cc/note/2021/visual-undo-tree/index.html][blog]] Yuan Fu describes a way of creating an undo-tree
+from Emacs' linear tree. This enables us to build an undo-tree on the
+fly, navigate it and make Emacs go to that state. Born is the package
+`vundo` (visualize undo).
+#+BEGIN_SRC emacs-lisp
+  (use-package vundo)
+#+END_SRC
+
 * ws-butler
 Removes trailing space and tabs from this user modified lines.
 #+BEGIN_SRC emacs-lisp
