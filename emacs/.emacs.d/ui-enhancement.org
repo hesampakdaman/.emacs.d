@@ -214,9 +214,12 @@ table.
 
 Use Dracula theme colors for the tab bar; we prefer it to be slighly
 smaller than surrounding text. We'll also add a line across the Emacs
-frame to separate the tab bar from the buffer.
+frame to separate the tab bar from the buffer. Inheriting nil to make
+sure it does not get values from `'default` which would alter size of
+tab bar font when zooming in/out the buffer.
 #+BEGIN_SRC emacs-lisp
   (set-face-attribute 'tab-bar nil
+                      :inherit nil
                       :height 0.95
                       :family hesam-default-font-family
                       :weight 'regular
