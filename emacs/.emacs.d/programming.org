@@ -70,8 +70,6 @@ Use `pyvenv` to manage Python virtual environments.
 Setup Language Server Protocol (LSP) for different programming
 languages. We use eglot which is built-in >= Emacs 29.
 #+BEGIN_SRC emacs-lisp
-  (use-package project)			; solves void project-name
-
   (use-package eglot
     :after project
     :defer t
@@ -130,6 +128,14 @@ Shows column number in `mode-line` in addtion to row number.
 Highlights matching parens in prog-mode.
 #+BEGIN_SRC emacs-lisp
   (add-hook 'prog-mode-hook 'show-paren-mode)
+#+END_SRC
+
+* Project
+Project management tool using git to detect root. Prefix `C-x p` to
+run project commands like visiting buffers and files associated with
+the project. We can also start a terminal in the project root or VC.
+#+BEGIN_SRC emacs-lisp
+  (use-package project)
 #+END_SRC
 
 * Flymake
