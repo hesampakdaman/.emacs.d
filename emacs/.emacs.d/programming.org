@@ -130,6 +130,29 @@ Highlights matching parens in prog-mode.
   (add-hook 'prog-mode-hook 'show-paren-mode)
 #+END_SRC
 
+* git
+** git-timemachine
+In a git-tracked repository we can invoke `git-timemachine` to quickly
+navigate between revisions, show commits and use git blame. When
+visiting a git tracked file and calling `git-timemachine`
+interatively, it allows us to move between revisions with `n`,
+`p`. Hit `?` to get a hydra-like menu for more commands.
+#+BEGIN_SRC emacs-lisp
+  (use-package git-timemachine
+    :after magit)
+#+END_SRC
+
+** Magit
+git porcelain
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :demand t
+    :after project
+    :bind ("C-c g" . magit-status)
+    :config
+    (advice-add #'project-vc-dir :override #'magit-project-status))
+#+END_SRC
+
 * Flymake
 Flymake is an built-in syntax checker for Emacs to be used everywhere,
 but it's stronlgy linked to programming and that is why we define it
@@ -145,17 +168,6 @@ here.
           flymake-start-on-save-buffer t
           flymake-proc-compilation-prevents-syntax-check t
           flymake-wrap-around nil))
-#+END_SRC
-
-* Magit
-git porcelain
-#+BEGIN_SRC emacs-lisp
-  (use-package magit
-    :demand t
-    :after project
-    :bind ("C-c g" . magit-status)
-    :config
-    (advice-add #'project-vc-dir :override #'magit-project-status))
 #+END_SRC
 
 * Project
