@@ -21,7 +21,7 @@ contexts. We complete text with `TAB` across Emacs' buffers.
 	  corfu-quit-at-boundary nil
 	  corfu-quit-no-match nil
 	  corfu-preview-current t
-	  corfu-preselect first
+	  corfu-preselect 'first
 	  corfu-scroll-margin 5)
 
     (set-face-attribute 'corfu-current nil
