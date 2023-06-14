@@ -130,14 +130,6 @@ Highlights matching parens in prog-mode.
   (add-hook 'prog-mode-hook 'show-paren-mode)
 #+END_SRC
 
-* Project
-Project management tool using git to detect root. Prefix `C-x p` to
-run project commands like visiting buffers and files associated with
-the project. We can also start a terminal in the project root or VC.
-#+BEGIN_SRC emacs-lisp
-  (use-package project)
-#+END_SRC
-
 * Flymake
 Flymake is an built-in syntax checker for Emacs to be used everywhere,
 but it's stronlgy linked to programming and that is why we define it
@@ -164,6 +156,14 @@ git porcelain
     :bind ("C-c g" . magit-status)
     :config
     (advice-add #'project-vc-dir :override #'magit-project-status))
+#+END_SRC
+
+* Project
+Project management tool using git to detect root. Prefix `C-x p` to
+run project commands like visiting buffers and files associated with
+the project. We can also start a terminal in the project root or VC.
+#+BEGIN_SRC emacs-lisp
+  (use-package project)
 #+END_SRC
 
 * Treemacs
