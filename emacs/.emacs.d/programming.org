@@ -189,16 +189,14 @@ project and includes integration with magit.
     :config (treemacs-set-scope-type 'Tabs))
 #+END_SRC
 
-* WS-butler
+* ws-butler
 Removes trailing space and tabs from this user modified lines.
 #+BEGIN_SRC emacs-lisp
   (use-package ws-butler
-    :hook ((prog-mode . ws-butler-mode)
-           (org-mode . ws-butler-mode)
-           (text-mode . ws-butler-mode)))
+    :hook ((prog-mode text-mode) . ws-butler-mode))
 #+END_SRC
 
-* Yasnippet
+* YASnippet
 Enables snippets for progamming and text modes.
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
@@ -206,8 +204,7 @@ Enables snippets for progamming and text modes.
     (yas-reload-all)
     :bind (:map yas-minor-mode-map
                 ("C-c y" . yas-expand))
-    :hook ((prog-mode . yas-minor-mode)
-           (text-mode .  yas-minor-mode)))
+    :hook ((prog-mode text-mode) . yas-minor-mode))
 
   (use-package yasnippet-snippets
     :after yasnippet)
