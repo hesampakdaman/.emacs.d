@@ -1,3 +1,5 @@
+#+TITLE: Completion
+#+STARTUP: OVERVIEW
 * Introduction
 For configuring autocompleting options. We begin with the a built-in
 hippie-expand by binding it
