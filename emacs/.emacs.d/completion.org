@@ -9,29 +9,37 @@ hippie-expand by binding it
    "C-c h" 'hippie-expand)
 #+END_SRC
 
-* Company
+* Corfu
 General autocompletion system, but mostly used in programming
-contexts. We bind it to `C-c n` for usage across emacs.
+contexts. We complete text with `TAB` across Emacs' buffers.
 #+BEGIN_SRC emacs-lisp
-  (use-package company
-    :general
-    ("C-c n" 'company-complete)
+  (use-package corfu
+    :init
+    (global-corfu-mode)
     :config
-    (global-company-mode t)
-    (setq company-minimum-prefix-length 1)
-    :bind
-    (:map company-active-map
-          ("C-n". company-select-next)
-          ("C-p". company-select-previous)
-          ("M-<". company-select-first)
-          ("M->". company-select-last)))
-#+END_SRC
-** company-shell
-Associated package specific module for shell scripting.
-#+BEGIN_SRC emacs-lisp
-  (use-package company-shell
-    :config
-    (add-to-list 'company-backends 'company-shell))
+    (setq corfu-cycle t
+	  corfu-quit-at-boundary nil
+	  corfu-quit-no-match nil
+	  corfu-preview-current t
+	  corfu-preselect first
+	  corfu-scroll-margin 5)
+
+    (set-face-attribute 'corfu-current nil
+			:foreground (hesam/theme-color 'fg)
+			:background (hesam/theme-color 'comment))
+    (set-face-attribute 'corfu-default nil
+			:background (hesam/theme-color 'current)))
+
+  (setq completion-cycle-threshold 3)
+
+  ;; Emacs 28: Hide commands in M-x which do not apply to the current mode.
+  ;; Corfu commands are hidden, since they are not supposed to be used via M-x.
+  (setq read-extended-command-predicate
+	#'command-completion-default-include-p)
+
+  ;; Enable indentation+completion using the TAB key.
+  ;; `completion-at-point' is often bound to M-TAB.
+  (setq tab-always-indent 'complete)
 #+END_SRC
 
 * Orderless
