@@ -36,6 +36,7 @@ assumed to exists in other configuration files.
   (org-babel-load-file
    (expand-file-name "keybindings.org" user-emacs-directory))
 #+END_SRC
+
 * Miscellaneous Packages
 #+BEGIN_SRC emacs-lisp
   (org-babel-load-file
