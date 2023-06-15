@@ -157,14 +157,17 @@ git porcelain
 Flymake is an built-in syntax checker for Emacs to be used everywhere,
 but it's stronlgy linked to programming and that is why we define it
 here.
+
+Out of intereset here is the setting `flymake-no-changes-timeout`. If
+set to a number, then Flymake will check the file after waiting that
+number in seconds for each change you make in the buffer.
 #+BEGIN_SRC emacs-lisp
   (use-package flymake
-    :commands flymake-mode
     :config
     (setq flymake-fringe-indicator-position 'left-fringe
           flymake-suppress-zero-counters t
           flymake-start-on-flymake-mode t
-          flymake-no-changes-timeout nil
+          flymake-no-changes-timeout 0.5
           flymake-start-on-save-buffer t
           flymake-proc-compilation-prevents-syntax-check t
           flymake-wrap-around nil))
