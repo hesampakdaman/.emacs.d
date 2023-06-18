@@ -6,16 +6,93 @@ configured elsewhere which affects the look of Emacs. One such example
 is the face `hideshow` minor mode uses, which we have put in
 `programming.org` because it's directly related to programming.
 
+* Themes
+** Dracula
 The name of the theme is `dracula` -- dark, sleek and ubiquitous with
 lots of color!
 #+BEGIN_SRC emacs-lisp
   (use-package dracula-theme
+    :init
+    (setq dracula-enlarge-headings nil)
     :config
     (load-theme 'dracula t)
-    (setq dracula-enlarge-headings nil)
-    ;; We don't like the match face provided by Dracula so we change it
-    ;; here -- as this should only be done if this theme is used.
-    (set-face-attribute 'match nil :background "#bd93f9"))
+    :init
+    (add-hook
+     'after-load-theme-hook
+     (lambda (theme)
+       (when (eq theme 'dracula)
+         ;; We don't like the match face provided by Dracula so we change it
+         ;; here -- as this should only be done if this theme is used.
+         (set-face-attribute 'match nil :background "#bd93f9")
+
+         ;; Use Dracula theme colors for the tab bar; we prefer it to be slighly
+         ;; smaller than surrounding text. We'll also add a line across the Emacs
+         ;; frame to separate the tab bar from the buffer. Inheriting nil to make
+         ;; sure it does not get values from `'default` which would alter size of
+         ;; tab bar font when zooming in/out the buffer.
+         (set-face-attribute 'tab-bar nil
+                             :inherit 'default
+                             :height 0.95
+                             :family hesam-default-font-family
+                             :weight 'regular
+                             :foreground "#f8f8f2"
+                             :background "#282a36"
+                             :underline "#44475a"
+                             :box nil)
+
+         ;; To differentiate between active/inactive tabs we make adjustments
+         ;; to the text weight and colors.
+         (set-face-attribute 'tab-bar-tab nil
+                             :inherit 'tab-bar
+                             :weight 'bold
+                             :foreground "#ff79c6"
+                             :background "#282a36"
+                             :underline "#ff79c6"
+                             :box `(:line-width (1 . 10) :color "#282a36" :style nil))
+
+         (set-face-attribute 'tab-bar-tab-inactive nil
+                             :inherit 'tab-bar
+                             :foreground "#bd93f9"
+                             :background "#282a36"
+                             :box `(:line-width (1 . 10) :color "#282a36" :style nil))))))
+#+END_SRC
+
+** Modus
+#+BEGIN_SRC emacs-lisp
+  (use-package modus-themes
+    :init
+    (add-hook
+     'after-load-theme-hook
+     (lambda (theme)
+       (when (string-match-p "modus-" (symbol-name theme))
+         ;; Theme bar set to background with a window divider (underline)
+         (set-face-attribute 'tab-bar nil
+                             :inherit 'default
+                             :height 0.95
+                             :family hesam-default-font-family
+                             :foreground (modus-themes-get-color-value 'bg-main)
+                             :background (modus-themes-get-color-value 'bg-main)
+                             :underline (modus-themes-get-color-value 'border)
+                             :box nil)
+
+         ;; To differentiate between active/inactive tabs we make adjustments
+         ;; to the text weight and colors.
+         (set-face-attribute 'tab-bar-tab nil
+                             :inherit 'tab-bar
+                             :weight 'bold
+                             :foreground (modus-themes-get-color-value 'red)
+                             :underline (modus-themes-get-color-value 'red)
+                             :box `(:line-width (1 . 10) :color ,(modus-themes-get-color-value 'bg-main) :style nil))
+
+         (set-face-attribute 'tab-bar-tab-inactive nil
+                             :inherit 'tab-bar
+                             :background (modus-themes-get-color-value 'bg-main)
+                             :foreground (modus-themes-get-color-value 'fg-main)
+                             :box `(:line-width (1 . 10) :color ,(modus-themes-get-color-value 'bg-main) :style nil))
+
+         ;; Hides the fringe on vertical edges of the screen
+         (set-face-attribute 'fringe nil
+                             :background (modus-themes-get-color-value 'bg-main))))))
 #+END_SRC
 
 * Cursor
@@ -67,6 +144,9 @@ variables that depend on resolutions, high-res and low-res.
                       :height hesam-default-lowres-height)
 
   (set-face-attribute 'fixed-pitch nil
+                      :inherit 'default)
+
+  (set-face-attribute 'fixed-pitch-serif nil
                       :inherit 'default)
 
   ;; we need to set it expclitly otherwise Emacs will display with
@@ -210,41 +290,6 @@ table.
       (define-key map (kbd "0") #'tab-close)
       map))
   (put 'tab-close 'repeat-map 'tab-close-repeat-map)
-#+END_SRC
-
-Use Dracula theme colors for the tab bar; we prefer it to be slighly
-smaller than surrounding text. We'll also add a line across the Emacs
-frame to separate the tab bar from the buffer. Inheriting nil to make
-sure it does not get values from `'default` which would alter size of
-tab bar font when zooming in/out the buffer.
-#+BEGIN_SRC emacs-lisp
-  (set-face-attribute 'tab-bar nil
-                      :inherit nil
-                      :height 0.95
-                      :family hesam-default-font-family
-                      :weight 'regular
-                      :foreground (hesam/theme-color 'fg)
-                      :background (hesam/theme-color 'bg)
-                      :underline (hesam/theme-color 'current)
-                      :box nil)
-#+END_SRC
-
-To differentiate between active/inactive tabs we make adjustments
-to the text weight and colors.
-#+BEGIN_SRC emacs-lisp
-  (set-face-attribute 'tab-bar-tab nil
-                      :inherit 'tab-bar
-                      :weight 'bold
-                      :foreground (hesam/theme-color 'pink)
-                      :background (hesam/theme-color 'bg)
-                      :underline (hesam/theme-color 'pink)
-                      :box `(:line-width (1 . 10) :color ,(hesam/theme-color 'bg) :style nil))
-
-  (set-face-attribute 'tab-bar-tab-inactive nil
-                      :inherit 'tab-bar
-                      :foreground (hesam/theme-color 'purple)
-                      :background (hesam/theme-color 'bg)
-                      :box `(:line-width (1 . 10) :color ,(hesam/theme-color 'bg) :style nil))
 #+END_SRC
 
 Define a function that kills all buffers associated with a window
