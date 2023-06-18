@@ -13,14 +13,12 @@ prefix/leader keys.
   (elpaca-wait)
 #+END_SRC
 
-* Leaders Keys
+** Leaders Keys
 Here we define leaders to be used throughout emacs. We have other
 leader-keys that could be defined elsewhere because they are related
 to a specifc file. For example as `leader-agenda-gtd` could be placed
 in `org-mode.org`. But we prefer to put them here to have all leaders
 in one place.
-
-
 #+BEGIN_SRC emacs-lisp
   ;; Prefix to be used for all kinds of stuff
   (general-create-definer leader-meta-spc
