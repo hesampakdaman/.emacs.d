@@ -4,7 +4,10 @@
 Programming related settings and packages defined here. Language
 Server Protocol (LSP) provides IDE-like features and is configured
 here. Some relevant minor modes also set here, including their look
-and feel if appropriate.
+and feel if appropriate. But first... let's get rid of tabs!
+#+BEGIN_SRC emacs-lisp
+  (setq-default indent-tabs-mode nil)
+#+END_SRC
 
 * Programming Languages Modes
 ** C
