@@ -83,7 +83,7 @@ languages. We use eglot which is built-in >= Emacs 29.
                 ("C-c e i" . eglot-find-implementation))
     :config
     (set-face-attribute 'eglot-highlight-symbol-face nil
-                        :inherit 'lazy-highlight)
+                        :inherit 'match)
     :hook ((rust-mode python-mode) . eglot-ensure))
 
   (use-package eldoc-box
@@ -91,7 +91,7 @@ languages. We use eglot which is built-in >= Emacs 29.
     :defer t
     :config
     (set-face-attribute 'eldoc-box-body nil
-			:background (hesam/theme-color 'bg)))
+                        :inherit 'default))
 #+END_SRC
 
 * Modes
