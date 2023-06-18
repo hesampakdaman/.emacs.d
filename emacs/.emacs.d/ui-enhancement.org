@@ -54,7 +54,10 @@ lots of color!
                              :inherit 'tab-bar
                              :foreground "#bd93f9"
                              :background "#282a36"
-                             :box `(:line-width (1 . 10) :color "#282a36" :style nil))))))
+                             :box `(:line-width (1 . 10) :color "#282a36" :style nil))
+         ;; Hides the fringe on vertical edges of the screen
+         (set-face-attribute 'fringe nil
+                             :background "#282a36")))))
 #+END_SRC
 
 ** Modus
@@ -81,6 +84,7 @@ lots of color!
                              :inherit 'tab-bar
                              :weight 'bold
                              :foreground (modus-themes-get-color-value 'red)
+                             :background (modus-themes-get-color-value 'bg-main)
                              :underline (modus-themes-get-color-value 'red)
                              :box `(:line-width (1 . 10) :color ,(modus-themes-get-color-value 'bg-main) :style nil))
 
