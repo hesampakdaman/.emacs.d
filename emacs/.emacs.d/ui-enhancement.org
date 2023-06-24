@@ -31,7 +31,6 @@ lots of color!
          ;; sure it does not get values from `'default` which would alter size of
          ;; tab bar font when zooming in/out the buffer.
          (set-face-attribute 'tab-bar nil
-                             :inherit 'default
                              :height 0.95
                              :family hesam-default-font-family
                              :weight 'regular
@@ -70,7 +69,6 @@ lots of color!
        (when (string-match-p "modus-" (symbol-name theme))
          ;; Theme bar set to background with a window divider (underline)
          (set-face-attribute 'tab-bar nil
-                             :inherit 'default
                              :height 0.95
                              :family hesam-default-font-family
                              :foreground (modus-themes-get-color-value 'bg-main)
