@@ -97,6 +97,44 @@ lots of color!
                              :background (modus-themes-get-color-value 'bg-main))))))
 #+END_SRC
 
+** Ef
+#+BEGIN_SRC emacs-lisp
+  (use-package ef-themes
+    :init
+    (add-hook
+     'after-load-theme-hook
+     (lambda (theme)
+       (when (string-match-p "ef-" (symbol-name theme))
+         ;; Theme bar set to background with a window divider (underline)
+         (set-face-attribute 'tab-bar nil
+                             :height 0.95
+                             :family hesam-default-font-family
+                             :foreground (ef-themes-get-color-value 'bg-main)
+                             :background (ef-themes-get-color-value 'bg-main)
+                             :underline (ef-themes-get-color-value 'border)
+                             :box nil)
+
+         ;; To differentiate between active/inactive tabs we make adjustments
+         ;; to the text weight and colors.
+         (set-face-attribute 'tab-bar-tab nil
+                             :inherit 'tab-bar
+                             :weight 'bold
+                             :foreground (ef-themes-get-color-value 'red)
+                             :background (ef-themes-get-color-value 'bg-main)
+                             :underline (ef-themes-get-color-value 'red)
+                             :box `(:line-width (1 . 10) :color ,(ef-themes-get-color-value 'bg-main) :style nil))
+
+         (set-face-attribute 'tab-bar-tab-inactive nil
+                             :inherit 'tab-bar
+                             :background (ef-themes-get-color-value 'bg-main)
+                             :foreground (ef-themes-get-color-value 'fg-main)
+                             :box `(:line-width (1 . 10) :color ,(ef-themes-get-color-value 'bg-main) :style nil))
+
+         ;; Hides the fringe on vertical edges of the screen
+         (set-face-attribute 'fringe nil
+                             :background (ef-themes-get-color-value 'bg-main))))))
+#+END_SRC
+
 * Cursor
 We always want the cursor to always blink so we can easily find it.
 #+BEGIN_SRC emacs-lisp
