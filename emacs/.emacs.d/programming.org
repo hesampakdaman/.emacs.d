@@ -29,7 +29,7 @@ environment.
 #+BEGIN_SRC emacs-lisp
   (use-package rustic
     :config
-    (setq rustic-format-on-save t
+    (setq rustic-format-on-save nil
 	  rustic-lsp-client 'eglot
 	  rustic-ansi-faces (vector
 			     "black"
