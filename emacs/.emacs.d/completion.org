@@ -14,15 +14,25 @@ General autocompletion system, but mostly used in programming
 contexts. We complete text with `TAB` across Emacs' buffers.
 #+BEGIN_SRC emacs-lisp
   (use-package corfu
+    :custom
+    (corfu-cycle t)                  ; Allows cycling through candidates
+    (corfu-auto t)                   ; Enable auto completion
+    (corfu-auto-prefix 3)            ; Enable auto completion
+    (corfu-auto-delay 0.25)          ; Enable auto completion
+    (corfu-quit-at-boundary nil)
+    (corfu-echo-documentation 0.25)   ; Enable auto completion
+    (corfu-preview-current 'first)    ; Do not preview current candidate
+    (corfu-preselect-first 'first)
+
+    ;; Optionally use TAB for cycling, default is `corfu-complete'.
+    :bind (:map corfu-map
+                ;; ("RET"     . nil) ;; leave my enter alone!
+                ("TAB"     . corfu-insert)
+                ([tab]     . corfu-insert)
+                ("S-TAB"   . corfu-previous)
+                ([backtab] . corfu-previous))
     :init
-    (global-corfu-mode)
-    :config
-    (setq corfu-cycle t
-          corfu-quit-at-boundary nil
-          corfu-quit-no-match nil
-          corfu-preview-current t
-          corfu-preselect 'first
-          corfu-scroll-margin 5))
+    (global-corfu-mode))
 
   (setq completion-cycle-threshold 3)
 
