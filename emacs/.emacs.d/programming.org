@@ -150,7 +150,7 @@ interatively, it allows us to move between revisions with `n`,
 git porcelain
 #+BEGIN_SRC emacs-lisp
   (use-package magit
-    :defer t
+    :demand t
     :after project
     :bind ("C-c g" . magit-status)
     :config
