@@ -10,14 +10,6 @@ and feel if appropriate. But first... let's get rid of tabs!
 #+END_SRC
 
 * Programming Languages Modes
-** C
-Style settings for C-programming language.
-#+BEGIN_SRC emacs-lisp
-  (setq c-default-style '((java-mode . "java")
-                          (awk-mode . "awk")
-                          (other . "k&r")))
-#+END_SRC
-
 ** Rust
 Rust-specific settings and packages. First install the major mode
 #+BEGIN_SRC emacs-lisp
