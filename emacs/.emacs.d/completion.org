@@ -26,7 +26,6 @@ contexts. We complete text with `TAB` across Emacs' buffers.
 
     ;; Optionally use TAB for cycling, default is `corfu-complete'.
     :bind (:map corfu-map
-                ;; ("RET"     . nil) ;; leave my enter alone!
                 ("TAB"     . corfu-insert)
                 ([tab]     . corfu-insert)
                 ("S-TAB"   . corfu-previous)
