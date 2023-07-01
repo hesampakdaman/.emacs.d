@@ -58,3 +58,10 @@ fi
 
 # disable freeze C-s
 [[ $- == *i* ]] && stty -ixon
+
+if [ -f /usr/share/autojump/autojump.sh ]; then
+    . /usr/share/autojump/autojump.sh
+fi
+if [ -f /usr/share/doc/fzf/examples/key-bindings.bash ]; then
+    . /usr/share/doc/fzf/examples/key-bindings.bash
+fi
