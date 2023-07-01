@@ -76,7 +76,7 @@ languages. We use eglot which is built-in >= Emacs 29.
     :config
     (set-face-attribute 'eglot-highlight-symbol-face nil
                         :inherit 'match)
-    :hook ((rust-mode python-mode) . eglot-ensure))
+    :hook ((rust-mode python-mode haskell-mode) . eglot-ensure))
 
   (use-package eldoc-box
     :after eglot
