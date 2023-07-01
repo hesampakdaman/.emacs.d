@@ -142,6 +142,7 @@ interatively, it allows us to move between revisions with `n`,
 `p`. Hit `?` to get a hydra-like menu for more commands.
 #+BEGIN_SRC emacs-lisp
   (use-package git-timemachine
+    :defer t
     :after magit)
 #+END_SRC
 
@@ -149,7 +150,7 @@ interatively, it allows us to move between revisions with `n`,
 git porcelain
 #+BEGIN_SRC emacs-lisp
   (use-package magit
-    :demand t
+    :defer t
     :after project
     :bind ("C-c g" . magit-status)
     :config
