@@ -214,3 +214,12 @@ minor mode.
 #+BEGIN_SRC emacs-lisp
   (global-subword-mode 1)
 #+END_SRC
+
+* Narrow
+Allow narrowing `C-x n n` to a region. It makes sense to have it off
+and warn the user by default. But once you familiarize with the mode
+it's okay to allow it. Simply put, this command lets you only display
+the region you selected.
+#+BEGIN_SRC emacs-lisp
+  (put 'narrow-to-region 'disabled nil)
+#+END_SRC
