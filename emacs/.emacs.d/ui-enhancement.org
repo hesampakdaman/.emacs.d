@@ -71,7 +71,7 @@ lots of color!
          (set-face-attribute 'tab-bar nil
                              :height 0.95
                              :family hesam-default-font-family
-                             :foreground (modus-themes-get-color-value 'bg-main)
+                             :foreground (modus-themes-get-color-value 'fg-main)
                              :background (modus-themes-get-color-value 'bg-main)
                              :underline (modus-themes-get-color-value 'border)
                              :box nil)
@@ -109,7 +109,7 @@ lots of color!
          (set-face-attribute 'tab-bar nil
                              :height 0.95
                              :family hesam-default-font-family
-                             :foreground (ef-themes-get-color-value 'bg-main)
+                             :foreground (ef-themes-get-color-value 'fg-main)
                              :background (ef-themes-get-color-value 'bg-main)
                              :underline (ef-themes-get-color-value 'border)
                              :box nil)
@@ -262,15 +262,33 @@ horizontally split windows (ie. `C-x 3` windows).
 
 * Mode-line
 We like a compact mode-line and since VC mode will display potentially
-long branch names we remove it from the mode-line.
+long branch names we remove it from the mode-line. To be safe we
+remove it after startup to ensure it is set when we try and delete it.
 #+BEGIN_SRC emacs-lisp
   (setq mode-line-compact t)
-  (delete '(vc-mode vc-mode) mode-line-format)
+  (add-hook
+   'emacs-startup-hook
+   (lambda ()
+     (delete '(vc-mode vc-mode) mode-line-format)))
 #+END_SRC
 
-and to remove the precentage and All/Top/Bottom indicator
+and to remove the precentage and All/Top/Bottom indicator.
 #+BEGIN_SRC emacs-lisp
   (setq mode-line-percent-position nil)
+#+END_SRC
+
+Remove global info from the mode-line. Otherwise `display-time-mode`
+will display the time on every mode-line bar since
+`mode-line-misc-info` carries the global-string. We instead opt for
+the tab-bar to include the global-info-string since for each frame we
+have only one tab-bar. At the time of writing, as you'll see below, we
+need to wait until the mode-line-misc-info is set and safest is to do
+it after startup.
+#+BEGIN_SRC emacs-lisp
+  (add-hook
+   'emacs-startup-hook
+   (lambda ()
+     (delete '(global-mode-string ("" global-mode-string)) mode-line-misc-info)))
 #+END_SRC
 
 To further clean-up the mode-line we will install `minions` that hides
@@ -291,12 +309,16 @@ example we enable the functionality and hide the close tab button.
 
 Next we decide what to display in the tab bar. This is done by adding
 functions to a variable that does something in the tab bar (like
-returning a string).
+returning a string). The `tab-bar-format-global` option will display
+info that are of _global_ nature, such as the time with
+`display-time-mode`.
+
 #+BEGIN_SRC emacs-lisp
   (setq tab-bar-format
-        '(tab-bar-format-tabs         ; show tabs in the bar
+        '(tab-bar-format-tabs
           tab-bar-separator
-          tab-bar-format-align-right)) ; render the bar across the frame
+          tab-bar-format-align-right
+          tab-bar-format-global))
 #+END_SRC
 
 However, the tab bar format tabs string prepends a separator on the
