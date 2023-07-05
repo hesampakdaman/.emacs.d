@@ -184,6 +184,24 @@ Save minibuffer commands in a file that is loaded at startup
   (savehist-mode t)
 #+END_SRC
 
+* Sentence end space
+One of the ways Emacs recognizes sentences is by a '.', ',', '?' or
+'!' followed by _two_ spaces. Hence sentence commands such as `M-k`
+will not work properly for text that does not follow this convention.
+We change it here so that only _one_ space is needed.
+#+BEGIN_SRC emacs-lisp
+  (setq sentence-end-double-space nil)
+#+END_SRC
+
+The drawback now is that Emacs cannot distinguish between periods used
+in abbreviations and those that mark an end to a sentence. Consider
+#+begin_quote
+Mt. Everest is Earth's highest mountain.
+#+end_quote
+
+Putting the cursor at the character `M` in the quote above and
+pressing `M-e` leaves us in the space between `Mt.` and `Everest`.
+
 * Server
 Starts emacs server at startup so that emacsclient can connect to
 it. This preferably used in conjunction with systemd --user to
