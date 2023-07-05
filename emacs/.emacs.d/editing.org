@@ -1,3 +1,5 @@
+#+TITLE: Editing settings
+#+STARTUP: OVERVIEW
 * Custom editing functions
 Here we define custom functions that we use for editing simple
 text. We first declare all their keybindings and make sure they are
@@ -62,8 +64,7 @@ Simple function to delete blank lines from cursor downwards.
     (flush-lines "^$"))
 #+END_SRC
 
-* Packages
-** sudo-edit
+* sudo-edit
 When buffer is locked for editing due to permissons we can use this
 package to make editing with sudo access easily. We extensively use
 either `(sudo-edit-current-file)` or `(sudo-edit-find-file)`.
