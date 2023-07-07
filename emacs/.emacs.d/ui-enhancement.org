@@ -34,7 +34,7 @@ lots of color!
                              :height 0.95
                              :family hesam-default-font-family
                              :weight 'regular
-                             :foreground "#f8f8f2"
+                             :foreground "#bd93f9"
                              :background "#282a36"
                              :underline "#44475a"
                              :box nil)
