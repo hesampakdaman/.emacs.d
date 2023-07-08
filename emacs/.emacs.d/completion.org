@@ -15,16 +15,11 @@ contexts. We complete text with `TAB` across Emacs' buffers.
 #+BEGIN_SRC emacs-lisp
   (use-package corfu
     :custom
-    (corfu-cycle t)                  ; Allows cycling through candidates
-    (corfu-auto t)                   ; Enable auto completion
-    (corfu-auto-prefix 3)            ; Enable auto completion
-    (corfu-auto-delay 0.25)          ; Enable auto completion
-    (corfu-quit-at-boundary nil)
-    (corfu-echo-documentation 0.25)   ; Enable auto completion
-    (corfu-preview-current 'first)    ; Do not preview current candidate
-    (corfu-preselect-first 'first)
-
-    ;; Optionally use TAB for cycling, default is `corfu-complete'.
+    (corfu-cycle t)
+    (corfu-auto t)
+    (corfu-quit-at-boundary t)
+    (corfu-preview-current 'first)
+    (corfu-preselect 'first)
     :bind (:map corfu-map
                 ("TAB"     . corfu-insert)
                 ([tab]     . corfu-insert)
@@ -33,10 +28,12 @@ contexts. We complete text with `TAB` across Emacs' buffers.
     :init
     (global-corfu-mode))
 
-  (setq completion-cycle-threshold 3)
+  ;; Do not cycle commands instead give me the corfu pop-up
+  (setq completion-cycle-threshold nil)
 
-  ;; Emacs 28: Hide commands in M-x which do not apply to the current mode.
-  ;; Corfu commands are hidden, since they are not supposed to be used via M-x.
+  ;; Hide commands in M-x which do not apply to the current mode. Corfu
+  ;; commands are hidden, since they are not supposed to be used via
+  ;; M-x.
   (setq read-extended-command-predicate
         #'command-completion-default-include-p)
 
