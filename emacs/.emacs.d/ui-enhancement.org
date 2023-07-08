@@ -149,39 +149,51 @@ activated buffers.
 #+END_SRC
 
 * Fonts
-We set the default, fixed-pitch and variable-pitch fonts here.  In
-order to get good font size across different screens we define
-variables that depend on resolutions, high-res and low-res.
+** Family
+The core of our text rendering in Emacs, the font family, is defined
+here as a configurable variable, which ensures flexibility and
+customization.
 #+BEGIN_SRC emacs-lisp
   (defcustom hesam-default-font-family "IosevkaTerm Nerd Font"
     "Default font family."
     :type 'string
     :group 'hesam)
+#+END_SRC
 
-  (defcustom hesam-default-hires-height 180
-    "Default high-resolution height."
-    :type 'integer
-    :group 'hesam)
+** Resolution-specific font sizes
+To maintain a visually pleasing font size regardless of the display
+resolution, we define custom variables that set the font height based
+on whether the screen is high-resolution (HiRes) or low-resolution
+(LowRes). The variables `hesam-hires-display-font-height` and
+`hesam-lowres-display-font-height` control the font height values for
+HiRes and LowRes displays, respectively.
+#+BEGIN_SRC emacs-lisp
+  (defvar hesam-hires-display-font-height-value 180
+    "The actual value of 'hesam-hires-display-font-height'.")
 
-  (defcustom hesam-default-lowres-height 120
-    "Default low-resolution height."
-    :type 'integer
-    :group 'hesam)
+  (defvar hesam-lowres-display-font-height-value 120
+    "The actual value of 'hesam-lowres-display-font-height'.")
 
-  (defcustom hesam-modeline-hires-height (- hesam-default-hires-height 10)
+  (defcustom hesam-modeline-hires-height (floor (* hesam-hires-display-font-height-value 0.9))
     "Modeline high-resolution height."
     :type 'integer
     :group 'hesam)
 
-  (defcustom hesam-modeline-lowres-height (- hesam-default-lowres-height 5)
+  (defcustom hesam-modeline-lowres-height (floor (* hesam-lowres-display-font-height-value 0.9))
     "Modeline low-resolution height."
     :type 'integer
     :group 'hesam)
+#+END_SRC
 
+** Default font attributes
+We explicitly set the attributes for the `'default`, `'fixed-pitch`,
+and `'variable-pitch` fonts. These attributes include the font family,
+weight, and height, the latter depending on the screen resolution.
+#+BEGIN_SRC emacs-lisp
   (set-face-attribute 'default nil
                       :family hesam-default-font-family
                       :weight 'regular
-                      :height hesam-default-lowres-height)
+                      :height hesam-lowres-display-font-height-value)
 
   (set-face-attribute 'fixed-pitch nil
                       :inherit 'default)
@@ -196,26 +208,85 @@ variables that depend on resolutions, high-res and low-res.
                       :inherit 'default)
 #+END_SRC
 
-If we drag an Emacs frame between screens with different resolutions
-we have to update all font sizes in that frame. The
-`hesam/font-per-display` achieves that and we let it be run each time
-a new frame is created and whenever it's moved.
+** Font size adjustment functions
+In scenarios where an Emacs frame is dragged between screens of
+different resolutions, all font sizes within that frame must be
+updated accordingly. The function `hesam/font-per-display` is designed
+to handle this, and it's set to run every time a new frame is created
+or moved.
+*** Threshold
+The variable `hesam-hires-resolution-threshold` sets the resolution
+threshold for high-resolution displays.
+#+BEGIN_SRC emacs-lisp
+  (defvar hesam-hires-resolution-threshold-value 1200
+    "The actual value of 'hesam-hires-resolution-threshold'.")
+#+END_SRC
+
+*** Functions
+The functions `hesam/font-per-display` and `hesam/set-font-sizes` work
+in tandem to adjust the font sizes based on the current screen
+resolution.
 #+BEGIN_SRC emacs-lisp
   (defun hesam/font-per-display (frame)
     "Adjust the font size based on the FRAME's resolution."
     (let* ((geometry (frame-monitor-attribute 'geometry frame))
            (resolution (car (last geometry))))
       (select-frame frame)
-      (if (> resolution 1200)
-          (hesam/set-font-sizes frame hesam-default-hires-height hesam-modeline-hires-height)
-        (hesam/set-font-sizes frame hesam-default-lowres-height hesam-modeline-lowres-height))))
+      (if (> resolution hesam-hires-resolution-threshold-value)
+          (hesam/set-font-sizes frame hesam-hires-display-font-height-value hesam-modeline-hires-height)
+        (hesam/set-font-sizes frame hesam-lowres-display-font-height-value hesam-modeline-lowres-height))))
 
   (defun hesam/set-font-sizes (frame default-height modeline-height)
     "Helper function to set the font sizes of FRAME."
     (set-face-attribute 'default frame :height default-height)
     (set-face-attribute 'mode-line frame :height modeline-height)
     (set-face-attribute 'mode-line-inactive frame :height modeline-height))
+#+END_SRC
 
+*** Custom variables
+The following custom variables control the font height based on the
+screen resolution. The `:set` attribute in each `defcustom` call is
+used to automatically update the font sizes using the
+`hesam/font-per-display` function whenever these variables are
+changed.
+#+BEGIN_SRC emacs-lisp
+  (defcustom hesam-hires-display-font-height 180
+    "Font height for high-resolution displays."
+    :type 'integer
+    :group 'hesam
+    :set (lambda (sym value)
+           (set-default sym value)
+           (setq hesam-hires-display-font-height-value value)
+           (hesam/font-per-display (selected-frame)))
+    :get (lambda (sym) hesam-hires-display-font-height-value))
+
+  (defcustom hesam-lowres-display-font-height 120
+    "Font height for low-resolution displays."
+    :type 'integer
+    :group 'hesam
+    :set (lambda (sym value)
+           (set-default sym value)
+           (setq hesam-lowres-display-font-height-value value)
+           (hesam/font-per-display (selected-frame)))
+    :get (lambda (sym) hesam-lowres-display-font-height-value))
+
+  (defcustom hesam-hires-resolution-threshold 1200
+    "Resolution threshold for high-resolution displays."
+    :type 'integer
+    :group 'hesam
+    :set (lambda (sym value)
+           (set-default sym value)
+           (setq hesam-hires-resolution-threshold-value value)
+           (hesam/font-per-display (selected-frame)))
+    :get (lambda (sym) hesam-hires-resolution-threshold-value))
+#+END_SRC
+*** Hooks
+Hooks are set up to ensure `hesam/font-per-display` is executed as
+required, maintaining optimal font size regardless of the screen
+resolution. This ensures that the font sizes are adjusted
+automatically when we create a new frame or move an existing frame to
+another screen.
+#+BEGIN_SRC emacs-lisp
   (add-hook 'after-make-frame-functions 'hesam/font-per-display)
   (add-hook 'move-frame-functions 'hesam/font-per-display)
 #+END_SRC
