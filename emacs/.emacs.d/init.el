@@ -1,6 +1,6 @@
-(load-file (expand-file-name "elpaca.el" user-emacs-directory))
-(elpaca use-package)
-(elpaca-wait)
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
 

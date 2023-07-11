@@ -10,7 +10,6 @@ prefix/leader keys.
   (use-package general
     :init
     (general-auto-unbind-keys))
-  (elpaca-wait)
 #+END_SRC
 
 ** Leaders Keys
