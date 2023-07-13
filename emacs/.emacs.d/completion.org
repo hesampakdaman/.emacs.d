@@ -17,7 +17,6 @@ contexts. We complete text with `TAB` across Emacs' buffers.
     :custom
     (corfu-cycle t)
     (corfu-auto t)
-    (corfu-quit-at-boundary t)
     (corfu-preview-current 'first)
     (corfu-preselect 'first)
     :bind (:map corfu-map
