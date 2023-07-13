@@ -168,13 +168,13 @@ number in seconds for each change you make in the buffer.
 #+BEGIN_SRC emacs-lisp
   (use-package flymake
     :config
-    (setq flymake-fringe-indicator-position 'left-fringe
-          flymake-suppress-zero-counters t
-          flymake-start-on-flymake-mode t
-          flymake-no-changes-timeout 0.5
-          flymake-start-on-save-buffer t
+    (setq flymake-no-changes-timeout 0.5
           flymake-proc-compilation-prevents-syntax-check t
-          flymake-wrap-around nil))
+          flymake-start-on-flymake-mode t
+          flymake-start-on-save-buffer t
+          flymake-suppress-zero-counters t
+          flymake-wrap-around nil
+          flymake-fringe-indicator-position 'left-fringe))
 #+END_SRC
 
 * Project
