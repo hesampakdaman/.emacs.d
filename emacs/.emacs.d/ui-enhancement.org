@@ -6,148 +6,6 @@ configured elsewhere which affects the look of Emacs. One such example
 is the face `hideshow` minor mode uses, which we have put in
 `programming.org` because it's directly related to programming.
 
-* Themes
-** Dracula
-The name of the theme is `dracula` -- dark, sleek and ubiquitous with
-lots of color!
-#+BEGIN_SRC emacs-lisp
-  (use-package dracula-theme
-    :init
-    (setq dracula-enlarge-headings nil)
-    :config
-    (load-theme 'dracula t)
-    :init
-    (add-hook
-     'after-load-theme-hook
-     (lambda (theme)
-       (when (eq theme 'dracula)
-         ;; We don't like the match face provided by Dracula so we change it
-         ;; here -- as this should only be done if this theme is used.
-         (set-face-attribute 'match nil :background "#bd93f9")
-
-         ;; Use Dracula theme colors for the tab bar; we prefer it to be slighly
-         ;; smaller than surrounding text. We'll also add a line across the Emacs
-         ;; frame to separate the tab bar from the buffer. Inheriting nil to make
-         ;; sure it does not get values from `'default` which would alter size of
-         ;; tab bar font when zooming in/out the buffer.
-         (set-face-attribute 'tab-bar nil
-                             :height 0.95
-                             :family hesam-default-font-family
-                             :weight 'regular
-                             :foreground "#bd93f9"
-                             :background "#282a36"
-                             :underline "#44475a"
-                             :box nil)
-
-         ;; To differentiate between active/inactive tabs we make adjustments
-         ;; to the text weight and colors.
-         (set-face-attribute 'tab-bar-tab nil
-                             :inherit 'tab-bar
-                             :weight 'bold
-                             :foreground "#ff79c6"
-                             :background "#282a36"
-                             :underline "#ff79c6"
-                             :box `(:line-width (1 . 10) :color "#282a36" :style nil))
-
-         (set-face-attribute 'tab-bar-tab-inactive nil
-                             :inherit 'tab-bar
-                             :foreground "#bd93f9"
-                             :background "#282a36"
-                             :box `(:line-width (1 . 10) :color "#282a36" :style nil))
-         ;; Hides the fringe on vertical edges of the screen
-         (set-face-attribute 'fringe nil
-                             :background "#282a36")))))
-#+END_SRC
-
-** Modus
-#+BEGIN_SRC emacs-lisp
-  (use-package modus-themes
-    :init
-    (add-hook
-     'after-load-theme-hook
-     (lambda (theme)
-       (when (string-match-p "modus-" (symbol-name theme))
-         ;; Theme bar set to background with a window divider (underline)
-         (set-face-attribute 'tab-bar nil
-                             :height 0.95
-                             :family hesam-default-font-family
-                             :foreground (modus-themes-get-color-value 'fg-main)
-                             :background (modus-themes-get-color-value 'bg-main)
-                             :underline (modus-themes-get-color-value 'border)
-                             :box nil)
-
-         ;; To differentiate between active/inactive tabs we make adjustments
-         ;; to the text weight and colors.
-         (set-face-attribute 'tab-bar-tab nil
-                             :inherit 'tab-bar
-                             :weight 'bold
-                             :foreground (modus-themes-get-color-value 'red)
-                             :background (modus-themes-get-color-value 'bg-main)
-                             :underline (modus-themes-get-color-value 'red)
-                             :box `(:line-width (1 . 10) :color ,(modus-themes-get-color-value 'bg-main) :style nil))
-
-         (set-face-attribute 'tab-bar-tab-inactive nil
-                             :inherit 'tab-bar
-                             :background (modus-themes-get-color-value 'bg-main)
-                             :foreground (modus-themes-get-color-value 'fg-main)
-                             :box `(:line-width (1 . 10) :color ,(modus-themes-get-color-value 'bg-main) :style nil))
-
-         ;; Hides the fringe on vertical edges of the screen
-         (set-face-attribute 'fringe nil
-                             :background (modus-themes-get-color-value 'bg-main))))))
-#+END_SRC
-
-** Ef
-#+BEGIN_SRC emacs-lisp
-  (use-package ef-themes
-    :init
-    (add-hook
-     'after-load-theme-hook
-     (lambda (theme)
-       (when (string-match-p "ef-" (symbol-name theme))
-         ;; Theme bar set to background with a window divider (underline)
-         (set-face-attribute 'tab-bar nil
-                             :height 0.95
-                             :family hesam-default-font-family
-                             :foreground (ef-themes-get-color-value 'fg-main)
-                             :background (ef-themes-get-color-value 'bg-main)
-                             :underline (ef-themes-get-color-value 'border)
-                             :box nil)
-
-         ;; To differentiate between active/inactive tabs we make adjustments
-         ;; to the text weight and colors.
-         (set-face-attribute 'tab-bar-tab nil
-                             :inherit 'tab-bar
-                             :weight 'bold
-                             :foreground (ef-themes-get-color-value 'red)
-                             :background (ef-themes-get-color-value 'bg-main)
-                             :underline (ef-themes-get-color-value 'red)
-                             :box `(:line-width (1 . 10) :color ,(ef-themes-get-color-value 'bg-main) :style nil))
-
-         (set-face-attribute 'tab-bar-tab-inactive nil
-                             :inherit 'tab-bar
-                             :background (ef-themes-get-color-value 'bg-main)
-                             :foreground (ef-themes-get-color-value 'fg-main)
-                             :box `(:line-width (1 . 10) :color ,(ef-themes-get-color-value 'bg-main) :style nil))
-
-         ;; Hides the fringe on vertical edges of the screen
-         (set-face-attribute 'fringe nil
-                             :background (ef-themes-get-color-value 'bg-main))))))
-#+END_SRC
-
-* Cursor
-We always want the cursor to always blink so we can easily find it.
-#+BEGIN_SRC emacs-lisp
-  (blink-cursor-mode t)
-  (setq blink-cursor-blinks 0) ;; blink forever
-#+END_SRC
-
-Highlights current line in programming buffers, ie. in `prog-mode`
-activated buffers.
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'prog-mode-hook 'hl-line-mode)
-#+END_SRC
-
 * Fonts
 ** Family
 The core of our text rendering in Emacs, the font family, is defined
@@ -289,6 +147,145 @@ another screen.
 #+BEGIN_SRC emacs-lisp
   (add-hook 'after-make-frame-functions 'hesam/font-per-display)
   (add-hook 'move-frame-functions 'hesam/font-per-display)
+#+END_SRC
+
+* Themes
+** Dracula
+The name of the theme is `dracula` -- dark, sleek and ubiquitous with
+lots of color!
+#+BEGIN_SRC emacs-lisp
+  (use-package dracula-theme
+    :init
+    (setq dracula-enlarge-headings nil)
+    (add-hook
+     'after-load-theme-hook
+     (lambda (theme)
+       (when (eq theme 'dracula)
+         ;; We don't like the match face provided by Dracula so we change it
+         ;; here -- as this should only be done if this theme is used.
+         (set-face-attribute 'match nil :background "#bd93f9")
+
+         ;; Use Dracula theme colors for the tab bar; we prefer it to be slighly
+         ;; smaller than surrounding text. We'll also add a line across the Emacs
+         ;; frame to separate the tab bar from the buffer. Inheriting nil to make
+         ;; sure it does not get values from `'default` which would alter size of
+         ;; tab bar font when zooming in/out the buffer.
+         (set-face-attribute 'tab-bar nil
+                             :height 0.95
+                             :family hesam-default-font-family
+                             :weight 'regular
+                             :foreground "#bd93f9"
+                             :background "#282a36"
+                             :underline "#44475a"
+                             :box nil)
+
+         ;; To differentiate between active/inactive tabs we make adjustments
+         ;; to the text weight and colors.
+         (set-face-attribute 'tab-bar-tab nil
+                             :inherit 'tab-bar
+                             :weight 'bold
+                             :foreground "#ff79c6"
+                             :background "#282a36"
+                             :underline "#ff79c6"
+                             :box `(:line-width (1 . 10) :color "#282a36" :style nil))
+
+         (set-face-attribute 'tab-bar-tab-inactive nil
+                             :inherit 'tab-bar
+                             :foreground "#bd93f9"
+                             :background "#282a36"
+                             :box `(:line-width (1 . 10) :color "#282a36" :style nil))
+         ;; Hides the fringe on vertical edges of the screen
+         (set-face-attribute 'fringe nil
+                             :background "#282a36")))))
+#+END_SRC
+
+** Modus
+#+BEGIN_SRC emacs-lisp
+  (use-package modus-themes
+    :init
+    (add-hook
+     'after-load-theme-hook
+     (lambda (theme)
+       (when (string-match-p "modus-" (symbol-name theme))
+         ;; Theme bar set to background with a window divider (underline)
+         (set-face-attribute 'tab-bar nil
+                             :height 0.95
+                             :family hesam-default-font-family
+                             :foreground (modus-themes-get-color-value 'fg-main)
+                             :background (modus-themes-get-color-value 'bg-main)
+                             :underline (modus-themes-get-color-value 'border)
+                             :box nil)
+
+         ;; To differentiate between active/inactive tabs we make adjustments
+         ;; to the text weight and colors.
+         (set-face-attribute 'tab-bar-tab nil
+                             :inherit 'tab-bar
+                             :weight 'bold
+                             :foreground (modus-themes-get-color-value 'red)
+                             :background (modus-themes-get-color-value 'bg-main)
+                             :underline (modus-themes-get-color-value 'red)
+                             :box `(:line-width (1 . 10) :color ,(modus-themes-get-color-value 'bg-main) :style nil))
+
+         (set-face-attribute 'tab-bar-tab-inactive nil
+                             :inherit 'tab-bar
+                             :background (modus-themes-get-color-value 'bg-main)
+                             :foreground (modus-themes-get-color-value 'fg-main)
+                             :box `(:line-width (1 . 10) :color ,(modus-themes-get-color-value 'bg-main) :style nil))
+
+         ;; Hides the fringe on vertical edges of the screen
+         (set-face-attribute 'fringe nil
+                             :background (modus-themes-get-color-value 'bg-main))))))
+#+END_SRC
+
+** Ef
+#+BEGIN_SRC emacs-lisp
+  (use-package ef-themes
+    :init
+    (add-hook
+     'after-load-theme-hook
+     (lambda (theme)
+       (when (string-match-p "ef-" (symbol-name theme))
+         ;; Theme bar set to background with a window divider (underline)
+         (set-face-attribute 'tab-bar nil
+                             :height 0.95
+                             :family hesam-default-font-family
+                             :foreground (ef-themes-get-color-value 'fg-main)
+                             :background (ef-themes-get-color-value 'bg-main)
+                             :underline (ef-themes-get-color-value 'border)
+                             :box nil)
+
+         ;; To differentiate between active/inactive tabs we make adjustments
+         ;; to the text weight and colors.
+         (set-face-attribute 'tab-bar-tab nil
+                             :inherit 'tab-bar
+                             :weight 'bold
+                             :foreground (ef-themes-get-color-value 'red)
+                             :background (ef-themes-get-color-value 'bg-main)
+                             :underline (ef-themes-get-color-value 'red)
+                             :box `(:line-width (1 . 10) :color ,(ef-themes-get-color-value 'bg-main) :style nil))
+
+         (set-face-attribute 'tab-bar-tab-inactive nil
+                             :inherit 'tab-bar
+                             :background (ef-themes-get-color-value 'bg-main)
+                             :foreground (ef-themes-get-color-value 'fg-main)
+                             :box `(:line-width (1 . 10) :color ,(ef-themes-get-color-value 'bg-main) :style nil))
+
+         ;; Hides the fringe on vertical edges of the screen
+         (set-face-attribute 'fringe nil
+                             :background (ef-themes-get-color-value 'bg-main))))))
+#+END_SRC
+
+* Cursor
+We always want the cursor to always blink so we can easily find it.
+#+BEGIN_SRC emacs-lisp
+  (blink-cursor-mode t)
+  (setq blink-cursor-blinks 0) ;; blink forever
+#+END_SRC
+
+Highlights current line in programming buffers, ie. in `prog-mode`
+activated buffers.
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'prog-mode-hook 'hl-line-mode)
 #+END_SRC
 
 * Frame customization and decorations
