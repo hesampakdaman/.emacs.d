@@ -193,10 +193,7 @@ lots of color!
                              :inherit 'tab-bar
                              :foreground "#bd93f9"
                              :background "#282a36"
-                             :box `(:line-width (1 . 10) :color "#282a36" :style nil))
-         ;; Hides the fringe on vertical edges of the screen
-         (set-face-attribute 'fringe nil
-                             :background "#282a36")))))
+                             :box `(:line-width (1 . 10) :color "#282a36" :style nil))))))
 #+END_SRC
 
 ** Modus
@@ -230,11 +227,7 @@ lots of color!
                              :inherit 'tab-bar
                              :background (modus-themes-get-color-value 'bg-main)
                              :foreground (modus-themes-get-color-value 'fg-main)
-                             :box `(:line-width (1 . 10) :color ,(modus-themes-get-color-value 'bg-main) :style nil))
-
-         ;; Hides the fringe on vertical edges of the screen
-         (set-face-attribute 'fringe nil
-                             :background (modus-themes-get-color-value 'bg-main))))))
+                             :box `(:line-width (1 . 10) :color ,(modus-themes-get-color-value 'bg-main) :style nil))))))
 #+END_SRC
 
 ** Ef
@@ -268,11 +261,7 @@ lots of color!
                              :inherit 'tab-bar
                              :background (ef-themes-get-color-value 'bg-main)
                              :foreground (ef-themes-get-color-value 'fg-main)
-                             :box `(:line-width (1 . 10) :color ,(ef-themes-get-color-value 'bg-main) :style nil))
-
-         ;; Hides the fringe on vertical edges of the screen
-         (set-face-attribute 'fringe nil
-                             :background (ef-themes-get-color-value 'bg-main))))))
+                             :box `(:line-width (1 . 10) :color ,(ef-themes-get-color-value 'bg-main) :style nil))))))
 #+END_SRC
 
 * Cursor
@@ -326,6 +315,14 @@ Setting partial width windows to `nil` means to respect the value for
 horizontally split windows (ie. `C-x 3` windows).
 #+BEGIN_SRC emacs-lisp
   (setq-default truncate-partial-width-windows nil)
+#+END_SRC
+
+Set fringes to be invisible by inheriting from 'default. Hook it so it
+updates when changing themes.
+#+BEGIN_SRC emacs-lisp
+  (add-hook
+   'after-load-theme-hook
+   (lambda (&optional args) (set-face-attribute 'fringe nil :background nil)))
 #+END_SRC
 
 * Mode-line
