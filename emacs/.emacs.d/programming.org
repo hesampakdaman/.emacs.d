@@ -220,13 +220,14 @@ from Emacs' linear tree. This enables us to build an undo-tree on the
 fly, navigate it and make Emacs go to that state. Born is the package
 `vundo` (visualize undo).
 #+BEGIN_SRC emacs-lisp
-  (use-package vundo)
+  (use-package vundo :defer t)
 #+END_SRC
 
 * ws-butler
 Removes trailing space and tabs from this user modified lines.
 #+BEGIN_SRC emacs-lisp
   (use-package ws-butler
+    :defer t
     :hook ((prog-mode text-mode) . ws-butler-mode))
 #+END_SRC
 
