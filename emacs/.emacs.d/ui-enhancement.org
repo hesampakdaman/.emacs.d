@@ -320,7 +320,6 @@ divider -- using `:underline` to highlight where the tab-bar starts.
                         :background (face-background 'default)
                         :box `(:line-width (1 . 10) :color ,(face-background 'default) :style nil)))
 
-
   ;; Run the function to set the look
   (hesam/set-tab-face-attributes)
 
@@ -328,7 +327,7 @@ divider -- using `:underline` to highlight where the tab-bar starts.
   ;; during run-time.
   (add-hook
    'after-load-theme-hook
-   (lambda (theme) (hesam/set-tab-face-attributes)))
+   (lambda (&optional theme) (hesam/set-tab-face-attributes)))
 #+END_SRC
 
 Next we decide what to display in the tab bar. This is done by adding
