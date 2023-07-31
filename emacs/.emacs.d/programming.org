@@ -191,14 +191,6 @@ copying.
            ("C-c n t" . neotree-toggle)))
 #+END_SRC
 
-* Project
-Project management tool using git to detect root. Prefix `C-x p` to
-run project commands like visiting buffers and files associated with
-the project. We can also start a terminal in the project root or VC.
-#+BEGIN_SRC emacs-lisp
-  (use-package project)
-#+END_SRC
-
 * vundo
 In this excellet [[https://archive.casouri.cc/note/2021/visual-undo-tree/index.html][blog]] Yuan Fu describes a way of creating an undo-tree
 from Emacs' linear tree. This enables us to build an undo-tree on the
