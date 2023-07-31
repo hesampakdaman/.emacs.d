@@ -11,31 +11,41 @@ and feel if appropriate. But first... let's get rid of tabs!
 
 * Programming Languages Modes
 ** Rust
-Rust-specific settings and packages. First install the major mode
+Rust-specific settings and packages. First remap the default major
+mode with Treesitter variant.
 #+BEGIN_SRC emacs-lisp
-  (use-package rust-mode)
+  (use-package rust-ts-mode
+    :config
+    (add-to-list 'major-mode-remap-alist '(rust-mode . rust-ts-mode)))
 #+END_SRC
 
-Now install `rustic` package which provides a rich Rust development
-environment.
+The `rustic` package enriches Emacs for editing rust source code.
+However, at the time of writing `rustic` is incompatible with
+`rust-ts-mode`. But seeing as we would like to retain the compilation
+convenience functions, we still install the package and use its
+bindings in `rust-ts-mode`.
 #+BEGIN_SRC emacs-lisp
   (use-package rustic
     :config
     (setq rustic-format-on-save nil
-	  rustic-lsp-client 'eglot
-	  rustic-ansi-faces (vector
-			     "black"
-			     (hesam/theme-color 'red)
-			     (hesam/theme-color 'green)
-			     (hesam/theme-color 'yellow)
-			     (hesam/theme-color 'purple)
-			     (hesam/theme-color 'pink)
-			     (hesam/theme-color 'cyan)
-			     (hesam/theme-color 'white))))
+          rustic-lsp-client nil)
+    :bind (:map rust-ts-mode-map
+                ("C-c C-c C-c" . rustic-recompile)
+                ("C-c C-c C-r" . rustic-cargo-run)
+                ("C-c C-c C-l" . rustic-cargo-clippy-run)
+                ("C-c C-c C-f" . rustic-cargo-clippy-fix)
+                ("C-c C-c C-r" . rustic-cargo-run)
+                ("C-c C-c C-t" . rustic-cargo-test)))
   #+END_SRC
 
 ** Python
-Python-specific settings and packages.
+Python-specific settings and packages. Since Emacs 29 we have Python
+with Treesitter support.
+#+BEGIN_SRC emacs-lisp
+  (setq python-ts-mode-hook python-mode-hook)
+  (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+#+END_SRC
+
 *** auto-virtualenv
 Automatically activate Python virtual environments with `auto-virtualenv`.
 #+BEGIN_SRC emacs-lisp
@@ -51,8 +61,8 @@ Automatically activate Python virtual environments with `auto-virtualenv`.
 #+BEGIN_SRC emacs-lisp
   (use-package python-black
     :demand t
-    :after python
-    :hook (python-mode . python-black-on-save-mode-enable-dwim))
+    :after python-ts-mode
+    :hook (python-ts-mode . python-black-on-save-mode-enable-dwim))
 #+END_SRC
 
 *** pyenv
@@ -66,7 +76,6 @@ Setup Language Server Protocol (LSP) for different programming
 languages. We use eglot which is built-in >= Emacs 29.
 #+BEGIN_SRC emacs-lisp
   (use-package eglot
-    :after project
     :defer t
     :bind (:map eglot-mode-map
                 ("C-c e r" . eglot-rename)
@@ -76,7 +85,7 @@ languages. We use eglot which is built-in >= Emacs 29.
     :config
     (set-face-attribute 'eglot-highlight-symbol-face nil
                         :inherit 'match)
-    :hook ((rust-mode python-mode haskell-mode) . eglot-ensure))
+    :hook ((rust-ts-mode python-ts-mode haskell-ts-mode) . eglot-ensure))
 
   (use-package eldoc-box
     :after eglot
@@ -189,6 +198,15 @@ copying.
           neo-smart-open t)
     :bind (("C-c n d" . neotree-dir)
            ("C-c n t" . neotree-toggle)))
+#+END_SRC
+
+* Treesit-auto
+#+BEGIN_SRC emacs-lisp
+  (use-package treesit-auto
+    :demand t
+    :config
+    (setq treesit-auto-install t)
+    (global-treesit-auto-mode))
 #+END_SRC
 
 * vundo
