@@ -16,8 +16,8 @@ contexts. We complete text with `TAB` across Emacs' buffers.
   (use-package corfu
     :custom
     (corfu-cycle t)
-    (corfu-auto t)
-    (corfu-preview-current 'first)
+    (corfu-quit-at-boundary nil)
+    (corfu-preview-current nil)
     (corfu-preselect 'first)
     :bind (:map corfu-map
                 ("TAB"     . corfu-insert)
@@ -49,9 +49,10 @@ the search string `g l` will match both if we have set `'orderless`
 style (ie. the order of your serach words does not matter).
 #+BEGIN_SRC emacs-lisp
   (use-package orderless
-    :custom
-    (completion-styles '(orderless))
-    (completion-category-overrides '((file (styles partial-completion)))))
+    :config
+    (setq completion-styles '(orderless basic)
+          completion-category-defaults nil
+          completion-category-overrides '((file (styles . (partial-completion))))))
 #+END_SRC
 
 * Vertico
