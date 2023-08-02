@@ -1,5 +1,23 @@
 #+TITLE: General Settings
 #+STARTUP: OVERVIEW
+* Introduction
+This file encapsulates a collection of global settings and
+configurations that influence the behavior of Emacs across various
+domains. From handling autosaves and backups to managing calendars,
+bookmarks, server settings, and performance tweaks, these
+configurations contribute to the overall usability, functionality, and
+personalization of the Emacs environment. Detailed sections within
+this file allow for fine-tuned adjustments to individual aspects,
+promoting a coherent and unified configuration tailored to specific
+user needs.
+
+* Performance Optimizations
+Optimizations that improve the general performance of Emacs.
+#+BEGIN_SRC emacs-lisp
+  ;; Increase the amount of data read from subprocesses
+  (setq read-process-output-max (* 1 (expt 10 6))) ; 1MB
+#+END_SRC
+
 * Autosave and Backups
 Saves all backups to user's Emacs directory and in addition creates
 numbered backups. First things first, we create autosave and backup
