@@ -3,7 +3,6 @@
 (setq gc-cons-threshold (* 100 (expt 10 6))) ; 100MB
 
 ;; package
-(require 'package)
 (setq package-native-compile t)
 (setq package-check-signature nil)
 (setq package-quickstart t)
