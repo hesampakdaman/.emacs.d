@@ -1,6 +1,6 @@
-;; Increase garbage collection threshold to 100MB to delay GC during
-;; startup
-(setq gc-cons-threshold (* 100 (expt 10 6)))
+;; Increase garbage collection threshold to delay GC during startup.
+;; This decreases startup time.
+(setq gc-cons-threshold (* 100 (expt 10 6))) ; 100MB
 
 ;; package
 (require 'package)
@@ -11,8 +11,8 @@
 ;; compilations
 (setq native-comp-deferred-compilation t)
 
-;; Lower garbage collection threshold to 1MB after startup to minimize
-;; impact of GC during normal use
+;; Lower garbage collection threshold after startup to minimize impact
+;; of GC during normal use
 (add-hook 'after-init-hook
           (lambda ()
-            (setq gc-cons-threshold (* 1 (expt 10 6)))))
+            (setq gc-cons-threshold (* 50 (expt 10 6))))) ; 50MB
