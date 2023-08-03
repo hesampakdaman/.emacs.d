@@ -91,7 +91,7 @@ is simple `(add-hook 'after-load-theme-hook (lambda (theme) body))`.
 
   (defun run-after-load-theme-hook (theme &rest _)
     "Run `after-load-theme-hook'."
-    (sit-for 0.01) ; ensure faces loaded properly
+    (sit-for 0.1) ; ensure faces loaded properly
     (run-hook-with-args 'after-load-theme-hook theme))
 
   (advice-add 'load-theme :after #'run-after-load-theme-hook)
