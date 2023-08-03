@@ -234,7 +234,7 @@ updates when changing themes.
 #+BEGIN_SRC emacs-lisp
   (add-hook
    'after-load-theme-hook
-   (lambda (&optional args) (set-face-attribute 'fringe nil :background nil)))
+   (lambda (&optional args) (set-face-attribute 'fringe nil :background 'unspecified)))
 #+END_SRC
 
 * Mode-line
