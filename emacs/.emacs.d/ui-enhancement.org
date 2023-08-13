@@ -290,12 +290,24 @@ melt with the 'default background. However, we make sure to have a
 divider -- using `:underline` to highlight where the tab-bar starts.
 #+BEGIN_SRC emacs-lisp
   (defun hesam/set-tab-face-attributes ()
-    ;; We prefer it to be slighly smaller than surrounding text. We'll
-    ;; also add a line across the Emacs frame to separate the tab bar
-    ;; from the buffer. Inheriting nil to make sure it does not get
-    ;; values from `'default` which would alter size of tab bar font
-    ;; when zooming in/out the buffer.
-    (set-face-attribute 'tab-bar nil
+    "Set the face attributes for the tab-bar and its tabs.
+
+    This function achieves the following:
+    1. Configures the default appearance of the tab-bar to match the default
+       face's foreground and background, with adjustments for height, font
+       family, weight, and underlining.
+    2. Differentiates between active and inactive tabs by setting distinct
+       face attributes. Active tabs have a more pronounced appearance
+       with an ultra-bold weight, while inactive tabs are lighter.
+
+    Prerequisites:
+    - Requires the default face's foreground and background to be set.
+    - Relies on the `hesam-default-font-family` variable for font specification.
+
+    Note: The function should be invoked after any theme or face customizations
+    to ensure consistency with the default face attributes."
+    (when (and (face-foreground 'default) (face-background 'default))
+        (set-face-attribute 'tab-bar nil
                         :height 0.95
                         :family hesam-default-font-family
                         :weight 'normal
@@ -309,17 +321,13 @@ divider -- using `:underline` to highlight where the tab-bar starts.
     (set-face-attribute 'tab-bar-tab nil
                         :inherit 'tab-bar
                         :weight 'ultra-bold
-                        :foreground (face-foreground 'default)
-                        :background (face-background 'default)
                         :underline (face-foreground 'default)
                         :box `(:line-width (1 . 10) :color ,(face-background 'default) :style nil))
 
     (set-face-attribute 'tab-bar-tab-inactive nil
                         :inherit 'tab-bar
                         :weight 'light
-                        :foreground (face-foreground 'default)
-                        :background (face-background 'default)
-                        :box `(:line-width (1 . 10) :color ,(face-background 'default) :style nil)))
+                        :box `(:line-width (1 . 10) :color ,(face-background 'default) :style nil))))
 
   ;; Run the function to set the look
   (hesam/set-tab-face-attributes)
