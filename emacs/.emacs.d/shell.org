@@ -40,7 +40,16 @@ colorful a delight.
     :config
     (define-key vterm-mode-map (kbd "M-SPC") nil)
     (add-to-list 'project-switch-commands '(hesam/vterm-project-shell "vterm" ?s))
-    (advice-add #'project-shell :override #'hesam/vterm-project-shell))
+    (advice-add #'project-shell :override #'hesam/vterm-project-shell)
+
+    (add-to-list 'display-buffer-alist
+                 '("vterm"
+                   (display-buffer-in-side-window)
+                   (side . bottom)
+                   (slot . 0)
+                   (inhibit-same-window . nil)
+                   (window-parameters
+                    (no-delete-other-windows . t)))))
 #+END_SRC
 
 The custom function `hesam/vterm-project-shell` is for usage with

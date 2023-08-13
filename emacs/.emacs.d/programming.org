@@ -161,7 +161,15 @@ git porcelain
     :after project
     :bind ("C-c g" . magit-status)
     :config
-    (advice-add #'project-vc-dir :override #'magit-project-status))
+    (advice-add #'project-vc-dir :override #'magit-project-status)
+
+    (add-to-list 'display-buffer-alist
+               '("magit"
+                 (display-buffer-reuse-mode-window
+                  display-buffer-in-direction)
+                 (mode magit-mode)
+                 (window . root)
+                 (direction . right))))
 #+END_SRC
 
 * Flymake
