@@ -322,11 +322,13 @@ divider -- using `:underline` to highlight where the tab-bar starts.
                         :inherit 'tab-bar
                         :weight 'ultra-bold
                         :underline (face-foreground 'default)
+                        :background (face-background 'default)
                         :box `(:line-width (1 . 10) :color ,(face-background 'default) :style nil))
 
     (set-face-attribute 'tab-bar-tab-inactive nil
                         :inherit 'tab-bar
                         :weight 'light
+                        :background (face-background 'default)
                         :box `(:line-width (1 . 10) :color ,(face-background 'default) :style nil))))
 
   ;; Run the function to set the look
