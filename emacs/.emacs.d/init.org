@@ -636,15 +636,6 @@ We want to display Org SRC code blocks in the same window
   (setq org-src-window-setup 'current-window)
 #+END_SRC
 
-** Babel
-What lanaguages to support for literal programming in Org buffers.
-#+BEGIN_SRC emacs-lisp
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((C . t)
-     (python . t)
-     (shell . t)))
-#+END_SRC
 
 ** Agenda and GTD
 Agenda files are stored in Dropbox under `org/agenda`. If we put our
@@ -824,8 +815,10 @@ bindings in `rust-ts-mode`.
 Python-specific settings and packages. Since Emacs 29 we have Python
 with Treesitter support.
 #+BEGIN_SRC emacs-lisp
-  (setq python-ts-mode-hook python-mode-hook)
-  (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+  (use-package python
+    :config
+    (setq python-ts-mode-hook python-mode-hook)
+    (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode)))
 #+END_SRC
 
 **** auto-virtualenv
