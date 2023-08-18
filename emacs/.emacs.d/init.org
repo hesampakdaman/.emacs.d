@@ -1001,13 +1001,6 @@ Removes trailing space and tabs from this user modified lines.
 * Search settings
 Settings for searching buffers, notes and more.
 
-** anzu
-#+BEGIN_SRC emacs-lisp
-  (use-package anzu
-    :bind (([remap query-replace] . anzu-query-replace)
-           ([remap query-replace-regexp] . anzu-query-replace-regexp)))
-#+END_SRC
-
 ** consult
 #+BEGIN_SRC emacs-lisp
   (use-package consult
