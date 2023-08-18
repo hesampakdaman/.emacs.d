@@ -1,6 +1,11 @@
 ;; Increase garbage collection threshold to delay GC during startup.
-;; This decreases startup time.
+;; this decreases startup time
 (setq gc-cons-threshold (* 100 (expt 10 6))) ; 100MB
+
+;; Frame decorations and size
+;; set these early to reduce flickering/resizing on startup
+(setq frame-inhibit-implied-resize t)
+(setq default-frame-alist '((width . 70) (height . 49)))
 
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
@@ -10,12 +15,12 @@
          '((undecorated . t) (internal-border-width . 10) (drag-internal-border . 1)))
   (add-to-list 'default-frame-alist frame-option))
 
-;; package
+;; Package
 (setq package-native-compile t)
 (setq package-check-signature nil)
 (setq package-quickstart t)
 
-;; compilations
+;; Compilations
 (setq native-comp-deferred-compilation t)
 
 ;; Lower garbage collection threshold after startup to minimize impact
