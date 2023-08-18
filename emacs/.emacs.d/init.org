@@ -1,0 +1,1780 @@
+# -*- after-save-hook: (org-babel-tangle); before-save-hook: (delete-trailing-whitespace)-*-
+#+TITLE: Emacs configuration
+#+STARTUP: OVERVIEW
+#+PROPERTY: header-args:emacs-lisp :exports code :results none :tangle ~/.emacs.d/init.el
+* Global settings
+It is of most important that this file is loaded first. Here we define
+global variables, such as leader keys and theme-colors, that are
+assumed to exists in other configuration files.
+
+In this file we define global variables to be consumed in other
+files. For example, the `leader-meta-spc` is global leader key used in
+many places and theming variables for colors too.
+
+#+BEGIN_SRC emacs-lisp
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+
+;; follow symlinks without prompt
+(setq vc-follow-symlinks t)
+#+END_SRC
+
+** The package `general`
+Simplifies setting keybindings and has advanced features for
+prefix/leader keys.
+#+BEGIN_SRC emacs-lisp
+  (use-package general
+    :init
+    (general-auto-unbind-keys))
+#+END_SRC
+
+*** Leaders Keys
+Here we define leaders to be used throughout emacs. We have other
+leader-keys that could be defined elsewhere because they are related
+to a specifc file. For example as `leader-agenda-gtd` could be placed
+in `org-mode.org`. But we prefer to put them here to have all leaders
+in one place.
+#+BEGIN_SRC emacs-lisp
+  ;; Prefix to be used for all kinds of stuff
+  (general-create-definer leader-meta-spc
+    :prefix "M-SPC")
+
+  ;; Sub-leader for agenda & GTD
+  (general-create-definer leader-org-mode
+    :prefix "C-c o")
+
+  ;; Sub-leader for redshift
+  (general-create-definer leader-super-r
+    :prefix "M-SPC r")
+
+  ;; Leader for editing text
+  (general-create-definer leader-editing
+    :prefix "C-c e")
+
+  ;; Leader for window management
+  (general-create-definer leader-window
+    :prefix "C-c w")
+#+END_SRC
+
+** Face group
+We define a customization group that we can use as a parent for all
+other `defcustom` commands. If we ever search for groups in
+`customize` we can easily find them.
+#+BEGIN_SRC emacs-lisp
+  (defgroup hesam nil
+    "Parent group for my personal Emacs customization settings."
+    :group 'emacs)
+#+END_SRC
+
+** Color theme list
+Throught our configuration we will supply an easy way of getting the
+colors. Note that if we change theme then most-likely we need to
+change the `hesam/theme-colrs-alist` as well. In this aspect it's a
+bit of a flaw because we cannot easily switch themes.
+
+The actual theme used can be find in [[file:ui-enhancement.org::*Themes][UI Enhancements]]. The default
+theme loaded on startup will have a `(load-theme ...)` in its
+`:config`.
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/theme-color (color)
+    "Retrieve the color code for COLOR from `hesam/theme-colors-alist'."
+    (cdr (assoc color hesam/theme-colors-alist)))
+
+  (defvar hesam/theme-colors-alist
+    ;; Dracula palette
+    '((bg      . "#282a36")
+      (fg      . "#f8f8f2")
+      (current . "#44475a")
+      (comment . "#6272a4")
+      (cyan    . "#8be9fd")
+      (green   . "#50fa7b")
+      (orange  . "#ffb86c")
+      (pink    . "#ff79c6")
+      (purple  . "#bd93f9")
+      (red     . "#ff5555")
+      (yellow  . "#f1fa8c")
+      (white   . "#f8f8f2")))
+#+END_SRC
+
+** Theme hooks
+These are used to override certain faces defined by the theme
+author. Any function added to the hook receives the theme symbol and
+is run either after `(load-theme ...)` or `(enable-theme ...)`. Usage
+is simple `(add-hook 'after-load-theme-hook (lambda (theme) body))`.
+#+BEGIN_SRC emacs-lisp
+  (defvar after-load-theme-hook nil
+    "Hook run after a theme is loaded using `load-theme'.")
+
+  (defun run-after-load-theme-hook (&rest args)
+    "Run `after-load-theme-hook' with theme as argument."
+    (run-hook-with-args 'after-load-theme-hook args))
+
+  (advice-add 'load-theme :after #'run-after-load-theme-hook)
+  (advice-add 'enable-theme :after #'run-after-load-theme-hook)
+#+END_SRC
+
+* General settings
+This file encapsulates a collection of global settings and
+configurations that influence the behavior of Emacs across various
+domains. From handling autosaves and backups to managing calendars,
+bookmarks, server settings, and performance tweaks, these
+configurations contribute to the overall usability, functionality, and
+personalization of the Emacs environment. Detailed sections within
+this file allow for fine-tuned adjustments to individual aspects,
+promoting a coherent and unified configuration tailored to specific
+user needs.
+
+** Performance Optimizations
+Optimizations that improve the general performance of Emacs.
+#+BEGIN_SRC emacs-lisp
+  ;; Increase the amount of data read from subprocesses
+  (setq read-process-output-max (* 1 (expt 10 6))) ; 1MB
+#+END_SRC
+
+** Autosave and Backups
+Saves all backups to user's Emacs directory and in addition creates
+numbered backups. First things first, we create autosave and backup
+directory where we put autosaves and backups respectevily.
+#+BEGIN_SRC emacs-lisp
+  (defcustom hesam-autosave-directory (expand-file-name "autosave/" user-emacs-directory)
+    "Directory where autosave and backups are put."
+    :type 'directory
+    :group 'hesam)
+
+  (defcustom hesam-backup-directory (expand-file-name "backup/" user-emacs-directory)
+    "Directory where autosave and backups are put."
+    :type 'directory
+    :group 'hesam)
+#+END_SRC
+
+Of course we need to make sure these directories exists
+#+BEGIN_SRC emacs-lisp
+  (dolist (dir (list hesam-autosave-directory hesam-backup-directory))
+    (unless (file-directory-p dir)
+      (make-directory dir)))
+#+END_SRC
+
+Use the directory for backups. There are some other sane settings used
+described below with comments.
+#+BEGIN_SRC emacs-lisp
+  (setq backup-directory-alist `(("." . ,hesam-backup-directory))
+	version-control t		  ; Use version numbers for backups.
+	vc-make-backup-files t	  ; Make backups for git files
+	kept-new-versions 1000	  ; Number of newest versions to keep.
+	kept-old-versions 0	  ; Number of oldest versions to keep.
+	delete-old-versions t ; Don't ask to delete excess backup versions.
+	backup-by-copying t)  ; Copy all files, don't rename them.
+#+END_SRC
+
+But backups are only created once when the buffer is visited. We want
+to save backups on each save. We do so by resetting the flag that
+tells Emacs that the file has been backed up. Adding a hook to do that
+after each save will make Emacs backup the file since the counter has
+been reset.
+#+BEGIN_SRC emacs-lisp
+  (defun force-backup-of-buffer ()
+    (setq buffer-backed-up nil))
+  (add-hook 'before-save-hook  'force-backup-of-buffer)
+#+END_SRC
+
+We also make sure to organize our autosaves in user's Emacs directory.
+#+BEGIN_SRC emacs-lisp
+  (setq auto-save-file-name-transforms
+	`((".*" ,hesam-autosave-directory t)))
+#+END_SRC
+
+** Bookmarks
+Saving bookmarks to Dropbox and auto-saving upon change.
+#+BEGIN_SRC emacs-lisp
+  (setq bookmark-default-file "~/Dropbox/emacs/bookmarks"
+        ;; num changes before saving bookmark
+        bookmark-save-flag 1)
+#+END_SRC
+
+** Calendar and Time
+Configuration for calendar, setting ISO formats and start of week.
+#+BEGIN_SRC emacs-lisp
+  ;; start with Mon
+  (setq calendar-week-start-day 1)
+
+  ;; EU style
+  (setq calendar-date-style 'european)
+
+  ;; Date format
+  (setq calendar-date-display-form
+        '((if dayname
+              (concat dayname ", "))
+          day " " monthname " " year))
+
+  ;; 24-clock
+  (setq calendar-time-display-form
+        '(24-hours ":" minutes))
+
+  ;; show week numbers
+  (setq calendar-intermonth-text
+        '(propertize
+          (format "W%2d"
+                  (car
+                   (calendar-iso-from-absolute
+                    (calendar-absolute-from-gregorian (list month day year)))))
+          'font-lock-face 'calendar-iso-week-face))
+#+END_SRC
+
+And if we ever need it the display is on 24h format, we don't display
+load-average
+#+BEGIN_SRC emacs-lisp
+  (setq display-time-24hr-format t
+        display-time-day-and-date nil
+        display-time-default-load-average nil)
+#+END_SRC
+
+** Disable suspend functions
+We don't want to ever suspend Emacs or the frame. Therefore display a
+warning when these commands are run.
+#+BEGIN_SRC emacs-lisp
+  (put 'suspend-frame 'disabled t)
+  (put 'suspend-emacs 'disabled t)
+#+END_SRC
+
+** Inhibiting Bells and Warnings
+Finding it too annoying hearing beeping sounds and seeing visual we
+alamrs we turn all of them completely off.
+#+BEGIN_SRC emacs-lisp
+  ;; no beeping
+  (setq ring-bell-function 'ignore)
+#+END_SRC
+
+Inhibits native compilation warnings which happens intermittently.
+#+BEGIN_SRC emacs-lisp
+  ;; to avoid getting spammed with warnings
+  (setq native-comp-async-report-warnings-errors 'silent)
+#+END_SRC
+
+** Loading untracked settings
+Helper function `hesam/load-if-exists` to load any files if they
+exist. These are not meant to be tracked by git. We also set the
+custom-file variable to notifty emacs customization options not
+tracked by git shall be saved there, instead of default in the init
+file.
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/load-if-exists (path)
+    (if (file-exists-p path)
+        (load path)))
+
+  (setq custom-file "~/.emacs.d/emacs-custom.el")
+  (hesam/load-if-exists custom-file)
+  (hesam/load-if-exists "~/.emacs.d/macros.el")
+  (hesam/load-if-exists "~/.emacs.d/local.el")
+#+END_SRC
+
+** Openwith
+A package that helps with opening files in an external app, such as
+opening `.doc` files in `libreoffice`.
+#+BEGIN_SRC emacs-lisp
+  (use-package openwith
+    :config
+    (setq openwith-associations
+          (list
+           (list (openwith-make-extension-regexp
+                  '("mpg" "mpeg" "mp3" "mp4"
+                    "avi" "wmv" "wav" "mov" "flv"
+                    "ogm" "ogg" "mkv" "rar"))
+                 "mpv --no-border"
+                 '(file))
+           (list (openwith-make-extension-regexp
+                  '("doc" "xls" "ppt" "odt" "ods" "odg" "odp"))
+                 "libreoffice"
+                 '(file))))
+    (openwith-mode 1))
+#+END_SRC
+
+** Repeat mode
+Allows us to repeat commands. For example, to use the next tab command
+we do "C-x t o" twice. But with repeat mode it suffices to do "C-x t
+o" once and followed by arbitrarily many "o".
+#+BEGIN_SRC emacs-lisp
+  (repeat-mode t)
+#+END_SRC
+
+** Reverting
+Will automatically load changed buffers, this can for example happen
+if we use git to reset recent changes.
+#+BEGIN_SRC emacs-lisp
+  (global-auto-revert-mode t)
+#+END_SRC
+
+And make use of the quick revert setting when reverting files with
+`C-x x g`
+#+BEGIN_SRC emacs-lisp
+  (setq revert-buffer-quick-short-answers t)
+#+END_SRC
+
+** Savehist mode
+Save minibuffer commands in a file that is loaded at startup
+#+BEGIN_SRC emacs-lisp
+  (savehist-mode t)
+#+END_SRC
+
+** Sentence end space
+One of the ways Emacs recognizes sentences is by a '.', ',', '?' or
+'!' followed by _two_ spaces. Hence sentence commands such as `M-k`
+will not work properly for text that does not follow this convention.
+We change it here so that only _one_ space is needed.
+#+BEGIN_SRC emacs-lisp
+  (setq sentence-end-double-space nil)
+#+END_SRC
+
+The drawback now is that Emacs cannot distinguish between periods used
+in abbreviations and those that mark an end to a sentence. Consider
+#+begin_quote
+Mt. Everest is Earth's highest mountain.
+#+end_quote
+
+Putting the cursor at the character `M` in the quote above and
+pressing `M-e` leaves us in the space between `Mt.` and `Everest`.
+
+** Server
+Starts emacs server at startup so that emacsclient can connect to
+it. This preferably used in conjunction with systemd --user to
+initialize emacs after login.
+#+BEGIN_SRC emacs-lisp
+  (require 'server)
+  (unless (server-running-p)
+    (server-start))
+#+END_SRC
+
+When we connect to the server Emacs will display about how to exit
+with `C-x 5 0`. As we are already familiar with this command we
+inhibit it.
+#+BEGIN_SRC emacs-lisp
+  (setq server-client-instructions nil)
+#+END_SRC
+
+** Subword
+Allows for moving over a word based on the subwords in the table
+below. From the manual we have a table to show us the meaning of this
+minor mode.
+
+  Nomenclature           Subwords
+  ===========================================================
+  GtkWindow          =>  "Gtk" and "Window"
+  EmacsFrameClass    =>  "Emacs", "Frame" and "Class"
+  NSGraphicsContext  =>  "NS", "Graphics" and "Context"
+#+BEGIN_SRC emacs-lisp
+  (global-subword-mode 1)
+#+END_SRC
+
+** Narrow
+Allow narrowing `C-x n n` to a region. It makes sense to have it off
+and warn the user by default. But once you familiarize with the mode
+it's okay to allow it. Simply put, this command lets you only display
+the region you selected.
+#+BEGIN_SRC emacs-lisp
+  (put 'narrow-to-region 'disabled nil)
+#+END_SRC
+
+* Applications settings
+Here we keep a list of functions that's main purpose is to start an
+external program or run a shell command. These are all namespaced
+`apps/` and `commands/` respectively.
+
+Make sure that relevant binaries already exists in the system.
+
+** Calibre
+Book library app Calibre
+#+BEGIN_SRC emacs-lisp
+  (defun apps/calibre ()
+    (interactive)
+    (start-process "" nil "calibre"))
+#+END_SRC
+
+** Redshift
+Controlling screen brightness and its warmness.
+#+BEGIN_SRC emacs-lisp
+  (defun commands/redshift-day ()
+    (interactive)
+    (start-process-shell-command "" nil "redshift -x"))
+
+  (defun commands/redshift-night ()
+    (interactive)
+    (start-process-shell-command "" nil "redshift -x; redshift -O 6500 -b 0.50"))
+
+  (defun commands/redshift-dark ()
+    (interactive)
+    (start-process-shell-command "" nil "redshift -x; redshift -O 6500 -b 0.30"))
+#+END_SRC
+
+** Flameshot
+Screenshot capturing tool.
+#+BEGIN_SRC emacs-lisp
+  (defun apps/flameshot ()
+    (interactive)
+    (start-process-shell-command "" nil "flameshot gui"))
+#+END_SRC
+
+* Completion settings
+For configuring autocompleting options. We begin with the a built-in
+hippie-expand by binding it
+
+#+BEGIN_SRC emacs-lisp
+  (general-define-key
+   "C-c h" 'hippie-expand)
+#+END_SRC
+
+** Corfu
+General autocompletion system, but mostly used in programming
+contexts. We complete text with `TAB` across Emacs' buffers.
+#+BEGIN_SRC emacs-lisp
+  (use-package corfu
+    :custom
+    (corfu-cycle t)
+    (corfu-quit-at-boundary nil)
+    (corfu-preview-current nil)
+    (corfu-preselect 'first)
+    :bind (:map corfu-map
+                ("TAB"     . corfu-insert)
+                ([tab]     . corfu-insert)
+                ("S-TAB"   . corfu-previous)
+                ([backtab] . corfu-previous))
+    :init
+    (global-corfu-mode))
+
+  ;; Do not cycle commands instead give me the corfu pop-up
+  (setq completion-cycle-threshold nil)
+
+  ;; Hide commands in M-x which do not apply to the current mode. Corfu
+  ;; commands are hidden, since they are not supposed to be used via
+  ;; M-x.
+  (setq read-extended-command-predicate
+        #'command-completion-default-include-p)
+
+  ;; Enable indentation+completion using the TAB key.
+  ;; `completion-at-point' is often bound to M-TAB.
+  (setq tab-always-indent 'complete)
+#+END_SRC
+
+** Orderless
+Provides completion styles to be used on top-of a completion packages
+such as `Vertico` or certain `Consult` functions. If we do `C-x C-f`
+and have two files `languages-and-modes.org` and `general.org` then
+the search string `g l` will match both if we have set `'orderless`
+style (ie. the order of your serach words does not matter).
+#+BEGIN_SRC emacs-lisp
+  (use-package orderless
+    :config
+    (setq completion-styles '(orderless basic)
+          completion-category-defaults nil
+          completion-category-overrides '((file (styles . (partial-completion))))))
+#+END_SRC
+
+** Vertico
+Minibuffer completion system. It will display a vertical scrolling
+minibuffer in modes like `M-x` or `(find-file)`.
+#+BEGIN_SRC emacs-lisp
+  (use-package vertico
+    :init
+    (vertico-mode)
+    :config
+    ;; Use `consult-completion-in-region' if Vertico is enabled.
+    ;; Otherwise use the default `completion--in-region' function.
+    (setq completion-in-region-function
+          (lambda (&rest args)
+            (apply (if vertico-mode
+                       #'consult-completion-in-region
+                     #'completion--in-region)
+                   args))))
+#+END_SRC
+
+** YASnippet
+Enables snippets for progamming and text modes. Disable it for `TAB`
+which we use for completion at point.
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+    :config
+    (yas-reload-all)
+    :bind (:map yas-minor-mode-map
+                ("C-c y" . yas-expand)
+                ("TAB" . nil)
+                ("<tab>" . nil))
+    :hook ((prog-mode text-mode) . yas-minor-mode))
+
+  (use-package yasnippet-snippets
+    :after yasnippet)
+#+END_SRC
+
+* Editing settings
+** Custom editing functions
+Here we define custom functions that we use for editing simple
+text. We first declare all their keybindings and make sure they are
+easily accessible without a leader
+*** Bindings
+#+BEGIN_SRC emacs-lisp
+    (general-define-key
+     :prefix "C-c"
+     "d" 'edit/delete-a-word
+     "C-k" 'edit/copy-lines)
+#+END_SRC
+
+And some more under an edit leader defined in `keybindings.org`.
+#+BEGIN_SRC emacs-lisp
+  (leader-editing
+    "b" 'edit/remove-blank-lines)
+
+#+END_SRC
+
+*** Function definitions
+Now we define the functionality we bound above. For copying several
+lines of text this function below is a snipppet found on the Internet.
+#+BEGIN_SRC emacs-lisp
+  (defun edit/copy-line (arg)
+    "Copy lines (as many as prefix argument) in the kill ring.
+        Ease of use features:
+        - Move to start of next line.
+        - Appends the copy on sequential calls.
+        - Use newline as last char even on the last line of the buffer.
+        - If region is active, copy its lines."
+    (interactive "p")
+    (let ((beg (line-beginning-position))
+          (end (line-end-position arg)))
+      (when mark-active
+        (if (> (point) (mark))
+            (setq beg (save-excursion (goto-char (mark)) (line-beginning-position)))
+          (setq end (save-excursion (goto-char (mark)) (line-end-position)))))
+      (if (eq last-command 'copy-line)
+          (kill-append (buffer-substring beg end) (< end beg))
+        (kill-ring-save beg end)))
+    (kill-append "\n" nil)
+    (beginning-of-line (or (and arg (1+ arg)) 2))
+    (if (and arg (not (= 1 arg))) (message "%d lines copied" arg)))
+#+END_SRC
+
+For vim-like deletion of a single word like we define this function
+#+BEGIN_SRC emacs-lisp
+  (defun edit/delete-a-word (&optional args)
+    "Vim-like deletion of a single word.
+    Takes an optional integer argument ARGS to delete ARGS many
+    words."
+    (interactive "p")
+    (forward-char 1)			;if at beg. of word
+    (backward-word 1)
+    (kill-word args))
+#+END_SRC
+
+Simple function to delete blank lines from cursor downwards.
+#+BEGIN_SRC emacs-lisp
+  (defun edit/remove-blank-lines ()
+    (interactive)
+    (flush-lines "^$"))
+#+END_SRC
+
+** sudo-edit
+When buffer is locked for editing due to permissons we can use this
+package to make editing with sudo access easily. We extensively use
+either `(sudo-edit-current-file)` or `(sudo-edit-find-file)`.
+#+BEGIN_SRC emacs-lisp
+  (use-package sudo-edit)
+#+END_SRC
+
+* Keybindings settings
+Here we define misc shortcuts to other programs or commands. We first
+define a set of leaders that can be defined throught emacs. Then we
+try and organize bindings depending on what they are used for.
+
+All bindings are not defined here, rather we define leaders and misc
+keybindings (like shortcuts to external programs). Instead we have the
+another philosophy of creating bindings where packages are defined.
+
+As such we make extensive use of `use-package` and its `:bind`
+feature.
+
+** C-c and C-x prefix bindings
+For built-in modes that need no `use-package` or enabling of modes. We
+separate between custom commands prefixed by `C-c` and shadowing emacs
+default bindings defined with `C-x`.
+*** Custom C-c bindings
+#+BEGIN_SRC emacs-lisp
+;; empty
+#+END_SRC
+
+*** Shadowing emacs' C-x bindings
+#+BEGIN_SRC emacs-lisp
+  (general-define-key
+   :prefix "C-x"
+   "C-b" 'ibuffer)
+#+END_SRC
+
+** Unset bindings
+We want to unbind default bindings that aren't useful to us, such as
+suspending.
+#+BEGIN_SRC emacs-lisp
+  (global-unset-key (kbd "C-z"))
+  (global-unset-key (kbd "C-x C-z"))
+#+END_SRC
+
+* Miscellaneous Packages
+This is not an exhaustive list of all packages used in our
+configuration. Rather we have put packages here that we couldn't
+motivate putting elsewhere under our directory tree.
+
+For example, in `programming.org` we have declared `magit`
+package. But it makes sense to have it there since it has a clear
+connection with programming. Another package `general` is declared in
+`bindings.org` since it's used to for defining keybindings easily.
+
+** expand region
+Will expand mark in regions that makes sense, ie. is context aware.
+#+BEGIN_SRC emacs-lisp
+  (use-package expand-region
+    :bind ("C-c =" . 'er/expand-region))
+#+END_SRC
+
+** pdf-tools
+A major mode for viewing PDF files inside Emacs. Ordinary `'isearch`
+works best in PDF tools which is why we explicitly set it for
+`PDFView` mode.
+#+BEGIN_SRC emacs-lisp
+  (use-package pdf-tools
+    :config (pdf-tools-install)
+    :bind (:map pdf-view-mode-map
+		("C-s" . isearch-forward)
+		("C-r" . isearch-backward)))
+#+END_SRC
+
+*** auxtex
+TeX should be open with PDF tools.
+#+BEGIN_SRC emacs-lisp
+  (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+        TeX-source-correlate-start-server t)
+
+  ;; Update PDF buffers after successful LaTeX runs
+  (add-hook 'TeX-after-compilation-finished-functions
+            #'TeX-revert-document-buffer)
+#+END_SRC
+
+*** midnight mode
+#+BEGIN_SRC emacs-lisp
+  ;;; set colors for pdf-tools, the var expects cons
+  ;; (setq pdf-view-midnight-colors (cons (doom-color 'fg) (doom-color 'bg)))
+  (setq pdf-view-midnight-colors (cons "#ffffff" "#000000"))
+#+END_SRC
+
+* Org mode settings
+At this point we assume `Org` is required and ready to go. This is
+safe because in our `init.el` we use babel to load all modules and
+therefore `Org` is required.
+
+First set up our org mode directory
+#+BEGIN_SRC emacs-lisp
+  (defcustom hesam-org-directory "~/Dropbox/org"
+    "Default directory for where Org will look at put files."
+    :type 'directory
+    :group 'hesam)
+  (setq org-directory hesam-org-directory)
+#+END_SRC
+
+We want to display Org SRC code blocks in the same window
+#+BEGIN_SRC emacs-lisp
+  (setq org-src-window-setup 'current-window)
+#+END_SRC
+
+** Babel
+What lanaguages to support for literal programming in Org buffers.
+#+BEGIN_SRC emacs-lisp
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((C . t)
+     (python . t)
+     (shell . t)))
+#+END_SRC
+
+** Agenda and GTD
+Agenda files are stored in Dropbox under `org/agenda`. If we put our
+GTD file inside `org-agenda-files`, then any dates in the GTD file
+will be seen by org agenda. We also define some nice tags to use so
+that we can filter on them in the Agenda view.
+#+BEGIN_SRC emacs-lisp
+    (setq gtd-file (concat (eval org-directory) "/agenda/gtd.org"))
+    (setq org-agenda-files `(,gtd-file)
+          org-default-notes-file "~/Dropbox/org/notes.org"
+          org-tag-alist '(("@work" . ?w) ("@home" . ?h)))
+#+END_SRC
+
+`org-outline-path-complete-in-steps` when set to nil allows selection
+of the refile target using a single completion step, which will
+provide a faster selection method if you have deeply nested
+structures.
+#+BEGIN_SRC emacs-lisp
+  (setq org-outline-path-complete-in-steps t)
+#+END_SRC
+
+When refiling target is GTD file we want to automatically save the
+buffer.
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/org-refile-save (&rest _)
+    "Save the buffer after refiling.
+
+     This function checks if the current buffer is visiting 'gtd.org'.
+     If so, it saves the buffer. It is used as an advice to `org-refile`,
+     meaning it is called every time after `org-refile` is invoked."
+    (when (eq (current-buffer) (find-buffer-visiting "gtd.org"))
+      (save-buffer)))
+
+  (advice-add 'org-refile :after 'hesam/org-refile-save)
+#+END_SRC
+
+Defines a toggler to show our GTD file whenever it is not visible in
+the window and to hide it if it is.
+#+BEGIN_SRC emacs-lisp
+  (defun gtd/toggle-doing ()
+    "Access the GTD gtd.org file inside `gtd-directory'.
+    The tasks in this file are actively working on. If the buffer
+    is visible then delete it, else open it in another window."
+    (interactive)
+    (let ((buf (get-buffer "gtd.org")))
+      (if (and buf (get-buffer-window buf))
+          (delete-window (get-buffer-window buf))
+        (find-file-other-window gtd-file))))
+#+END_SRC
+
+*** View
+Start with current day and do not show tasks that are done.
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-start-on-weekday nil
+        org-agenda-skip-deadline-if-done t
+        org-agenda-skip-scheduled-if-done t
+        org-agenda-show-all-dates t)
+#+END_SRC
+
+From emacs cafe [[https://emacs.cafe/emacs/orgmode/gtd/2017/06/30/orgmode-gtd.html][blog]] to get gtd context filtered in the dispatcher.
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-custom-commands
+        '(("w" "Context work" tags-todo "@work"
+           ((org-agenda-overriding-header "Work")
+            (org-agenda-skip-function #'my-org-agenda-skip-all-siblings-but-first)))
+          ("h" "Context home" tags-todo "@home"
+           ((org-agenda-overriding-header "Home")
+            (org-agenda-skip-function #'my-org-agenda-skip-all-siblings-but-first)))))
+
+  (defun my-org-agenda-skip-all-siblings-but-first ()
+    "Skip all but the first non-done entry."
+    (let (should-skip-entry)
+      (unless (org-current-is-todo)
+        (setq should-skip-entry t))
+      (save-excursion
+        (while (and (not should-skip-entry) (org-goto-sibling t))
+          (when (org-current-is-todo)
+            (setq should-skip-entry t))))
+      (when should-skip-entry
+        (or (outline-next-heading)
+            (goto-char (point-max))))))
+
+  (defun org-current-is-todo ()
+    (string= "TODO" (org-get-todo-state)))
+#+END_SRC
+
+And lastly to cleanup the Org agenda TODO view
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-prefix-format
+      '((agenda . " %i %-12:c%?-12t% s")
+        (todo   . " ")
+        (tags   . " %i %-12:c")
+        (search . " %i %-12:c")))
+#+END_SRC
+
+*** Keybindings
+For accessing Org agenda and GTD quickly.
+#+BEGIN_SRC emacs-lisp
+(leader-org-mode
+    "a" 'org-agenda
+    "c" 'org-capture
+    "g" 'gtd/toggle-doing
+    "l" 'org-store-link
+    "x" 'org-archive-subtree)
+
+  (leader-org-mode
+    :keymaps 'org-mode-map
+    "r" 'org-refile)
+#+END_SRC
+
+*** Templates
+Storage for Org capture is set to Dropbox to provide syncing between
+devices.
+#+BEGIN_SRC emacs-lisp
+  (setq org-capture-templates
+        '(("i" "Inbox" entry
+           (file+headline gtd-file "Inbox") "* %u %i%?")
+          ("p" "Planned" entry
+           (file+headline gtd-file "Planned") "* %t %i%?")))
+#+END_SRC
+
+** Appearance
+We basically use org-modern for look and feel. But using
+`org-modern-star` screws with navigation `C-n/p`. We therefore don't
+use it. [[https://github.com/minad/org-modern/issues/134][See this Github issue]].
+#+BEGIN_SRC emacs-lisp
+  (use-package org-modern
+    :config (setq org-modern-star nil)
+    :hook (org-mode . org-modern-mode))
+#+END_SRC
+
+So in order to get nice bullet points we use `org-bullets`.
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bullets
+    :hook (org-mode . org-bullets-mode))
+#+END_SRC
+
+* Programming settings
+Programming related settings and packages defined here. Language
+Server Protocol (LSP) provides IDE-like features and is configured
+here. Some relevant minor modes also set here, including their look
+and feel if appropriate. But first... let's get rid of tabs!
+#+BEGIN_SRC emacs-lisp
+  (setq-default indent-tabs-mode nil)
+#+END_SRC
+
+** Programming Languages Modes
+*** Rust
+Rust-specific settings and packages. First remap the default major
+mode with Treesitter variant.
+#+BEGIN_SRC emacs-lisp
+  (use-package rust-ts-mode
+    :config
+    (add-to-list 'major-mode-remap-alist '(rust-mode . rust-ts-mode)))
+#+END_SRC
+
+The `rustic` package enriches Emacs for editing rust source code.
+However, at the time of writing `rustic` is incompatible with
+`rust-ts-mode`. But seeing as we would like to retain the compilation
+convenience functions, we still install the package and use its
+bindings in `rust-ts-mode`.
+#+BEGIN_SRC emacs-lisp
+  (use-package rustic
+    :config
+    (setq rustic-format-on-save nil
+          rustic-lsp-client nil)
+    :bind (:map rust-ts-mode-map
+                ("C-c C-c C-c" . rustic-recompile)
+                ("C-c C-c C-r" . rustic-cargo-run)
+                ("C-c C-c C-l" . rustic-cargo-clippy-run)
+                ("C-c C-c C-f" . rustic-cargo-clippy-fix)
+                ("C-c C-c C-r" . rustic-cargo-run)
+                ("C-c C-c C-t" . rustic-cargo-test)))
+  #+END_SRC
+
+*** Python
+Python-specific settings and packages. Since Emacs 29 we have Python
+with Treesitter support.
+#+BEGIN_SRC emacs-lisp
+  (setq python-ts-mode-hook python-mode-hook)
+  (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+#+END_SRC
+
+**** auto-virtualenv
+Automatically activate Python virtual environments with `auto-virtualenv`.
+#+BEGIN_SRC emacs-lisp
+  (use-package auto-virtualenv
+    :defer t
+    :config
+    (advice-add #'project-switch-to-buffer :after #'auto-virtualenv-set-virtualenv)
+    :hook (python-ts-mode . auto-virtualenv-set-virtualenv))
+#+END_SRC
+
+**** black
+#+BEGIN_SRC emacs-lisp
+  (use-package python-black
+    :defer t
+    :hook (python-ts-mode . python-black-on-save-mode-enable-dwim))
+#+END_SRC
+
+**** pyenv
+Use `pyvenv` to manage Python virtual environments.
+#+BEGIN_SRC emacs-lisp
+  (use-package pyvenv :defer t)
+#+END_SRC
+
+** Language Server Protocol
+Setup Language Server Protocol (LSP) for different programming
+languages. We use eglot which is built-in >= Emacs 29.
+#+BEGIN_SRC emacs-lisp
+  (use-package eglot
+    :defer t
+    :bind (:map eglot-mode-map
+                ("C-c e r" . eglot-rename)
+                ("C-c e f" . eglot-format)
+                ("C-c e d" . eglot-find-declaration)
+                ("C-c e i" . eglot-find-implementation))
+    :config
+    (set-face-attribute 'eglot-highlight-symbol-face nil
+                        :inherit 'match)
+    :hook ((rust-ts-mode python-ts-mode haskell-ts-mode) . eglot-ensure))
+
+  (use-package eldoc-box
+    :after eglot
+    :defer t
+    :config
+    (set-face-attribute 'eldoc-box-body nil
+                        :inherit 'default))
+#+END_SRC
+
+** Modes
+Many of these mode are activated by adding a hook to `prog-mode-hook`
+or is highly associated with programming.
+*** ediff
+Ediff is used for viewing diffs and acting upon them. We want the
+control that normally displays in another frame to be place in the
+same window.
+#+BEGIN_SRC emacs-lisp
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+#+END_SRC
+
+*** electric mode
+Automatically add closing brackets and indent code in `prog-mode`.
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/electric ()
+    (electric-pair-local-mode t)
+    (electric-indent-local-mode t))
+  (add-hook 'prog-mode-hook #'hesam/electric)
+#+END_SRC
+
+*** hideshow
+Set up the `hideshow` minor mode for `prog-mode`.
+#+BEGIN_SRC emacs-lisp
+  (setq hs-allow-nesting t)
+  (add-hook 'prog-mode-hook 'hs-minor-mode)
+  (eval-after-load 'prog-mode
+    '(define-key prog-mode-map (kbd "C-<return>") 'hs-toggle-hiding))
+#+END_SRC
+
+Another symbol to be used for collapsed text.
+#+BEGIN_SRC emacs-lisp
+  (set-display-table-slot standard-display-table
+                          'selective-display (string-to-vector " [+] "))
+#+END_SRC
+
+*** row/column/line numbers
+Shows column number in `mode-line` in addtion to row number.
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'prog-mode-hook 'column-number-mode)
+#+END_SRC
+
+*** Show parent
+Highlights matching parens in prog-mode.
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'prog-mode-hook 'show-paren-mode)
+#+END_SRC
+
+** git
+*** git-timemachine
+In a git-tracked repository we can invoke `git-timemachine` to quickly
+navigate between revisions, show commits and use git blame. When
+visiting a git tracked file and calling `git-timemachine`
+interatively, it allows us to move between revisions with `n`,
+`p`. Hit `?` to get a hydra-like menu for more commands.
+#+BEGIN_SRC emacs-lisp
+  (use-package git-timemachine
+    :defer t
+    :after magit)
+#+END_SRC
+
+*** Magit
+git porcelain
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :demand t
+    :after project
+    :bind ("C-c g" . magit-status)
+    :config
+    (advice-add #'project-vc-dir :override #'magit-project-status)
+
+    (add-to-list 'display-buffer-alist
+               '("magit"
+                 (display-buffer-reuse-mode-window
+                  display-buffer-in-direction)
+                 (mode magit-mode)
+                 (window . root)
+                 (direction . right))))
+#+END_SRC
+
+** Flymake
+Flymake is an built-in syntax checker for Emacs to be used everywhere,
+but it's stronlgy linked to programming and that is why we define it
+here.
+
+Out of intereset here is the setting `flymake-no-changes-timeout`. If
+set to a number, then Flymake will check the file after waiting that
+number in seconds for each change you make in the buffer.
+#+BEGIN_SRC emacs-lisp
+  (use-package flymake
+    :config
+    (setq flymake-no-changes-timeout 0.5
+          flymake-proc-compilation-prevents-syntax-check t
+          flymake-start-on-flymake-mode t
+          flymake-start-on-save-buffer t
+          flymake-suppress-zero-counters t
+          flymake-wrap-around nil
+          flymake-fringe-indicator-position 'left-fringe))
+#+END_SRC
+
+** NeoTree
+A tree renderer of your filesystem. Useful for seeing files in your
+project and to preform basic operations on them, such as renaming and
+copying.
+#+BEGIN_SRC emacs-lisp
+  (use-package neotree
+    :defer t
+    :config
+    (setq neo-theme 'arrow
+          neo-smart-open t)
+    :bind (("C-c n d" . neotree-dir)
+           ("C-c n t" . neotree-toggle)))
+#+END_SRC
+
+** Treesit-auto
+#+BEGIN_SRC emacs-lisp
+  (use-package treesit-auto
+    :demand t
+    :config
+    (setq treesit-auto-install t)
+    (global-treesit-auto-mode))
+#+END_SRC
+
+** vundo
+In this excellet [[https://archive.casouri.cc/note/2021/visual-undo-tree/index.html][blog]] Yuan Fu describes a way of creating an undo-tree
+from Emacs' linear tree. This enables us to build an undo-tree on the
+fly, navigate it and make Emacs go to that state. Born is the package
+`vundo` (visualize undo).
+#+BEGIN_SRC emacs-lisp
+  (use-package vundo :defer t)
+#+END_SRC
+
+** ws-butler
+Removes trailing space and tabs from this user modified lines.
+#+BEGIN_SRC emacs-lisp
+  (use-package ws-butler
+    :defer t
+    :hook ((prog-mode text-mode) . ws-butler-mode))
+#+END_SRC
+
+* Search settings
+Settings for searching buffers, notes and more.
+
+** anzu
+#+BEGIN_SRC emacs-lisp
+  (use-package anzu
+    :bind (([remap query-replace] . anzu-query-replace)
+           ([remap query-replace-regexp] . anzu-query-replace-regexp)))
+#+END_SRC
+
+** consult
+#+BEGIN_SRC emacs-lisp
+  (use-package consult
+    ;; Replace bindings. Lazily loaded due by `use-package'.
+    :bind (;; C-c bindings (mode-specific-map)
+           ("C-c k" . consult-kmacro)
+           ;; C-x bindings (ctl-x-map)
+           ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+           ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+           ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
+           ;; Custom M-# bindings for fast register access
+           ;; Other custom bindings
+           ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+           ;; M-g bindings (goto-map)
+           ("M-g e" . consult-compile-error)
+           ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
+           ("M-g g" . consult-goto-line)             ;; orig. goto-line
+           ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+           ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
+           ("M-g m" . consult-mark)
+           ("M-g k" . consult-global-mark)
+           ("M-g i" . consult-imenu)
+           ("M-g I" . consult-imenu-multi)
+           ;; M-s bindings (search-map)
+           ("M-s f" . consult-find)
+           ("M-s F" . consult-locate)
+           ("M-s g" . consult-grep)
+           ("M-s G" . consult-git-grep)
+           ("M-s r" . consult-ripgrep)
+           ("M-s l" . consult-line)
+           ("M-s L" . consult-line-multi)
+           ("M-s m" . consult-multi-occur)
+           ("M-s k" . consult-keep-lines)
+           ("M-s u" . consult-focus-lines)
+           ;; Isearch integration
+           ("M-s e" . consult-isearch)
+           :map isearch-mode-map
+           ("M-e" . consult-isearch)                 ;; orig. isearch-edit-string
+           ("M-s e" . consult-isearch)               ;; orig. isearch-edit-string
+           ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
+           ("M-s L" . consult-line-multi))           ;; needed by consult-line to detect isearch
+    :init
+    ;; Optionally replace `completing-read-multiple' with an enhanced version.
+    (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple)
+
+    ;; Use Consult to select xref locations with preview
+    (setq xref-show-xrefs-function #'consult-xref
+          xref-show-definitions-function #'consult-xref))
+#+END_SRC
+
+** deft
+deft is a roam-like utility for quickly creating notes and searching
+for them.
+#+BEGIN_SRC emacs-lisp
+  (use-package deft
+    :commands (deft)
+    :config  (setq deft-file-naming-rules	;; use dots as delimiters in filename and downcase
+                   '((noslash . ".")
+                     (nospace . ".")
+                     (case-fn . downcase))
+                   deft-use-filename-as-title nil
+                   deft-use-filter-string-for-filename t
+                   deft-extensions '("org")
+                   deft-default-extension "org"))
+#+END_SRC
+*** director
+Chooses which directory to run deft in. Courtesy of [[http://pragmaticemacs.com/category/deft/][bjm]].
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/deft-director (dir)
+    "Run deft in directory DIR"
+    (setq deft-directory dir)
+    (switch-to-buffer "*Deft*")
+    (kill-this-buffer)
+    (deft))
+#+END_SRC
+*** projects
+We define different projects under a common deft directory.
+#+BEGIN_SRC emacs-lisp
+  (defcustom hesam-deft-directory "~/Dropbox/org/deft"
+    "Directory for Deft notes in Hesam's Emacs configuration."
+    :type 'directory
+    :group 'hesam)
+#+END_SRC
+
+Now we declare projects which invokes the director with the root to
+that project.
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/recipes ()
+    "Open the recipes project for searching and taking cooking-related notes.
+  This function uses hesam/deft-director to open the recipes project directory."
+    (interactive)
+    (hesam/deft-director (concat hesam-deft-directory "/recipes")))
+
+  (defun hesam/notes ()
+    "Open the notes project for general note-taking.
+  This function uses hesam/deft-director to open the notes project directory."
+    (interactive)
+    (hesam/deft-director (concat hesam-deft-directory "/notes")))
+#+END_SRC
+
+*** Keybindings
+#+BEGIN_SRC emacs-lisp
+  (leader-meta-spc
+    "n" 'hesam/notes
+    "r" 'hesam/recipes)
+#+END_SRC
+
+** Regexp is default search
+#+BEGIN_SRC emacs-lisp
+  (general-def
+    "C-s" 'isearch-forward-regexp
+    "C-r" 'isearch-backward-regexp)
+#+END_SRC
+
+* Shell settings
+Shell related packages and configurations. Our main emulator is
+vterm. In order to get all environment variables correctly we define
+them in `.bash_profile`, let the package `exec-path-from-shell` read
+them and intialize our terminal correctly.
+
+** Options
+Use completions other than for binaries.
+#+BEGIN_SRC emacs-lisp
+  (setq shell-completion-execonly nil)
+#+END_SRC
+
+** exec-path-from-shell
+Uses environment variables defined in your env files
+correctly. Otherwise, we have executables that are not reconginzed by
+Emacs shells.
+#+BEGIN_SRC emacs-lisp
+  (use-package exec-path-from-shell
+    :config
+    (exec-path-from-shell-initialize))
+#+END_SRC
+
+** shx
+#+BEGIN_SRC emacs-lisp
+  (use-package shx
+    :init
+    (add-hook 'shell-mode-hook  #'shx-mode))
+#+END_SRC
+
+** vterm
+Powerful terminal emulator based on libvterm written in C. Fast,
+colorful a delight.
+#+BEGIN_SRC emacs-lisp
+  (use-package vterm
+    :demand t
+    :after project
+    :bind ("M-SPC v" . 'vterm-other-window)
+    :config
+    (define-key vterm-mode-map (kbd "M-SPC") nil)
+    (add-to-list 'project-switch-commands '(hesam/vterm-project-shell "vterm" ?s))
+    (advice-add #'project-shell :override #'hesam/vterm-project-shell)
+
+    (add-to-list 'display-buffer-alist
+                 '("vterm"
+                   (display-buffer-in-side-window)
+                   (side . bottom)
+                   (slot . 0)
+                   (inhibit-same-window . nil)
+                   (window-parameters
+                    (no-delete-other-windows . t)))))
+#+END_SRC
+
+The custom function `hesam/vterm-project-shell` is for usage with
+`project.el`. It overrides the default shell. The function is rather
+long because we want to make sure vterm is started in `project-root`
+and have requirements on how and when a new window is created.
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/vterm-project-shell ()
+    "Run `vterm' in the current project's root.
+
+  If the VTerm buffer for this project exists and is visible, switch to it.
+  If it exists but is not visible, pop a new window and switch to it.
+  If the buffer does not exist, create a new one and switch to it.
+  A numeric prefix argument ARG does two things:
+  - If a buffer associated with the prefix exists, switch to that buffer accordingly.
+  - Otherwise, create a new buffer with the prefix number in the name."
+    (interactive)
+    (if (fboundp 'project-root)
+        (let* ((root (project-root (project-current t)))
+               (dir-name (file-name-nondirectory (directory-file-name root)))
+               (prefix-arg (if current-prefix-arg (format "<%d>"current-prefix-arg) ""))
+               (buffer-name (format "*%s*%s" (concat dir-name " vterm") prefix-arg))
+               (existing-buffer (get-buffer buffer-name)))
+          (if existing-buffer
+              (pop-to-buffer existing-buffer)
+            (let ((new-buffer (vterm-other-window buffer-name)))
+              (with-current-buffer new-buffer
+                (vterm-send-string (concat "cd " root))
+                (vterm-send-return)
+                (vterm-send-C-l)))))))
+#+END_SRC
+
+** xterm colors
+Enables full color support in Emacs comint buffers.
+#+BEGIN_SRC emacs-lisp
+  (use-package xterm-color
+    :config
+    ;; Provides colors for comint buffers
+    (setq comint-output-filter-functions
+          (remove 'ansi-color-process-output comint-output-filter-functions))
+    :hook
+    (shell-mode . (lambda ()
+                    ;; Disable font-locking in this buffer to improve performance
+                    (font-lock-mode -1)
+                    ;; Prevent font-locking from being re-enabled in this buffer
+                    (make-local-variable 'font-lock-function)
+                    (setq font-lock-function (lambda (_) nil))
+                    (add-hook 'comint-preoutput-filter-functions 'xterm-color-filter nil t))))
+#+END_SRC
+
+* UI Enhancement settings
+Settings for the feel and look of Emacs. We may also have some options
+configured elsewhere which affects the look of Emacs. One such example
+is the face `hideshow` minor mode uses, which we have put in
+`programming.org` because it's directly related to programming.
+
+** Fonts
+*** Family
+The core of our text rendering in Emacs, the font family, is defined
+here as a configurable variable, which ensures flexibility and
+customization.
+#+BEGIN_SRC emacs-lisp
+  (defcustom hesam-default-font-family "IosevkaTerm Nerd Font"
+    "Default font family."
+    :type 'string
+    :group 'hesam)
+#+END_SRC
+
+*** Resolution-specific font sizes
+To maintain a visually pleasing font size regardless of the display
+resolution, we define custom variables that set the font height based
+on whether the screen is high-resolution (HiRes) or low-resolution
+(LowRes). The variables `hesam-hires-display-font-height` and
+`hesam-lowres-display-font-height` control the font height values for
+HiRes and LowRes displays, respectively.
+#+BEGIN_SRC emacs-lisp
+  (defvar hesam-hires-display-font-height-value 180
+    "The actual value of 'hesam-hires-display-font-height'.")
+
+  (defvar hesam-lowres-display-font-height-value 120
+    "The actual value of 'hesam-lowres-display-font-height'.")
+
+  (defcustom hesam-modeline-hires-height (floor (* hesam-hires-display-font-height-value 0.9))
+    "Modeline high-resolution height."
+    :type 'integer
+    :group 'hesam)
+
+  (defcustom hesam-modeline-lowres-height (floor (* hesam-lowres-display-font-height-value 0.9))
+    "Modeline low-resolution height."
+    :type 'integer
+    :group 'hesam)
+#+END_SRC
+
+*** Default font attributes
+We explicitly set the attributes for the `'default`, `'fixed-pitch`,
+and `'variable-pitch` fonts. These attributes include the font family,
+weight, and height, the latter depending on the screen resolution.
+#+BEGIN_SRC emacs-lisp
+  (set-face-attribute 'default nil
+                      :family hesam-default-font-family
+                      :weight 'regular
+                      :height hesam-lowres-display-font-height-value)
+
+  (set-face-attribute 'fixed-pitch nil
+                      :inherit 'default)
+
+  (set-face-attribute 'fixed-pitch-serif nil
+                      :inherit 'default)
+
+  ;; we need to set it expclitly otherwise Emacs will display with
+  ;; this face with another font, see the start screen as an example
+  (set-face-attribute 'variable-pitch nil
+                      :family hesam-default-font-family
+                      :inherit 'default)
+#+END_SRC
+
+*** Font size adjustment functions
+In scenarios where an Emacs frame is dragged between screens of
+different resolutions, all font sizes within that frame must be
+updated accordingly. The function `hesam/font-per-display` is designed
+to handle this, and it's set to run every time a new frame is created
+or moved.
+**** Threshold
+The variable `hesam-hires-resolution-threshold` sets the resolution
+threshold for high-resolution displays.
+#+BEGIN_SRC emacs-lisp
+  (defvar hesam-hires-resolution-threshold-value 1200
+    "The actual value of 'hesam-hires-resolution-threshold'.")
+#+END_SRC
+
+**** Functions
+The functions `hesam/font-per-display` and `hesam/set-font-sizes` work
+in tandem to adjust the font sizes based on the current screen
+resolution.
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/font-per-display (frame)
+    "Adjust the font size based on the FRAME's resolution."
+    (let* ((geometry (frame-monitor-attribute 'geometry frame))
+           (resolution (car (last geometry))))
+      (select-frame frame)
+      (if (> resolution hesam-hires-resolution-threshold-value)
+          (hesam/set-font-sizes frame hesam-hires-display-font-height-value hesam-modeline-hires-height)
+        (hesam/set-font-sizes frame hesam-lowres-display-font-height-value hesam-modeline-lowres-height))))
+
+  (defun hesam/set-font-sizes (frame default-height modeline-height)
+    "Helper function to set the font sizes of FRAME."
+    (set-face-attribute 'default frame :height default-height)
+    (set-face-attribute 'mode-line frame :height modeline-height)
+    (set-face-attribute 'mode-line-inactive frame :height modeline-height))
+#+END_SRC
+
+**** Custom variables
+The following custom variables control the font height based on the
+screen resolution. The `:set` attribute in each `defcustom` call is
+used to automatically update the font sizes using the
+`hesam/font-per-display` function whenever these variables are
+changed.
+#+BEGIN_SRC emacs-lisp
+  (defcustom hesam-hires-display-font-height 180
+    "Font height for high-resolution displays."
+    :type 'integer
+    :group 'hesam
+    :set (lambda (sym value)
+           (set-default sym value)
+           (setq hesam-hires-display-font-height-value value)
+           (hesam/font-per-display (selected-frame)))
+    :get (lambda (sym) hesam-hires-display-font-height-value))
+
+  (defcustom hesam-lowres-display-font-height 120
+    "Font height for low-resolution displays."
+    :type 'integer
+    :group 'hesam
+    :set (lambda (sym value)
+           (set-default sym value)
+           (setq hesam-lowres-display-font-height-value value)
+           (hesam/font-per-display (selected-frame)))
+    :get (lambda (sym) hesam-lowres-display-font-height-value))
+
+  (defcustom hesam-hires-resolution-threshold 1200
+    "Resolution threshold for high-resolution displays."
+    :type 'integer
+    :group 'hesam
+    :set (lambda (sym value)
+           (set-default sym value)
+           (setq hesam-hires-resolution-threshold-value value)
+           (hesam/font-per-display (selected-frame)))
+    :get (lambda (sym) hesam-hires-resolution-threshold-value))
+#+END_SRC
+**** Hooks
+Hooks are set up to ensure `hesam/font-per-display` is executed as
+required, maintaining optimal font size regardless of the screen
+resolution. This ensures that the font sizes are adjusted
+automatically when we create a new frame or move an existing frame to
+another screen.
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'after-make-frame-functions 'hesam/font-per-display)
+  (add-hook 'move-frame-functions 'hesam/font-per-display)
+#+END_SRC
+
+** Themes
+*** Dracula
+The name of the theme is `dracula` -- dark, sleek and ubiquitous with
+lots of color!
+#+BEGIN_SRC emacs-lisp
+  (use-package dracula-theme
+    :config
+    (setq dracula-enlarge-headings nil)
+    (add-hook
+     'after-load-theme-hook
+     (lambda (theme)
+       (when (eq theme 'dracula)
+         ;; We don't like the match face provided by Dracula so we change it
+         ;; here -- as this should only be done if this theme is used.
+         (set-face-attribute 'match nil :background "#bd93f9")))))
+#+END_SRC
+
+*** Modus
+#+BEGIN_SRC emacs-lisp
+  (use-package modus-themes)
+#+END_SRC
+
+*** Ef
+#+BEGIN_SRC emacs-lisp
+  (use-package ef-themes)
+#+END_SRC
+
+** Cursor
+We always want the cursor to always blink so we can easily find it.
+#+BEGIN_SRC emacs-lisp
+  (blink-cursor-mode t)
+  (setq blink-cursor-blinks 0) ;; blink forever
+#+END_SRC
+
+Highlights current line in programming buffers, ie. in `prog-mode`
+activated buffers.
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'prog-mode-hook 'hl-line-mode)
+#+END_SRC
+
+** Frame customization and decorations
+Remove the menu, scroll and toolbar from Emacs frame.
+#+BEGIN_SRC emacs-lisp
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
+#+END_SRC
+Use an undecorated frame to remove OS titlebar. We also add internal
+border around the whole Emacs frame which pads the frame from all
+sides.
+
+The `drag-internal` settings is for using the mouse to drag/resize the
+Emacs frame, useful for when we have an undecorated frame.
+#+BEGIN_SRC emacs-lisp
+  (dolist (frame-option
+           '((undecorated . t) (internal-border-width . 10) (drag-internal-border . 1)))
+    (add-to-list 'default-frame-alist frame-option))
+#+END_SRC
+
+Lastly we use a little margin on both sides. Mainly because we want
+some padding between buffers. Recall that `internal-border` option is
+only around the frame and does not apply in areas that do not touch a
+frame edge.
+#+BEGIN_SRC emacs-lisp
+  (setq-default right-margin-width 1)
+#+END_SRC
+
+Do not truncate lines and if we need it the default binding to toggle
+is `C-x x t`. A value of `t` means to NOT truncate lines.
+#+BEGIN_SRC emacs-lisp
+  (setq-default truncate-lines t)
+#+END_SRC
+
+Setting partial width windows to `nil` means to respect the value for
+`truncate-lines`, otherwise we will get truncated lines for
+horizontally split windows (ie. `C-x 3` windows).
+#+BEGIN_SRC emacs-lisp
+  (setq-default truncate-partial-width-windows nil)
+#+END_SRC
+
+Set fringes to be invisible by inheriting from 'default. Hook it so it
+updates when changing themes.
+#+BEGIN_SRC emacs-lisp
+  (add-hook
+   'after-load-theme-hook
+   (lambda (&optional args) (set-face-attribute 'fringe nil :background 'unspecified)))
+#+END_SRC
+
+** Mode-line
+We like a compact mode-line and since VC mode will display potentially
+long branch names we remove it from the mode-line. To be safe we
+remove it after startup to ensure it is set when we try and delete it.
+#+BEGIN_SRC emacs-lisp
+  (setq mode-line-compact t)
+  (add-hook
+   'emacs-startup-hook
+   (lambda ()
+     (delete '(vc-mode vc-mode) mode-line-format)))
+#+END_SRC
+
+and to remove the precentage and All/Top/Bottom indicator.
+#+BEGIN_SRC emacs-lisp
+  (setq mode-line-percent-position nil)
+#+END_SRC
+
+Remove global info from the mode-line. Otherwise `display-time-mode`
+will display the time on every mode-line bar since
+`mode-line-misc-info` carries the global-string. We instead opt for
+the tab-bar to include the global-info-string since for each frame we
+have only one tab-bar. At the time of writing, as you'll see below, we
+need to wait until the mode-line-misc-info is set and safest is to do
+it after startup.
+#+BEGIN_SRC emacs-lisp
+  (add-hook
+   'emacs-startup-hook
+   (lambda ()
+     (delete '(global-mode-string ("" global-mode-string)) mode-line-misc-info)))
+#+END_SRC
+
+To further clean-up the mode-line we will install `minions` that hides
+them under the major mode. Now all relevant minor modes are shown
+under a hidden list.
+#+BEGIN_SRC emacs-lisp
+  (use-package minions
+    :config (minions-mode 1))
+#+END_SRC
+
+** Tabs and Windows
+Start with configuring the behavior and look of the tab bar, for
+example we enable the functionality and hide the close tab button.
+#+BEGIN_SRC emacs-lisp
+  (setq tab-bar-mode t
+        tab-bar-close-button-show nil
+        tab-bar-auto-width nil)
+#+END_SRC
+
+Sets the look of tab bar. We choose =not= to extenuate it and let it
+melt with the 'default background. However, we make sure to have a
+divider -- using `:underline` to highlight where the tab-bar starts.
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/set-tab-face-attributes ()
+    "Set the face attributes for the tab-bar and its tabs.
+
+    This function achieves the following:
+    1. Configures the default appearance of the tab-bar to match the default
+       face's foreground and background, with adjustments for height, font
+       family, weight, and underlining.
+    2. Differentiates between active and inactive tabs by setting distinct
+       face attributes. Active tabs have a more pronounced appearance
+       with an ultra-bold weight, while inactive tabs are lighter.
+
+    Prerequisites:
+    - Requires the default face's foreground and background to be set.
+    - Relies on the `hesam-default-font-family` variable for font specification.
+
+    Note: The function should be invoked after any theme or face customizations
+    to ensure consistency with the default face attributes."
+    (when (and (face-foreground 'default) (face-background 'default))
+        (set-face-attribute 'tab-bar nil
+                        :height 0.95
+                        :family hesam-default-font-family
+                        :weight 'normal
+                        :foreground (face-foreground 'default)
+                        :background (face-background 'default)
+                        :underline (face-foreground 'default)
+                        :box nil)
+
+    ;; To differentiate between active/inactive tabs we make adjustments
+    ;; to the text weight.
+    (set-face-attribute 'tab-bar-tab nil
+                        :inherit 'tab-bar
+                        :weight 'ultra-bold
+                        :underline (face-foreground 'default)
+                        :background (face-background 'default)
+                        :box `(:line-width (1 . 10) :color ,(face-background 'default) :style nil))
+
+    (set-face-attribute 'tab-bar-tab-inactive nil
+                        :inherit 'tab-bar
+                        :weight 'light
+                        :background (face-background 'default)
+                        :box `(:line-width (1 . 10) :color ,(face-background 'default) :style nil))))
+
+  ;; Run the function to set the look
+  (hesam/set-tab-face-attributes)
+
+  ;; And add it as a hook to adhere with changes when switching theme
+  ;; during run-time.
+  (add-hook
+   'after-load-theme-hook
+   (lambda (&optional theme) (hesam/set-tab-face-attributes)))
+#+END_SRC
+
+Next we decide what to display in the tab bar. This is done by adding
+functions to a variable that does something in the tab bar (like
+returning a string). The `tab-bar-format-global` option will display
+info that are of _global_ nature, such as the time with
+`display-time-mode`.
+#+BEGIN_SRC emacs-lisp
+  (setq tab-bar-format
+        '(tab-bar-format-tabs
+          tab-bar-separator
+          tab-bar-format-align-right
+          tab-bar-format-global))
+#+END_SRC
+
+However, the tab bar format tabs string prepends a separator on the
+very left side. We'll remove it.
+#+BEGIN_SRC emacs-lisp
+  (advice-add
+   'tab-bar-format-tabs :around (lambda (orig-fun) (cdr (funcall orig-fun))))
+#+END_SRC
+
+Next we want all tabs to be displayed in UPCASE. The function that
+automatically names tabs is `tab-bar-tab-name-current` which we
+decorate.
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/uppercase-tab-name-current (original-function &rest args)
+    (upcase (apply original-function args)))
+  (advice-add 'tab-bar-tab-name-current :around #'hesam/uppercase-tab-name-current)
+#+END_SRC
+
+And to quickly switch between tabs we bind convenient keys
+#+BEGIN_SRC emacs-lisp
+  (general-define-key
+   "s-n" 'tab-next
+   "s-p" 'tab-previous)
+#+END_SRC
+
+We want to repeat closing tabs. Hence we insert it in the repeat-map
+table.
+#+BEGIN_SRC emacs-lisp
+  (defvar tab-close-repeat-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map (kbd "0") #'tab-close)
+      map))
+  (put 'tab-close 'repeat-map 'tab-close-repeat-map)
+#+END_SRC
+
+Define a function that kills all buffers associated with a window
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/close-window-and-buffers ()
+    "Kill all buffers associated with the current window, and then delete the window if possible."
+    (interactive)
+    (let* ((current-window (selected-window))
+           (buffers (delq nil (mapcar (lambda (win)
+                                        (when (eq win current-window)
+                                          (window-buffer win)))
+                                      (window-list)))))
+      (mapc 'kill-buffer buffers)
+      (unless (one-window-p t)
+        (delete-window current-window))))
+#+END_SRC
+
+and build upon that to close the tab as well, bind this `C-x t k`.
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/kill-buffer-on-close-tab ()
+    (interactive)
+    (hesam/close-window-and-buffers)
+    (tab-close))
+
+  ;; Usually we don't bind custom keys to C-x but make an exception this
+  ;; time to gather all tab commands with the one defined.
+  (general-define-key
+   "C-x t k" 'hesam/kill-buffer-on-close-tab)
+#+END_SRC
+
+But sometimes we just want to kill next window in cyclic order and to
+do that we make use of `other-window` function.
+#+BEGIN_SRC emacs-lisp
+  (defun hesam/switch-and-close-next-window ()
+    "Switch to the next window in cyclic order, then kill the window."
+    (interactive)
+    (other-window 1)
+    (delete-window))
+
+  (leader-window
+    "0" 'hesam/switch-and-close-next-window)
+#+END_SRC
+
+Enable `winner-mode` everywhere which will allow undo and redo for
+tabs and windows. Windmove allows for easy navigation inside a
+window. We configure windmove to wrap around when moving buffers
+around (windmove is enabled by default).
+#+BEGIN_SRC emacs-lisp
+  (winner-mode t)
+  (setq windmove-wrap-around t)
+#+END_SRC
+
+Under prefix `C-c w` we define keybindings for windmov's display
+feature and winner mode. We are inspired by Vim bindings to allow for
+fast display of next buffers. Winner mode is naturally bound to `u`
+and `r`.
+#+BEGIN_SRC emacs-lisp
+  (leader-window
+     "k" 'windmove-display-up
+     "j" 'windmove-display-down
+     "h" 'windmove-display-left
+     "l" 'windmove-display-right
+     "s" 'windmove-display-same-window
+     "r" 'winner-redo
+     "u" 'winner-undo)
+#+END_SRC
+
+Sometimes we have two windows in a frame and want to change
+orientation from
+#+BEGIN_SRC emacs-lisp
+  (use-package transpose-frame
+    :config
+    (leader-window
+      "f" 'transpose-frame))
+#+END_SRC
+
+Here we bind convenient bindings for easy traversal between buffers in
+a window. Additionally we define keys for swapping buffer locations.
+#+BEGIN_SRC emacs-lisp
+  (general-define-key
+   "s-k" 'windmove-up
+   "s-j" 'windmove-down
+   "s-h" 'windmove-left
+   "s-l" 'windmove-right
+
+   "s-K" 'windmove-swap-states-up
+   "s-J" 'windmove-swap-states-down
+   "s-H" 'windmove-swap-states-left
+   "s-L" 'windmove-swap-states-right)
+#+END_SRC
+
+** Marginalia
+This package displays helpful descriptions of on the margins in
+certains instances. For example: invoking `M-x` displays all commands
+that can be called interactively. `Marginalia` will show their
+descriptions on the right hand side -- at the margin if you will.
+#+BEGIN_SRC emacs-lisp
+  (use-package marginalia
+    :config
+    (marginalia-mode))
+#+END_SRC
+
+** Which-key
+Displays available key chords after partially input. Hence, if we
+input `C-x t` to Emacs then `which-key` will display all defined key
+chords that are prefixed with `C-x t`. Placement of which-key window
+is on the bottom and pagination is done by `C-h n` for next and `C-h
+p` for previous.
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+    :config
+    (which-key-mode t)
+    (which-key-setup-side-window-bottom))
+#+END_SRC
