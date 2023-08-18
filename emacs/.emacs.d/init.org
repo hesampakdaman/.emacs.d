@@ -12,11 +12,13 @@ files. For example, the `leader-meta-spc` is global leader key used in
 many places and theming variables for colors too.
 
 #+BEGIN_SRC emacs-lisp
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+  (require 'package)
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 
-;; follow symlinks without prompt
-(setq vc-follow-symlinks t)
+  ;; follow symlinks without prompt
+  (setq vc-follow-symlinks t)
+
+  (setq use-package-always-defer t)
 #+END_SRC
 
 ** The package `general`
@@ -1013,20 +1015,6 @@ number in seconds for each change you make in the buffer.
           flymake-suppress-zero-counters t
           flymake-wrap-around nil
           flymake-fringe-indicator-position 'left-fringe))
-#+END_SRC
-
-** NeoTree
-A tree renderer of your filesystem. Useful for seeing files in your
-project and to preform basic operations on them, such as renaming and
-copying.
-#+BEGIN_SRC emacs-lisp
-  (use-package neotree
-    :defer t
-    :config
-    (setq neo-theme 'arrow
-          neo-smart-open t)
-    :bind (("C-c n d" . neotree-dir)
-           ("C-c n t" . neotree-toggle)))
 #+END_SRC
 
 ** Treesit-auto
