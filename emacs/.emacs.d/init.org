@@ -399,6 +399,7 @@ General autocompletion system, but mostly used in programming
 contexts. We complete text with `TAB` across Emacs' buffers.
 #+BEGIN_SRC emacs-lisp
   (use-package corfu
+    :demand t
     :custom
     (corfu-cycle t)
     (corfu-quit-at-boundary nil)
@@ -434,6 +435,7 @@ the search string `g l` will match both if we have set `'orderless`
 style (ie. the order of your serach words does not matter).
 #+BEGIN_SRC emacs-lisp
   (use-package orderless
+    :demand t
     :config
     (setq completion-styles '(orderless basic)
           completion-category-defaults nil
@@ -445,6 +447,7 @@ Minibuffer completion system. It will display a vertical scrolling
 minibuffer in modes like `M-x` or `(find-file)`.
 #+BEGIN_SRC emacs-lisp
   (use-package vertico
+    :demand t
     :init
     (vertico-mode)
     :config
