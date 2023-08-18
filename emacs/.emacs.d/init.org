@@ -12,8 +12,9 @@ files. For example, the `leader-meta-spc` is global leader key used in
 many places and theming variables for colors too.
 
 #+BEGIN_SRC emacs-lisp
-  (require 'package)
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+  (use-package package
+    :config
+    (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/")))
 
   ;; follow symlinks without prompt
   (setq vc-follow-symlinks t)
