@@ -2,6 +2,14 @@
 ;; This decreases startup time.
 (setq gc-cons-threshold (* 100 (expt 10 6))) ; 100MB
 
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+
+(dolist (frame-option
+         '((undecorated . t) (internal-border-width . 10) (drag-internal-border . 1)))
+  (add-to-list 'default-frame-alist frame-option))
+
 ;; package
 (setq package-native-compile t)
 (setq package-check-signature nil)

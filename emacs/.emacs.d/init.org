@@ -1408,24 +1408,6 @@ activated buffers.
 #+END_SRC
 
 ** Frame customization and decorations
-Remove the menu, scroll and toolbar from Emacs frame.
-#+BEGIN_SRC emacs-lisp
-  (scroll-bar-mode -1)
-  (tool-bar-mode -1)
-  (menu-bar-mode -1)
-#+END_SRC
-Use an undecorated frame to remove OS titlebar. We also add internal
-border around the whole Emacs frame which pads the frame from all
-sides.
-
-The `drag-internal` settings is for using the mouse to drag/resize the
-Emacs frame, useful for when we have an undecorated frame.
-#+BEGIN_SRC emacs-lisp
-  (dolist (frame-option
-           '((undecorated . t) (internal-border-width . 10) (drag-internal-border . 1)))
-    (add-to-list 'default-frame-alist frame-option))
-#+END_SRC
-
 Lastly we use a little margin on both sides. Mainly because we want
 some padding between buffers. Recall that `internal-border` option is
 only around the frame and does not apply in areas that do not touch a
