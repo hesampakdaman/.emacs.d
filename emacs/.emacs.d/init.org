@@ -952,8 +952,6 @@ interatively, it allows us to move between revisions with `n`,
 git porcelain
 #+BEGIN_SRC emacs-lisp
   (use-package magit
-    :demand t
-    :after project
     :bind ("C-c g" . magit-status)
     :config
     (advice-add #'project-vc-dir :override #'magit-project-status)
