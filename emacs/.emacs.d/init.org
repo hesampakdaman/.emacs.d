@@ -68,36 +68,6 @@ other `defcustom` commands. If we ever search for groups in
     :group 'emacs)
 #+END_SRC
 
-** Color theme list
-Throught our configuration we will supply an easy way of getting the
-colors. Note that if we change theme then most-likely we need to
-change the `hesam/theme-colrs-alist` as well. In this aspect it's a
-bit of a flaw because we cannot easily switch themes.
-
-The actual theme used can be find in [[file:ui-enhancement.org::*Themes][UI Enhancements]]. The default
-theme loaded on startup will have a `(load-theme ...)` in its
-`:config`.
-#+BEGIN_SRC emacs-lisp
-  (defun hesam/theme-color (color)
-    "Retrieve the color code for COLOR from `hesam/theme-colors-alist'."
-    (cdr (assoc color hesam/theme-colors-alist)))
-
-  (defvar hesam/theme-colors-alist
-    ;; Dracula palette
-    '((bg      . "#282a36")
-      (fg      . "#f8f8f2")
-      (current . "#44475a")
-      (comment . "#6272a4")
-      (cyan    . "#8be9fd")
-      (green   . "#50fa7b")
-      (orange  . "#ffb86c")
-      (pink    . "#ff79c6")
-      (purple  . "#bd93f9")
-      (red     . "#ff5555")
-      (yellow  . "#f1fa8c")
-      (white   . "#f8f8f2")))
-#+END_SRC
-
 ** Theme hooks
 These are used to override certain faces defined by the theme
 author. Any function added to the hook receives the theme symbol and
