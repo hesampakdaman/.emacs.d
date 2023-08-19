@@ -1,7 +1,7 @@
 # -*- after-save-hook: (org-babel-tangle); before-save-hook: (delete-trailing-whitespace)-*-
 #+TITLE: Emacs configuration
-#+STARTUP: OVERVIEW
-#+PROPERTY: header-args:emacs-lisp :exports code :results none :tangle ~/.emacs.d/init.el
+#+STARTUP: overview
+#+PROPERTY: header-args:emacs-lisp :exports code :results none :tangle (eval user-init-file)
 * Global settings
 It is of most important that this file is loaded first. Here we define
 global variables, such as leader keys and theme-colors, that are
