@@ -935,7 +935,6 @@ git porcelain
     :bind ("C-c g" . magit-status)
     :config
     (advice-add #'project-vc-dir :override #'magit-project-status)
-
     (add-to-list 'display-buffer-alist
                '("magit"
                  (display-buffer-reuse-mode-window
@@ -1149,15 +1148,16 @@ colorful a delight.
     (define-key vterm-mode-map (kbd "M-SPC") nil)
     (add-to-list 'project-switch-commands '(hesam/vterm-project-shell "vterm" ?s))
     (advice-add #'project-shell :override #'hesam/vterm-project-shell)
-
     (add-to-list 'display-buffer-alist
-                 '("vterm"
+                 '(".*vterm\\*"           ; captures vterm in project
                    (display-buffer-in-side-window)
-                   (side . bottom)
-                   (slot . 0)
-                   (inhibit-same-window . nil)
-                   (window-parameters
-                    (no-delete-other-windows . t)))))
+                   (inhibit-same-window . nil)))
+    (add-to-list 'display-buffer-alist
+                 '("\\*vterm.*"           ; regular vterm
+                   (display-buffer-in-direction)
+                   (direction . below)
+                   (window . root)
+                   (inhibit-same-window . nil))))
 #+END_SRC
 
 The custom function `hesam/vterm-project-shell` is for usage with
