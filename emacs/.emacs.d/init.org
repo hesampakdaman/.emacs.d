@@ -1687,6 +1687,7 @@ is on the bottom and pagination is done by `C-h n` for next and `C-h
 p` for previous.
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
+    :demand t
     :config
     (which-key-mode t)
     (which-key-setup-side-window-bottom))
