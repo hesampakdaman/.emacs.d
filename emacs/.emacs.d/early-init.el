@@ -5,7 +5,7 @@
 ;; Frame decorations and size
 ;; set these early to reduce flickering/resizing on startup
 (setq frame-inhibit-implied-resize t)
-(setq default-frame-alist '((width . 70) (height . 49)))
+(setq default-frame-alist '((width . 70) (height . 35)))
 
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
