@@ -1144,6 +1144,8 @@ colorful a delight.
     :demand t
     :after project
     :bind ("M-SPC v" . 'vterm-other-window)
+    :custom
+    (vterm-max-scrollback 10000)
     :config
     (define-key vterm-mode-map (kbd "M-SPC") nil)
     (add-to-list 'project-switch-commands '(hesam/vterm-project-shell "vterm" ?s))
