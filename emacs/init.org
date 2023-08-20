@@ -363,7 +363,6 @@ minor mode.
 |-------------------+--------------------------------|
 | Nomenclature      | Subwords                       |
 |-------------------+--------------------------------|
-|                   |                                |
 | GtkWindow         | "Gtk" and "Window"             |
 | EmacsFrameClass   | "Emacs", "Frame" and "Class"   |
 | NSGraphicsContext | "NS", "Graphics" and "Context" |
