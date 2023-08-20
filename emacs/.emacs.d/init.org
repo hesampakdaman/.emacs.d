@@ -1,7 +1,45 @@
 # -*- after-save-hook: (org-babel-tangle); before-save-hook: (delete-trailing-whitespace)-*-
 #+TITLE: Emacs configuration
 #+STARTUP: overview
-#+PROPERTY: header-args:emacs-lisp :exports code :results none :tangle (eval user-init-file)
+#+PROPERTY: header-args :mkdirp yes :tangle (eval user-init-file) :tangle-mode: #o444 :results silent :noweb yes
+* Early initialization
+:PROPERTIES:
+:header-args: :tangle-mode o444 :results silent :tangle (concat user-emacs-directory "early-init.el")
+:END:
+#+begin_src emacs-lisp
+  ;; Increase garbage collection threshold to delay GC during startup.
+  ;; this decreases startup time
+  (setq gc-cons-threshold (* 100 (expt 10 6))) ; 100MB
+
+  ;; Frame decorations and size
+  ;; set these early to reduce flickering/resizing on startup
+  (setq frame-inhibit-implied-resize t)
+  (setq default-frame-alist '((width . 70) (height . 35)))
+
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
+
+  (dolist (frame-option
+           '((undecorated . t) (internal-border-width . 10) (drag-internal-border . 1)))
+    (add-to-list 'default-frame-alist frame-option))
+
+  ;; Package
+  (setq package-native-compile t)
+  (setq package-check-signature nil)
+  (setq package-quickstart t)
+
+  ;; Compilations
+  (setq native-comp-deferred-compilation t)
+
+  ;; Lower garbage collection threshold after startup to minimize impact
+  ;; of GC during normal use
+  (add-hook 'after-init-hook
+            (lambda ()
+              (setq gc-cons-threshold (* 50 (expt 10 6))))) ; 50MB
+
+#+end_src
+
 * Global settings
 It is of most important that this file is loaded first. Here we define
 global variables, such as leader keys and theme-colors, that are
