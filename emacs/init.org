@@ -2,6 +2,11 @@
 #+TITLE: Emacs configuration
 #+STARTUP: overview
 #+PROPERTY: header-args :mkdirp yes :tangle (concat user-emacs-directory "init.el") :tangle-mode: #o444 :results silent :noweb yes
+This Emacs configuration will be tangled to =init.el= inside Emacs'
+configuration directory, usually =~/.emacs.d=, with one exception. The
+code in subsection [[* Early initialization]] will be tangled to the same
+directory as =early-init.el=.
+
 * Early initialization
 :PROPERTIES:
 :header-args: :tangle-mode o444 :results silent :tangle (concat user-emacs-directory "early-init.el")
