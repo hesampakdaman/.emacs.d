@@ -11,33 +11,46 @@
   ;; this decreases startup time
   (setq gc-cons-threshold (* 100 (expt 10 6))) ; 100MB
 
-  ;; Frame decorations and size
-  ;; set these early to reduce flickering/resizing on startup
-  (setq frame-inhibit-implied-resize t)
-  (setq default-frame-alist '((width . 70) (height . 35)))
+  ;; lower garbage collection threshold after startup to minimize impact
+  ;; of GC during normal use
+  (add-hook 'after-init-hook
+            (lambda ()
+              (setq gc-cons-threshold (* 50 (expt 10 6))))) ; 50MB
 
+  ;; Frame decorations and size
+  ;; do not allow Emacs to resize frame
+  (setq frame-inhibit-implied-resize t)
+
+  (setq frame-resize-pixelwise t)
+
+  ;; update Emacs ui more frequently
+  (setq idle-update-delay 0.1)
+
+  ;; set these early to reduce flickering/resizing on startup
+  (setq default-frame-alist '((width . 70) (height . 35)))
   (scroll-bar-mode -1)
   (tool-bar-mode -1)
   (menu-bar-mode -1)
+  (load-theme 'modus-vivendi t)
+  (set-face-attribute 'fringe nil :background 'unspecified)
+
 
   (dolist (frame-option
            '((undecorated . t) (internal-border-width . 10) (drag-internal-border . 1)))
     (add-to-list 'default-frame-alist frame-option))
 
   ;; Package
-  (setq package-native-compile t)
+  (setq package-native-compile t)         ; compile package ahead-of-time
   (setq package-check-signature nil)
   (setq package-quickstart t)
 
   ;; Compilations
-  (setq native-comp-deferred-compilation t)
+  ;; warning: with 3, the compiler is free to perform dangerous optimizations.
+  (setq-default native-comp-speed 3) ;; -O3
 
-  ;; Lower garbage collection threshold after startup to minimize impact
-  ;; of GC during normal use
-  (add-hook 'after-init-hook
-            (lambda ()
-              (setq gc-cons-threshold (* 50 (expt 10 6))))) ; 50MB
-
+  ;; Misc Optimizations
+  (setq-default cursor-in-non-selected-windows nil)
+  (setq fast-but-imprecise-scrolling t)
 #+end_src
 
 * Global settings
@@ -60,7 +73,6 @@ many places and theming variables for colors too.
   (require 'use-package-ensure)
   (setq use-package-always-defer t
         use-package-always-ensure t)
-
 #+END_SRC
 
 ** The package `general`
