@@ -1169,13 +1169,8 @@ Powerful terminal emulator based on libvterm written in C. Fast,
 colorful a delight.
 #+BEGIN_SRC emacs-lisp
   (use-package vterm
-    :demand t
     :after project
-    :bind ("M-SPC v" . 'vterm-other-window)
-    :custom
-    (vterm-max-scrollback 10000)
-    :config
-    (define-key vterm-mode-map (kbd "M-SPC") nil)
+    :init
     (add-to-list 'project-switch-commands '(hesam/vterm-project-shell "vterm" ?s))
     (advice-add #'project-shell :override #'hesam/vterm-project-shell)
     (add-to-list 'display-buffer-alist
@@ -1187,7 +1182,12 @@ colorful a delight.
                    (display-buffer-in-direction)
                    (direction . below)
                    (window . root)
-                   (inhibit-same-window . nil))))
+                   (inhibit-same-window . nil)))
+    :custom
+    (vterm-max-scrollback 10000)
+    :config
+    (define-key vterm-mode-map (kbd "M-SPC") nil))
+  (keymap-global-set "M-SPC v" 'vterm-other-window)
 #+END_SRC
 
 The custom function `hesam/vterm-project-shell` is for usage with
