@@ -37,23 +37,28 @@ same directory as =early-init.el=.
   (scroll-bar-mode -1)
   (tool-bar-mode -1)
   (menu-bar-mode -1)
+
+  ;; load a default theme
   (load-theme 'modus-vivendi t)
   (set-face-attribute 'fringe nil :background 'unspecified)
-
 
   (dolist (frame-option
            '((undecorated . t) (internal-border-width . 10) (drag-internal-border . 1)))
     (add-to-list 'default-frame-alist frame-option))
 
   ;; Package
-  (setq package-native-compile t)         ; compile package ahead-of-time
   (setq package-check-signature nil)
+  (setq package-native-compile t)         ; compile package ahead-of-time
   (setq package-quickstart t)
 
   ;; Compilations
   ;; warning: with 3, the compiler is free to perform dangerous optimizations.
   (setq-default native-comp-speed 3) ;; -O3
+
+  ;; Warnings
+  (setq byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local cl-functions))
   (setq native-comp-async-report-warnings-errors 'silent)
+  (setq warning-minimum-level :emergency)
   (setq warning-suppress-types '((comp)))
 
   ;; Misc Optimizations
@@ -276,6 +281,7 @@ alamrs we turn all of them completely off.
 #+BEGIN_SRC emacs-lisp
   ;; no beeping
   (setq ring-bell-function 'ignore)
+  (setq server-client-instructions nil)
 #+END_SRC
 
 ** Loading untracked settings
