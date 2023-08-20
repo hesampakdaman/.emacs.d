@@ -1676,6 +1676,7 @@ that can be called interactively. `Marginalia` will show their
 descriptions on the right hand side -- at the margin if you will.
 #+BEGIN_SRC emacs-lisp
   (use-package marginalia
+    :demand t
     :config
     (marginalia-mode))
 #+END_SRC
