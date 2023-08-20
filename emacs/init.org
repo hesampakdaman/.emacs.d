@@ -1,7 +1,7 @@
 # -*- after-save-hook: (org-babel-tangle); before-save-hook: (delete-trailing-whitespace)-*-
 #+TITLE: Emacs configuration
 #+STARTUP: overview
-#+PROPERTY: header-args :mkdirp yes :tangle :tangle (concat user-emacs-directory "init.el") :tangle-mode: #o444 :results silent :noweb yes
+#+PROPERTY: header-args :mkdirp yes :tangle (concat user-emacs-directory "init.el") :tangle-mode: #o444 :results silent :noweb yes
 * Early initialization
 :PROPERTIES:
 :header-args: :tangle-mode o444 :results silent :tangle (concat user-emacs-directory "early-init.el")
