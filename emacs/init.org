@@ -864,7 +864,7 @@ Python-specific settings and packages. Since Emacs 29 we have Python
 with Treesitter support.
 #+BEGIN_SRC emacs-lisp
   (use-package python
-    :config
+    :init
     (setq python-ts-mode-hook python-mode-hook)
     (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode)))
 #+END_SRC
