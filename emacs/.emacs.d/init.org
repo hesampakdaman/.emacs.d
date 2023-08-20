@@ -934,7 +934,7 @@ git porcelain
 #+BEGIN_SRC emacs-lisp
   (use-package magit
     :bind ("C-c g" . magit-status)
-    :config
+    :init
     (advice-add #'project-vc-dir :override #'magit-project-status)
     (add-to-list 'display-buffer-alist
                '("magit"
