@@ -1,13 +1,14 @@
 * GNU Emacs
-To setup Emacs after installing it we run the following command
+This configuration requires Emacs 29.1+ to run. In order to get
+started after installing Emacs run the command
 
 ```shell
 $ emacs --batch -l org ~/dotfiles/emacs/init.org -f org-babel-tangle
 ```
 
-which generates an =init.el= file inside Emacs configuration
-directory, ususally =~/.emacs.d/=. Then open Emacs as usual and all
-declared packages will be downloaded. That's it!
+It will generate an =init.el= file inside Emacs default configuration
+directory, =~/.emacs.d/= in Linux. Now open up Emacs to download and
+compile all declared packages. That's it!
 
 * vim
 Install vim-plug =curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim; vim +PlugInstall=.
