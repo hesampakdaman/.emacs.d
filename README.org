@@ -2,9 +2,9 @@
 This configuration requires Emacs 29.1+ to run. In order to get
 started after installing Emacs run the command
 
-```shell
-$ emacs --batch -l org ~/dotfiles/emacs/init.org -f org-babel-tangle
-```
+#+begin_src bash
+  $ emacs --batch -l org ~/dotfiles/emacs/init.org -f org-babel-tangle
+#+end_src
 
 It will generate an =init.el= file inside Emacs default configuration
 directory, =~/.emacs.d/= in Linux. Now open up Emacs to download and
