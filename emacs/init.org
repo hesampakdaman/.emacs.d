@@ -57,7 +57,10 @@ many places and theming variables for colors too.
   ;; follow symlinks without prompt
   (setq vc-follow-symlinks t)
 
-  (setq use-package-always-defer t)
+  (require 'use-package-ensure)
+  (setq use-package-always-defer t
+        use-package-always-ensure t)
+
 #+END_SRC
 
 ** The package `general`
