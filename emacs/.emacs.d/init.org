@@ -788,6 +788,7 @@ Rust-specific settings and packages. First remap the default major
 mode with Treesitter variant.
 #+BEGIN_SRC emacs-lisp
   (use-package rust-ts-mode
+    :demand t
     :config
     (add-to-list 'major-mode-remap-alist '(rust-mode . rust-ts-mode)))
 #+END_SRC
