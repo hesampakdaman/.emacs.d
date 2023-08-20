@@ -1,5 +1,5 @@
 * GNU Emacs
-[[file:emacs/emacs.png]]
+[[file:emacs.png]]
 
 This configuration requires =Emacs 29.1+= to run. In order to get
 started after installing Emacs run the command
