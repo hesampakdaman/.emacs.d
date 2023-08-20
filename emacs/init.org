@@ -8,6 +8,8 @@ configuration directory -- usually =~/.emacs.d= -- with one exception:
 the code in subsection [[Early initialization]] below will be tangled to the
 same directory as =early-init.el=.
 
+[[file:emacs.png][Emacs preview]]
+
 * Early initialization
 :PROPERTIES:
 :header-args: :tangle-mode o444 :results silent :tangle (concat user-emacs-directory "early-init.el")
