@@ -1540,7 +1540,8 @@ them under the major mode. Now all relevant minor modes are shown
 under a hidden list.
 #+BEGIN_SRC emacs-lisp
   (use-package minions
-    :config (minions-mode 1))
+    :demand t
+    :config (minions-mode t))
 #+END_SRC
 
 ** Tabs and Windows
