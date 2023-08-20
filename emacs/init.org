@@ -1598,8 +1598,10 @@ divider -- using `:underline` to highlight where the tab-bar starts.
                         :background (face-background 'default)
                         :box `(:line-width (1 . 10) :color ,(face-background 'default) :style nil))))
 
-  ;; Run the function to set the look
-  (hesam/set-tab-face-attributes)
+  ;; Run the function to set the look after init is complete
+  (add-hook
+   'after-init-hook
+   'hesam/set-tab-face-attributes)
 
   ;; And add it as a hook to adhere with changes when switching theme
   ;; during run-time.
