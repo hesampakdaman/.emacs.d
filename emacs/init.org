@@ -617,6 +617,44 @@ suspending.
   (global-unset-key (kbd "C-x C-z"))
 #+END_SRC
 
+** macOS specific
+Keybindings in macOS are a bit different compared to Linux. I'm
+accustomed to Linux so here I will try and mimic its keybindings. Use
+`Karabiner Elements` to bind keys according to the table below
+
+|----------+---------|
+| Key      | Binding |
+|----------+---------|
+| Capslock | Control |
+| Command  | Fn      |
+| Control  | Command |
+|----------+---------|
+
+#+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) (concat user-emacs-directory "init.el") "no")
+  (setq mac-command-modifier 'control)
+  (setq mac-option-modifier 'super)
+  (setq ns-function-modifier 'meta)
+#+end_src
+
+We'll need to do some modifications to keys used by macOS; otherwise
+they will interfere with the setup above. For it to work we require
+`skhd` with the following config
+
+#+begin_src bash :tangle (if (eq system-type 'darwin) "~/.skhdrc" "no")
+  fn - h : skhd --key "f13"
+  fn - n : skhd --key "f14"
+  fn - c : skhd --key "f15"
+  fn - a : skhd --key "f16"
+#+end_src
+
+and let Emacs know about it
+#+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) (concat user-emacs-directory "init.el") "no")
+  (global-set-key (kbd "<f16>") (kbd "M-a"))
+  (global-set-key (kbd "<f15>") (kbd "M-c"))
+  (global-set-key (kbd "<f13>") (kbd "M-h"))
+  (global-set-key (kbd "<f14>") (kbd "M-n"))
+#+end_src
+
 * Miscellaneous Packages
 This is not an exhaustive list of all packages used in our
 configuration. Rather we have put packages here that we couldn't
