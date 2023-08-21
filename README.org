@@ -1,16 +1,16 @@
 * GNU Emacs
 [[file:emacs.png]]
 
-This configuration requires =Emacs 29.1+= to run. In order to get
-started after installing Emacs run the command
+This configuration requires =Emacs 29.1+= to run. After installing
+Emacs run the command
 
 #+begin_src bash
-  $ emacs --batch -l org ~/dotfiles/emacs/init.org -f org-babel-tangle
+  $ emacs --batch -l org ./emacs/init.org -f org-babel-tangle
 #+end_src
 
-It will generate an =init.el= file inside Emacs default configuration
-directory, =~/.emacs.d/= in Linux. Now open up Emacs to download and
-compile all declared packages. That's it!
+which generates an =init.el= file inside Emacs default configuration
+directory. Now open up Emacs and it will automatically download,
+install and compile all declared packages the first time. That's it!
 
 * GNU Stow
 Install GNU Stow and link packages, e.g. =stow bash=. Alternatively, run
