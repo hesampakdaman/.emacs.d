@@ -19,7 +19,7 @@ same directory as =early-init.el=.
 
   ;; lower garbage collection threshold after startup to minimize impact
   ;; of GC during normal use
-  (add-hook 'after-init-hook
+  (add-hook 'emacs-starup-hook
             (lambda ()
               (setq gc-cons-threshold (* 50 (expt 10 6))))) ; 50MB
 
@@ -1639,7 +1639,7 @@ divider -- using `:underline` to highlight where the tab-bar starts.
 
   ;; Run the function to set the look after init is complete
   (add-hook
-   'after-init-hook
+   'emacs-starup-hook
    'hesam/set-tab-face-attributes)
 
   ;; And add it as a hook to adhere with changes when switching theme
