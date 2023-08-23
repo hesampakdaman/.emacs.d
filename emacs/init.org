@@ -1497,11 +1497,6 @@ lots of color!
          (set-face-attribute 'match nil :background "#bd93f9")))))
 #+END_SRC
 
-*** Modus
-#+BEGIN_SRC emacs-lisp
-  (use-package modus-themes)
-#+END_SRC
-
 *** Ef
 #+BEGIN_SRC emacs-lisp
   (use-package ef-themes)
