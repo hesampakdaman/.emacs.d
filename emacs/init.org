@@ -84,16 +84,16 @@ files. For example, the `leader-meta-spc` is global leader key used in
 many places and theming variables for colors too.
 
 #+begin_src emacs-lisp
+  (require 'use-package-ensure)
+  (setq use-package-always-defer t
+        use-package-always-ensure t)
+
   (use-package package
     :config
     (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/")))
 
   ;; follow symlinks without prompt
   (setq vc-follow-symlinks t)
-
-  (require 'use-package-ensure)
-  (setq use-package-always-defer t
-        use-package-always-ensure t)
 #+end_src
 
 ** The package `general`
