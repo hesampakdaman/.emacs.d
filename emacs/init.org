@@ -1218,13 +1218,6 @@ Emacs shells.
     (exec-path-from-shell-initialize))
 #+end_src
 
-** shx
-#+begin_src emacs-lisp
-  (use-package shx
-    :init
-    (add-hook 'shell-mode-hook  #'shx-mode))
-#+end_src
-
 ** vterm
 Powerful terminal emulator based on libvterm written in C. Fast,
 colorful a delight.
