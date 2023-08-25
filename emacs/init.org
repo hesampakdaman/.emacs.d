@@ -401,45 +401,6 @@ the region you selected.
   (put 'narrow-to-region 'disabled nil)
 #+end_src
 
-* Applications settings
-Here we keep a list of functions that's main purpose is to start an
-external program or run a shell command. These are all namespaced
-`apps/` and `commands/` respectively.
-
-Make sure that relevant binaries already exists in the system.
-
-** Calibre
-Book library app Calibre
-#+begin_src emacs-lisp
-  (defun apps/calibre ()
-    (interactive)
-    (start-process "" nil "calibre"))
-#+end_src
-
-** Redshift
-Controlling screen brightness and its warmness.
-#+begin_src emacs-lisp
-  (defun commands/redshift-day ()
-    (interactive)
-    (start-process-shell-command "" nil "redshift -x"))
-
-  (defun commands/redshift-night ()
-    (interactive)
-    (start-process-shell-command "" nil "redshift -x; redshift -O 6500 -b 0.50"))
-
-  (defun commands/redshift-dark ()
-    (interactive)
-    (start-process-shell-command "" nil "redshift -x; redshift -O 6500 -b 0.30"))
-#+end_src
-
-** Flameshot
-Screenshot capturing tool.
-#+begin_src emacs-lisp
-  (defun apps/flameshot ()
-    (interactive)
-    (start-process-shell-command "" nil "flameshot gui"))
-#+end_src
-
 * Completion settings
 For configuring autocompleting options. We begin with the a built-in
 hippie-expand by binding it
