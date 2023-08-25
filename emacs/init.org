@@ -1235,7 +1235,7 @@ colorful a delight.
     (add-to-list 'project-switch-commands '(hesam/vterm-project-shell "vterm" ?s))
     (advice-add #'project-shell :override #'hesam/vterm-project-shell)
     (add-to-list 'display-buffer-alist
-                 '(".*vterm\\*"           ; captures vterm in project
+                 '(".* vterm\\*"           ; captures vterm in project
                    (display-buffer-in-side-window)
                    (inhibit-same-window . nil)))
     (add-to-list 'display-buffer-alist
