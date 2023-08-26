@@ -36,9 +36,8 @@ same directory as =early-init.el=.
   (setq frame-inhibit-implied-resize t)
 
   (setq frame-resize-pixelwise t)
-
-  ;; update Emacs ui more frequently
   (setq idle-update-delay 0.1)
+  (setq fast-but-imprecise-scrolling t)
 
   ;; set these early to reduce flickering/resizing on startup
   (setq default-frame-alist '((width . 70) (height . 35)))
@@ -70,7 +69,6 @@ same directory as =early-init.el=.
 
   ;; Misc Optimizations
   (setq-default cursor-in-non-selected-windows nil)
-  (setq fast-but-imprecise-scrolling t)
 #+end_src
 
 * Global settings
