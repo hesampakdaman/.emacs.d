@@ -888,7 +888,6 @@ with Treesitter support.
 #+begin_src emacs-lisp
   (use-package python
     :init
-    (setq python-ts-mode-hook python-mode-hook)
     (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode)))
 #+end_src
 
