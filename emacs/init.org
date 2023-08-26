@@ -272,6 +272,15 @@ load-average
         display-time-default-load-average nil)
 #+end_src
 
+** Custom file settings
+Emacs customization options are not tracked by git and will be saved
+in another file instead of in this init file.
+#+begin_src emacs-lisp
+  (setq custom-file "~/.emacs.d/emacs-custom.el")
+  (if (file-exists-p custom-file)
+      (load-file custom-file))
+#+end_src
+
 ** Disable suspend functions
 We don't want to ever suspend Emacs or the frame. Therefore display a
 warning when these commands are run.
@@ -296,23 +305,6 @@ alamrs we turn all of them completely off.
   ;; no beeping
   (setq ring-bell-function 'ignore)
   (setq server-client-instructions nil)
-#+end_src
-
-** Loading untracked settings
-Helper function `hesam/load-if-exists` to load any files if they
-exist. These are not meant to be tracked by git. We also set the
-custom-file variable to notifty emacs customization options not
-tracked by git shall be saved there, instead of default in the init
-file.
-#+begin_src emacs-lisp
-  (defun hesam/load-if-exists (path)
-    (if (file-exists-p path)
-        (load path)))
-
-  (setq custom-file "~/.emacs.d/emacs-custom.el")
-  (hesam/load-if-exists custom-file)
-  (hesam/load-if-exists "~/.emacs.d/macros.el")
-  (hesam/load-if-exists "~/.emacs.d/local.el")
 #+end_src
 
 ** Openwith
