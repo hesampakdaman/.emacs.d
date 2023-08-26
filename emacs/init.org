@@ -793,7 +793,10 @@ And lastly to cleanup the Org agenda TODO view
 *** Keybindings
 For accessing Org agenda and GTD quickly.
 #+begin_src emacs-lisp
-(leader-org-mode
+  ;; capture to template Inbox "i" directly
+  (keymap-global-set "C-c c" #'(lambda () (interactive) (org-capture nil "i")))
+
+  (leader-org-mode
     "a" 'org-agenda
     "c" 'org-capture
     "g" 'gtd/toggle-doing
