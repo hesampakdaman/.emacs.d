@@ -690,6 +690,11 @@ We want to display Org SRC code blocks in the same window
   (setq org-src-window-setup 'current-window)
 #+end_src
 
+When invoking `imenu` we would like to search through at least 5
+subsections.
+#+begin_src emacs-lisp
+  (setq org-imenu-depth 5)
+#+end_src
 
 ** Agenda and GTD
 Agenda files are stored in Dropbox under `org/agenda`. If we put our
