@@ -895,7 +895,6 @@ with Treesitter support.
 Automatically activate Python virtual environments with `auto-virtualenv`.
 #+begin_src emacs-lisp
   (use-package auto-virtualenv
-    :defer t
     :config
     (advice-add #'project-switch-to-buffer :after #'auto-virtualenv-set-virtualenv)
     :hook (python-ts-mode . auto-virtualenv-set-virtualenv))
@@ -904,14 +903,13 @@ Automatically activate Python virtual environments with `auto-virtualenv`.
 **** black
 #+begin_src emacs-lisp
   (use-package python-black
-    :defer t
     :hook (python-ts-mode . python-black-on-save-mode-enable-dwim))
 #+end_src
 
 **** pyenv
 Use `pyvenv` to manage Python virtual environments.
 #+begin_src emacs-lisp
-  (use-package pyvenv :defer t)
+  (use-package pyvenv)
 #+end_src
 
 ** Language Server Protocol
@@ -919,7 +917,6 @@ Setup Language Server Protocol (LSP) for different programming
 languages. We use eglot which is built-in >= Emacs 29.
 #+begin_src emacs-lisp
   (use-package eglot
-    :defer t
     :bind (:map eglot-mode-map
                 ("C-c e r" . eglot-rename)
                 ("C-c e f" . eglot-format)
@@ -932,7 +929,6 @@ languages. We use eglot which is built-in >= Emacs 29.
 
   (use-package eldoc-box
     :after eglot
-    :defer t
     :config
     (set-face-attribute 'eldoc-box-body nil
                         :inherit 'default))
@@ -994,7 +990,6 @@ interatively, it allows us to move between revisions with `n`,
 `p`. Hit `?` to get a hydra-like menu for more commands.
 #+begin_src emacs-lisp
   (use-package git-timemachine
-    :defer t
     :after magit)
 #+end_src
 
@@ -1049,14 +1044,13 @@ from Emacs' linear tree. This enables us to build an undo-tree on the
 fly, navigate it and make Emacs go to that state. Born is the package
 `vundo` (visualize undo).
 #+begin_src emacs-lisp
-  (use-package vundo :defer t)
+  (use-package vundo)
 #+end_src
 
 ** ws-butler
 Removes trailing space and tabs from this user modified lines.
 #+begin_src emacs-lisp
   (use-package ws-butler
-    :defer t
     :hook ((prog-mode text-mode) . ws-butler-mode))
 #+end_src
 
