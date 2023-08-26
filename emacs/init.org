@@ -283,6 +283,15 @@ warning when these commands are run.
   (put 'suspend-emacs 'disabled t)
 #+end_src
 
+** Help
+When spawning new `*Help*` buffers we select them (for ease of
+quitting with `q`) and tell Emacs to reuse the same window for all
+`*Help*` related buffers.
+#+begin_src emacs-lisp
+  (setq help-window-select t
+        help-window-keep-selected t)      ; reuse help window for related buffers
+#+end_src
+
 ** Inhibiting Bells and Warnings
 Finding it too annoying hearing beeping sounds and seeing visual we
 alamrs we turn all of them completely off.
