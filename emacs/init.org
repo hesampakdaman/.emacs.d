@@ -11,7 +11,7 @@ same directory as =early-init.el=.
 
 * Early initialization
 :PROPERTIES:
-:header-args: :tangle-mode o444 :results silent :tangle (concat user-emacs-directory "early-init.el")
+:header-args: :tangle (concat user-emacs-directory "early-init.el")
 :END:
 #+begin_src emacs-lisp
   ;; Increase garbage collection threshold to delay GC during startup.
