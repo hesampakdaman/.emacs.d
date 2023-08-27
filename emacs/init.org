@@ -1,5 +1,6 @@
 # -*- after-save-hook: (org-babel-tangle); before-save-hook: (delete-trailing-whitespace)-*-
 #+TITLE: Emacs configuration
+#+AUTHOR: Hesam Pakdaman
 #+STARTUP: overview
 #+PROPERTY: header-args :mkdrip yes :tangle-mode o444 :results silent :tangle (concat user-emacs-directory "init.el")
 * Introduction
