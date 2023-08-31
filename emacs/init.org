@@ -1470,7 +1470,6 @@ lots of color!
 We always want the cursor to always blink so we can easily find it.
 #+begin_src emacs-lisp
   (blink-cursor-mode t)
-  (setq blink-cursor-blinks 0) ;; blink forever
 #+end_src
 
 Highlights current line in programming buffers, ie. in `prog-mode`
