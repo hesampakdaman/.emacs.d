@@ -150,9 +150,9 @@ is simple `(add-hook 'after-load-theme-hook (lambda (theme) body))`.
   (defvar after-load-theme-hook nil
     "Hook run after a theme is loaded using `load-theme'.")
 
-  (defun run-after-load-theme-hook (&rest args)
+  (defun run-after-load-theme-hook (theme &rest args)
     "Run `after-load-theme-hook' with theme as argument."
-    (run-hook-with-args 'after-load-theme-hook args))
+    (run-hook-with-args 'after-load-theme-hook theme))
 
   (advice-add 'load-theme :after #'run-after-load-theme-hook)
   (advice-add 'enable-theme :after #'run-after-load-theme-hook)
