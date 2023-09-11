@@ -1457,13 +1457,7 @@ lots of color!
 
 *** Tok
 #+begin_src emacs-lisp
-  (use-package tok-theme
-    :config
-    (custom-theme-set-faces
-     'tok
-     `(font-lock-function-name-face ((t (:weight bold))))
-     `(font-lock-keyword-face ((t (:foreground "MediumPurple2"))))
-     `(font-lock-function-call-face ((t (:weight bold))))))
+  (use-package tok-theme)
 #+end_src
 
 ** Cursor
