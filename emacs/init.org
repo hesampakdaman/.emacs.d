@@ -39,6 +39,7 @@ same directory as =early-init.el=.
   (setq frame-resize-pixelwise t)
   (setq idle-update-delay 0.1)
   (setq fast-but-imprecise-scrolling t)
+  (setq pixel-scroll-precision-mode t)
 
   ;; set these early to reduce flickering/resizing on startup
   (setq default-frame-alist '((width . 70) (height . 35)))
