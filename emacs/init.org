@@ -1542,7 +1542,7 @@ Start with configuring the behavior and look of the tab bar, for
 example we enable the functionality and hide the close tab button.
 #+begin_src emacs-lisp
   (setq tab-bar-mode t
-        tab-bar-show 0
+        tab-bar-show 1
         tab-bar-close-button-show nil
         tab-bar-auto-width nil)
 #+end_src
