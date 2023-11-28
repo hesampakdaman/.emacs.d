@@ -1467,12 +1467,6 @@ No blinking cursor!
   (blink-cursor-mode -1)
 #+end_src
 
-Highlights current line in programming buffers, ie. in `prog-mode`
-activated buffers.
-#+begin_src emacs-lisp
-  (add-hook 'prog-mode-hook 'hl-line-mode)
-#+end_src
-
 ** Frame customization and decorations
 Lastly we use a little margin on both sides. Mainly because we want
 some padding between buffers. Recall that `internal-border` option is
