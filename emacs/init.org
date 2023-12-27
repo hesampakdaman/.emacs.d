@@ -839,6 +839,12 @@ So in order to get nice bullet points we use `org-bullets`.
     :hook (org-mode . org-bullets-mode))
 #+end_src
 
+** LaTeX
+SRC blocks in latex should be syntax highlighted
+#+begin_src emacs-lisp
+  (setq org-latex-src-block-backend 'engraved)
+#+end_src
+
 * Programming settings
 Programming related settings and packages defined here. Language
 Server Protocol (LSP) provides IDE-like features and is configured
