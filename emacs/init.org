@@ -420,21 +420,18 @@ enable it or not
     :type 'boolean
     :group 'hesam)
 
-  (eval-when-compile
-    (if (and hesam-copilot-enabled
-             (file-directory-p "/home/hesam/repos/copilot.el"))
-        (progn
-          (use-package editorconfig)
-          (require 'copilot)
-          (use-package copilot
-            :ensure-system-package nodejs
-            :load-path "/home/hesam/repos/copilot.el"
-            :hook
-            ((org-mode prog-mode text-mode) . copilot-mode)
-            (emacs-lisp-mode . (lambda ()
-                                 (setq-local copilot--indent-warning-printed-p t)))
-            :bind (:map copilot-completion-map
-                        ("C-c n" . copilot-accept-completion))))))
+  (cond ((and hesam-copilot-enabled
+           (file-directory-p "/home/hesam/repos/copilot.el"))
+        (use-package editorconfig)
+        (use-package copilot
+          :ensure-system-package nodejs
+          :load-path "/home/hesam/repos/copilot.el"
+          :hook
+          ((org-mode prog-mode text-mode) . copilot-mode)
+          ((org-mode prog-mode text-mode) . (lambda ()
+                               (setq-local copilot--indent-warning-printed-p t)))
+          :bind (:map copilot-completion-map
+                      ("C-c n" . copilot-accept-completion)))))
 #+end_src
 
 ** Corfu
