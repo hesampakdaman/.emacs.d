@@ -668,6 +668,17 @@ Will expand mark in regions that makes sense, ie. is context aware.
     :bind ("C-c =" . 'er/expand-region))
 #+end_src
 
+** Large Language Models
+*** gptel
+#+begin_src emacs-lisp
+  (use-package gptel
+    :init
+    (setq gptel-default-mode 'org-mode
+          gptel-prompt-string "> ")
+    :config
+    (gptel-auto-scroll))
+#+end_src
+
 ** pdf-tools
 A major mode for viewing PDF files inside Emacs. Ordinary `'isearch`
 works best in PDF tools which is why we explicitly set it for
