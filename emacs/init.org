@@ -647,7 +647,9 @@ works best in PDF tools which is why we explicitly set it for
 `PDFView` mode.
 #+begin_src emacs-lisp
   (use-package pdf-tools
-    :config (pdf-tools-install)
+    :config
+    (pdf-tools-install)
+    (setq pdf-view-use-scaling t)
     :bind (:map pdf-view-mode-map
                 ("C-s" . isearch-forward)
                 ("C-r" . isearch-backward)
