@@ -866,6 +866,11 @@ So in order to get nice bullet points we use `org-bullets`.
     :hook (org-mode . org-bullets-mode))
 #+end_src
 
+Hook `visual-line-mode` to `org-mode`
+#+begin_src emacs-lisp
+  (add-hook 'org-mode-hook 'visual-line-mode)
+#+end_src
+
 ** LaTeX
 SRC blocks in latex should be syntax highlighted
 #+begin_src emacs-lisp
