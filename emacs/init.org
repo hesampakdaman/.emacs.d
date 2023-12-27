@@ -668,12 +668,19 @@ Will expand mark in regions that makes sense, ie. is context aware.
 ** Large Language Models
 *** gptel
 #+begin_src emacs-lisp
-  (use-package gptel
-    :init
-    (setq gptel-default-mode 'org-mode
-          gptel-prompt-string "> ")
-    :config
-    (gptel-auto-scroll))
+  (defcustom hesam-openai-key nil
+    "OpenAI API key"
+    :type 'string
+    :group 'hesam)
+
+  (if hesam-openai-key
+      (use-package gptel
+        :init
+        (setq gptel-api-key hesam-openai-key
+              gptel-default-mode 'org-mode
+              gptel-prompt-string "> ")
+        :config
+        (gptel-auto-scroll)))
 #+end_src
 
 ** pdf-tools
