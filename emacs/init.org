@@ -410,6 +410,33 @@ hippie-expand by binding it
    "C-c h" 'hippie-expand)
 #+end_src
 
+** copilot
+Uses GitHub's copilot as completion system. Requires paid account,
+because of this define a custom variable that controls wether to
+enable it or not
+#+begin_src emacs-lisp
+  (defcustom hesam-copilot-enabled nil
+    "Enable copilot-mode. Requires restart to take effect."
+    :type 'boolean
+    :group 'hesam)
+
+  (eval-when-compile
+    (if (and hesam-copilot-enabled
+             (file-directory-p "/home/hesam/repos/copilot.el"))
+        (progn
+          (use-package editorconfig)
+          (require 'copilot)
+          (use-package copilot
+            :ensure-system-package nodejs
+            :load-path "/home/hesam/repos/copilot.el"
+            :hook
+            (prog-mode . copilot-mode)
+            (emacs-lisp-mode . (lambda ()
+                                 (setq-local copilot--indent-warning-printed-p t)))
+            :bind (:map copilot-completion-map
+                        ("C-c n" . copilot-accept-completion))))))
+#+end_src
+
 ** Corfu
 General autocompletion system, but mostly used in programming
 contexts. We complete text with `TAB` across Emacs' buffers.
