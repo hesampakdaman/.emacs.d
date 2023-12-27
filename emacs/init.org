@@ -649,8 +649,10 @@ works best in PDF tools which is why we explicitly set it for
   (use-package pdf-tools
     :config (pdf-tools-install)
     :bind (:map pdf-view-mode-map
-		("C-s" . isearch-forward)
-		("C-r" . isearch-backward)))
+                ("C-s" . isearch-forward)
+                ("C-r" . isearch-backward)
+                ("<mouse-8>" . pdf-view-previous-page-command)
+                ("<mouse-9>" . pdf-view-next-page-command)))
 #+end_src
 
 *** auxtex
