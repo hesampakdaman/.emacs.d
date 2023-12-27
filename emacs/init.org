@@ -430,7 +430,7 @@ enable it or not
             :ensure-system-package nodejs
             :load-path "/home/hesam/repos/copilot.el"
             :hook
-            (prog-mode . copilot-mode)
+            ((org-mode prog-mode text-mode) . copilot-mode)
             (emacs-lisp-mode . (lambda ()
                                  (setq-local copilot--indent-warning-printed-p t)))
             :bind (:map copilot-completion-map
