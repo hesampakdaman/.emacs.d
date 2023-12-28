@@ -713,8 +713,7 @@ TeX should be open with PDF tools.
 *** midnight mode
 #+begin_src emacs-lisp
   ;;; set colors for pdf-tools, the var expects cons
-  ;; (setq pdf-view-midnight-colors (cons (doom-color 'fg) (doom-color 'bg)))
-  (setq pdf-view-midnight-colors (cons "#ffffff" "#000000"))
+
 #+end_src
 
 * Org mode settings
