@@ -112,8 +112,8 @@ in `org-mode.org`. But we prefer to put them here to have all leaders
 in one place.
 #+begin_src emacs-lisp
   ;; Prefix to be used for all kinds of stuff
-  (general-create-definer leader-meta-spc
-    :prefix "M-SPC")
+  (unbind-key "M-SPC" global-map)
+  (define-key global-map (kbd "M-SPC") (make-sparse-keymap))
 
   ;; Sub-leader for agenda & GTD
   (general-create-definer leader-org-mode
@@ -1233,9 +1233,9 @@ that project.
 
 *** Keybindings
 #+begin_src emacs-lisp
-  (leader-meta-spc
-    "n" 'hesam/notes
-    "r" 'hesam/recipes)
+  (bind-keys
+   ("M-SPC n" . hesam/notes)
+   ("M-SPC r" . hesam/recipes))
 #+end_src
 
 ** Regexp is default search
