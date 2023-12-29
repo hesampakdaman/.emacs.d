@@ -677,10 +677,16 @@ Will expand mark in regions that makes sense, ie. is context aware.
       (use-package gptel
         :init
         (setq gptel-api-key hesam-openai-key
-              gptel-default-mode 'org-mode
-              gptel-prompt-string "> ")
+              gptel-default-mode 'org-mode)
+        :hook (gptel-post-response . gptel-end-of-response)
+        :bind ("M-SPC c" . gptel-menu)
         :config
-        (gptel-auto-scroll)))
+        (add-to-list 'display-buffer-alist
+                     '("\\*ChatGPT.*\\*"
+                       (display-buffer-in-side-window)
+                       (side . top)
+                       (window-height . 0.4)
+                       (inhibit-same-window . nil)))))
 #+end_src
 
 ** pdf-tools
