@@ -678,7 +678,6 @@ Will expand mark in regions that makes sense, ie. is context aware.
         :init
         (setq gptel-api-key hesam-openai-key
               gptel-default-mode 'org-mode)
-        :hook (gptel-post-response . gptel-end-of-response)
         :bind ("M-SPC c" . gptel-menu)
         :config
         (add-to-list 'display-buffer-alist
