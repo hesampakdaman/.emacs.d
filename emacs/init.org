@@ -753,7 +753,7 @@ works best in PDF tools which is why we explicitly set it for
   (use-package pdf-tools
     :init
     (setq pdf-view-use-unicode-ligther nil
-          pdf-view-use-scaling t)
+          pdf-view-use-scaling nil)
     :hook (doc-view-mode . pdf-tools-install)
     :bind (:map pdf-view-mode-map
                 ("C-s" . isearch-forward)
