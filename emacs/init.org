@@ -119,10 +119,6 @@ in one place.
   (general-create-definer leader-org-mode
     :prefix "C-c o")
 
-  ;; Sub-leader for redshift
-  (general-create-definer leader-super-r
-    :prefix "M-SPC r")
-
   ;; Leader for editing text
   (general-create-definer leader-editing
     :prefix "C-c e")
