@@ -1542,22 +1542,6 @@ another screen.
 #+end_src
 
 ** Themes
-*** Dracula
-The name of the theme is `dracula` -- dark, sleek and ubiquitous with
-lots of color!
-#+begin_src emacs-lisp
-  (use-package dracula-theme
-    :config
-    (setq dracula-enlarge-headings nil)
-    (add-hook
-     'after-load-theme-hook
-     (lambda (theme)
-       (when (eq theme 'dracula)
-         ;; We don't like the match face provided by Dracula so we change it
-         ;; here -- as this should only be done if this theme is used.
-         (set-face-attribute 'match nil :background "#bd93f9")))))
-#+end_src
-
 *** Ef
 #+begin_src emacs-lisp
   (use-package ef-themes
