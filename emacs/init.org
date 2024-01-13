@@ -1559,7 +1559,15 @@ lots of color!
 
 *** Ef
 #+begin_src emacs-lisp
-  (use-package ef-themes)
+  (use-package ef-themes
+    :config
+    (setq ef-themes-common-palette-overrides
+          '((builtin fg-main)
+            (constant fg-main)
+            (identifier fg-main)
+            (preprocessor fg-main)))
+            (prompt fg-main)
+            (variable fg-main))
 #+end_src
 
 *** Tok
