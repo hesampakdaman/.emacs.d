@@ -754,7 +754,11 @@ works best in PDF tools which is why we explicitly set it for
     :init
     (setq pdf-view-use-unicode-ligther nil
           pdf-view-use-scaling nil)
-    :hook (doc-view-mode . pdf-tools-install)
+    :hook ((doc-view-mode . pdf-tools-install)
+           (after-load-theme . (lambda (theme)
+                                (setq pdf-view-midnight-colors
+                                      (cons (face-attribute 'default :foreground)
+                                            (face-attribute 'default :background))))))
     :bind (:map pdf-view-mode-map
                 ("C-s" . isearch-forward)
                 ("C-r" . isearch-backward)
