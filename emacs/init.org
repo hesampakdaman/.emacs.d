@@ -149,6 +149,7 @@ is simple `(add-hook 'after-load-theme-hook (lambda (theme) body))`.
 
   (defun run-after-load-theme-hook (theme &rest args)
     "Run `after-load-theme-hook' with theme as argument."
+    (sit-for 0.5)
     (run-hook-with-args 'after-load-theme-hook theme))
 
   (advice-add 'load-theme :after #'run-after-load-theme-hook)
