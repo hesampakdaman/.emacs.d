@@ -1566,9 +1566,9 @@ lots of color!
           '((builtin fg-main)
             (constant fg-main)
             (identifier fg-main)
-            (preprocessor fg-main)))
+            (preprocessor fg-main)
             (prompt fg-main)
-            (variable fg-main))
+            (variable fg-main))))
 #+end_src
 
 *** Tok
