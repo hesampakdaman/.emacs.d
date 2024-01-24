@@ -1541,6 +1541,20 @@ another screen.
   (add-hook 'move-frame-functions 'hesam/font-per-display)
 #+end_src
 
+*** Ligatures
+Ligatures are a way to display multiple characters as a single glyph. Here we use the package `ligature` to enable ligatures in Emacs. We use the font Iosevka Term Nerd Font which has ligatures built-in. We also set the ligatures to be enabled in programming modes.
+#+begin_src emacs-lisp
+  (use-package ligature
+    :config
+    ;; Enable all Iosevka ligatures in programming modes
+    (ligature-set-ligatures
+     'prog-mode '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
+                  "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
+                  "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
+                  ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
+    (global-ligature-mode t))
+#+end_src
+
 ** Themes
 *** Ef
 #+begin_src emacs-lisp
