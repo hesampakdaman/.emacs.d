@@ -1569,6 +1569,20 @@ Ligatures are a way to display multiple characters as a single glyph. Here we us
             (variable fg-main))))
 #+end_src
 
+*** Modus
+#+begin_src emacs-lisp
+  (use-package modus-themes
+    :config
+    (setq modus-themes-bold-constructs t
+          modus-themes-common-palette-overrides
+          '((variable fg-main)
+            (constant fg-main)
+            (builtin fg-main)
+            (identifier fg-main)
+            (prompt fg-main)
+            (preprocessor fg-main))))
+#+end_src
+
 *** Tok
 #+begin_src emacs-lisp
   (use-package tok-theme)
