@@ -1026,7 +1026,7 @@ languages. We use eglot which is built-in >= Emacs 29.
     :config
     (set-face-attribute 'eglot-highlight-symbol-face nil
                         :inherit 'match)
-    (setq eglot-sync-connect nil
+    (setq eglot-sync-connect 1
           eglot-events-buffer-config 0)
     :hook ((rust-ts-mode python-ts-mode haskell-ts-mode) . eglot-ensure))
 
