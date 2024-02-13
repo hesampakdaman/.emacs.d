@@ -1550,13 +1550,12 @@ Ligatures are a way to display multiple characters as a single glyph. Here we us
 #+begin_src emacs-lisp
   (use-package ligature
     :config
-    ;; Enable all Iosevka ligatures in programming modes
     (ligature-set-ligatures
      'prog-mode '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
                   "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
                   "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
                   ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
-    (global-ligature-mode t))
+    :hook (prog-mode . ligature-mode))
 #+end_src
 
 ** Themes
