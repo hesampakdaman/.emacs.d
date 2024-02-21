@@ -1077,6 +1077,26 @@ Highlights matching parens in prog-mode.
   (add-hook 'prog-mode-hook 'show-paren-mode)
 #+end_src
 
+** flymake
+Flymake is an built-in syntax checker for Emacs to be used everywhere,
+but it's stronlgy linked to programming and that is why we define it
+here.
+
+Out of intereset here is the setting `flymake-no-changes-timeout`. If
+set to a number, then Flymake will check the file after waiting that
+number in seconds for each change you make in the buffer.
+#+begin_src emacs-lisp
+  (use-package flymake
+    :config
+    (setq flymake-no-changes-timeout 0.5
+          flymake-proc-compilation-prevents-syntax-check t
+          flymake-start-on-flymake-mode t
+          flymake-start-on-save-buffer t
+          flymake-suppress-zero-counters t
+          flymake-wrap-around nil
+          flymake-fringe-indicator-position 'left-fringe))
+#+end_src
+
 ** git
 *** git-timemachine
 In a git-tracked repository we can invoke `git-timemachine` to quickly
@@ -1105,27 +1125,7 @@ git porcelain
                  (direction . right))))
 #+end_src
 
-** Flymake
-Flymake is an built-in syntax checker for Emacs to be used everywhere,
-but it's stronlgy linked to programming and that is why we define it
-here.
-
-Out of intereset here is the setting `flymake-no-changes-timeout`. If
-set to a number, then Flymake will check the file after waiting that
-number in seconds for each change you make in the buffer.
-#+begin_src emacs-lisp
-  (use-package flymake
-    :config
-    (setq flymake-no-changes-timeout 0.5
-          flymake-proc-compilation-prevents-syntax-check t
-          flymake-start-on-flymake-mode t
-          flymake-start-on-save-buffer t
-          flymake-suppress-zero-counters t
-          flymake-wrap-around nil
-          flymake-fringe-indicator-position 'left-fringe))
-#+end_src
-
-** Treesit-auto
+** treesit-auto
 #+begin_src emacs-lisp
   (use-package treesit-auto
     :demand t
