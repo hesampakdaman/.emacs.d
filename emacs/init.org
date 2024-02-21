@@ -1016,25 +1016,18 @@ Setup Language Server Protocol (LSP) for different programming
 languages. We use eglot which is built-in >= Emacs 29.
 #+begin_src emacs-lisp
   (use-package eglot
-    :init
+    :config
     (fset #'jsonrpc--log-event #'ignore)
+    (set-face-attribute 'eglot-highlight-symbol-face nil
+                        :inherit 'match)
+    (setq eglot-sync-connect 1
+          eglot-events-buffer-config 0)
     :bind (:map eglot-mode-map
                 ("C-c e r" . eglot-rename)
                 ("C-c e f" . eglot-format)
                 ("C-c e d" . eglot-find-declaration)
                 ("C-c e i" . eglot-find-implementation))
-    :config
-    (set-face-attribute 'eglot-highlight-symbol-face nil
-                        :inherit 'match)
-    (setq eglot-sync-connect 1
-          eglot-events-buffer-config 0)
     :hook ((rust-ts-mode python-ts-mode haskell-ts-mode) . eglot-ensure))
-
-  (use-package eldoc-box
-    :after eglot
-    :config
-    (set-face-attribute 'eldoc-box-body nil
-                        :inherit 'default))
 #+end_src
 
 ** Modes
