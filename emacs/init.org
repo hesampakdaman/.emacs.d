@@ -438,10 +438,11 @@ contexts. We complete text with `TAB` across Emacs' buffers.
   (use-package corfu
     :demand t
     :custom
+    (corfu-auto t)
     (corfu-cycle t)
-    (corfu-quit-at-boundary nil)
-    (corfu-preview-current nil)
     (corfu-preselect 'first)
+    (corfu-preview-current nil)
+    (corfu-quit-at-boundary nil)
     :bind (:map corfu-map
                 ("TAB"     . corfu-insert)
                 ([tab]     . corfu-insert)
