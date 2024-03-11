@@ -1136,7 +1136,6 @@ git porcelain
           (rust-mode . rust-ts-mode)
           (typescript-mode . typescript-ts-mode)
           (yaml-mode . yaml-ts-mode)))
-
 #+end_src
 ** vundo
 In this excellet [[https://archive.casouri.cc/note/2021/visual-undo-tree/index.html][blog]] Yuan Fu describes a way of creating an undo-tree
