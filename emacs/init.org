@@ -1330,7 +1330,11 @@ colorful a delight.
     (advice-add #'project-shell :override #'hesam/vterm-project-shell)
     (add-to-list 'display-buffer-alist
                  '(".* vterm\\*"           ; captures vterm in project
-                   (display-buffer-in-side-window)
+                   (display-buffer-in-direction)
+                   (direction . below)
+                   (dedicated . t)
+                   (window . root)
+                   (window-height . 0.25)
                    (inhibit-same-window . nil)))
     (add-to-list 'display-buffer-alist
                  '("\\*vterm.*"           ; regular vterm
