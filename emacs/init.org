@@ -953,6 +953,11 @@ and feel if appropriate. But first... let's get rid of tabs!
 
 ** Programming Languages Modes
 *** Rust
+Demand the new treesitter mode for Rust.
+#+begin_src emacs-lisp
+  (use-package rust-ts-mode
+    :demand t)
+#+end_src
 The `rustic` package enriches Emacs for editing rust source code.
 However, at the time of writing `rustic` is incompatible with
 `rust-ts-mode`. But seeing as we would like to retain the compilation
