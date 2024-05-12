@@ -1108,6 +1108,7 @@ interatively, it allows us to move between revisions with `n`,
 git porcelain
 #+begin_src emacs-lisp
   (use-package magit
+    :defer 1
     :bind ("C-c g" . magit-status)
     :init
     (advice-add #'project-vc-dir :override #'magit-project-status)
