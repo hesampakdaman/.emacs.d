@@ -1595,9 +1595,10 @@ Ligatures are a way to display multiple characters as a single glyph. Here we us
           modus-themes-common-palette-overrides
           '((builtin fg-main)
             (constant fg-main)
+            (fnname fg-main)
             (identifier fg-main)
-            (preprocessor fg-main)
-            (prompt fg-main)
+            (keyword fg-main)
+            (type cyan)
             (variable fg-main))))
 #+end_src
 
