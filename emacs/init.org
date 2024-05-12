@@ -1420,7 +1420,7 @@ The core of our text rendering in Emacs, the font family, is defined
 here as a configurable variable, which ensures flexibility and
 customization.
 #+begin_src emacs-lisp
-  (defcustom hesam-default-font-family "IosevkaTerm Nerd Font"
+  (defcustom hesam-default-font-family "IosevkaTerm SS05"
     "Default font family."
     :type 'string
     :group 'hesam)
@@ -1558,7 +1558,7 @@ another screen.
 #+end_src
 
 *** Ligatures
-Ligatures are a way to display multiple characters as a single glyph. Here we use the package `ligature` to enable ligatures in Emacs. We use the font Iosevka Term Nerd Font which has ligatures built-in. We also set the ligatures to be enabled in programming modes.
+Ligatures are a way to display multiple characters as a single glyph. Here we use the package `ligature` to enable ligatures in Emacs. We use the font Iosevka Term Font which has ligatures built-in. We also set the ligatures to be enabled in programming modes.
 #+begin_src emacs-lisp
   (use-package ligature
     :config
