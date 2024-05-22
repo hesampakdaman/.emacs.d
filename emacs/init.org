@@ -398,6 +398,16 @@ the region you selected.
   (put 'narrow-to-region 'disabled nil)
 #+end_src
 
+** Start-up time
+It's a good idea to be aware of Emacs' startup time. In case any new setting has dramatic effect on it, this should hopefully make you aware.
+#+begin_src emacs-lisp
+  (defun hesam/display-startup-time ()
+    (message
+     "Emacs loaded in %s with %d garbage collections."
+     (emacs-init-time) gcs-done))
+  (add-hook 'emacs-startup-hook #'hesam/display-startup-time)
+#+end_src
+
 * Completion settings
 For configuring autocompleting options. We begin with the a built-in
 hippie-expand by binding it
