@@ -75,12 +75,11 @@ same directory as =early-init.el=.
 
 * Global settings
 It is of most important that this file is loaded first. Here we define
-global variables, such as leader keys and theme-colors, that are
+global variables, such as theme-colors, that are
 assumed to exists in other configuration files.
 
 In this file we define global variables to be consumed in other
-files. For example, the `leader-meta-spc` is global leader key used in
-many places and theming variables for colors too.
+files. For example, theming variables for colors too.
 
 #+begin_src emacs-lisp
   (require 'use-package-ensure)
@@ -93,39 +92,6 @@ many places and theming variables for colors too.
 
   ;; follow symlinks without prompt
   (setq vc-follow-symlinks t)
-#+end_src
-
-** The package `general`
-Simplifies setting keybindings and has advanced features for
-prefix/leader keys.
-#+begin_src emacs-lisp
-  (use-package general
-    :init
-    (general-auto-unbind-keys))
-#+end_src
-
-*** Leaders Keys
-Here we define leaders to be used throughout emacs. We have other
-leader-keys that could be defined elsewhere because they are related
-to a specifc file. For example as `leader-agenda-gtd` could be placed
-in `org-mode.org`. But we prefer to put them here to have all leaders
-in one place.
-#+begin_src emacs-lisp
-  ;; Prefix to be used for all kinds of stuff
-  (unbind-key "M-SPC" global-map)
-  (define-key global-map (kbd "M-SPC") (make-sparse-keymap))
-
-  ;; Sub-leader for agenda & GTD
-  (general-create-definer leader-org-mode
-    :prefix "C-c o")
-
-  ;; Leader for editing text
-  (general-create-definer leader-editing
-    :prefix "C-c e")
-
-  ;; Leader for window management
-  (general-create-definer leader-window
-    :prefix "C-c w")
 #+end_src
 
 ** Face group
@@ -409,14 +375,6 @@ It's a good idea to be aware of Emacs' startup time. In case any new setting has
 #+end_src
 
 * Completion settings
-For configuring autocompleting options. We begin with the a built-in
-hippie-expand by binding it
-
-#+begin_src emacs-lisp
-  (general-define-key
-   "C-c h" 'hippie-expand)
-#+end_src
-
 ** Corfu
 General autocompletion system, but mostly used in programming
 contexts. We complete text with `TAB` across Emacs' buffers.
@@ -488,23 +446,7 @@ minibuffer in modes like `M-x` or `(find-file)`.
 * Editing settings
 ** Custom editing functions
 Here we define custom functions that we use for editing simple
-text. We first declare all their keybindings and make sure they are
-easily accessible without a leader
-*** Bindings
-#+begin_src emacs-lisp
-    (general-define-key
-     :prefix "C-c"
-     "d" 'edit/delete-a-word
-     "C-k" 'edit/copy-lines)
-#+end_src
-
-And some more under an edit leader defined in `keybindings.org`.
-#+begin_src emacs-lisp
-  (leader-editing
-    "b" 'edit/remove-blank-lines)
-
-#+end_src
-
+text.
 *** Function definitions
 Now we define the functionality we bound above. For copying several
 lines of text this function below is a snipppet found on the Internet.
@@ -559,16 +501,12 @@ either `(sudo-edit-current-file)` or `(sudo-edit-find-file)`.
 #+end_src
 
 * Keybindings settings
-Here we define misc shortcuts to other programs or commands. We first
-define a set of leaders that can be defined throught emacs. Then we
+Here we define misc shortcuts to other programs or commands. Then we
 try and organize bindings depending on what they are used for.
 
-All bindings are not defined here, rather we define leaders and misc
-keybindings (like shortcuts to external programs). Instead we have the
-another philosophy of creating bindings where packages are defined.
-
-As such we make extensive use of `use-package` and its `:bind`
-feature.
+All bindings are not defined here. Instead we have the another
+philosophy of creating bindings where packages are defined. As such we
+make extensive use of `use-package` and its `:bind` feature.
 
 ** C-c and C-x prefix bindings
 For built-in modes that need no `use-package` or enabling of modes. We
@@ -581,9 +519,7 @@ default bindings defined with `C-x`.
 
 *** Shadowing emacs' C-x bindings
 #+begin_src emacs-lisp
-  (general-define-key
-   :prefix "C-x"
-   "C-b" 'ibuffer)
+  (global-set-key (kbd "C-x C-b") 'ibuffer)
 #+end_src
 
 ** Unset bindings
@@ -638,8 +574,7 @@ motivate putting elsewhere under our directory tree.
 
 For example, in `programming.org` we have declared `magit`
 package. But it makes sense to have it there since it has a clear
-connection with programming. Another package `general` is declared in
-`bindings.org` since it's used to for defining keybindings easily.
+connection with programming.
 
 ** embark
 A package that provides a minibuffer UI for actions on things. We install =embark= and =embark-consult= for previewing targets.
@@ -722,7 +657,6 @@ Will expand mark in regions that makes sense, ie. is context aware.
         :init
         (setq gptel-api-key hesam-openai-key
               gptel-default-mode 'org-mode)
-        :bind ("M-SPC c" . gptel-menu)
         :config
         (add-to-list 'display-buffer-alist
                      '("\\*ChatGPT.*\\*"
@@ -878,16 +812,16 @@ For accessing Org agenda and GTD quickly.
   ;; capture to template Inbox "i" directly
   (keymap-global-set "C-c c" #'(lambda () (interactive) (org-capture nil "i")))
 
-  (leader-org-mode
-    "a" 'org-agenda
-    "c" 'org-capture
-    "g" 'gtd/toggle-doing
-    "l" 'org-store-link
-    "x" 'org-archive-subtree)
+  ;; (leader-org-mode
+  ;;   "a" 'org-agenda
+  ;;   "c" 'org-capture
+  ;;   "g" 'gtd/toggle-doing
+  ;;   "l" 'org-store-link
+  ;;   "x" 'org-archive-subtree)
 
-  (leader-org-mode
-    :keymaps 'org-mode-map
-    "r" 'org-refile)
+  ;; (leader-org-mode
+  ;;   :keymaps 'org-mode-map
+  ;;   "r" 'org-refile)
 #+end_src
 
 *** Templates
@@ -1281,17 +1215,10 @@ that project.
 #+end_src
 
 *** Keybindings
-#+begin_src emacs-lisp
-  (bind-keys
-   ("M-SPC n" . hesam/notes)
-   ("M-SPC r" . hesam/recipes))
-#+end_src
-
 ** Regexp is default search
 #+begin_src emacs-lisp
-  (general-def
-    "C-s" 'isearch-forward-regexp
-    "C-r" 'isearch-backward-regexp)
+  (global-set-key (kbd "C-s") 'isearch-forward-regexp)
+  (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 #+end_src
 
 * Shell settings
@@ -1340,10 +1267,7 @@ colorful a delight.
                    (window . root)
                    (inhibit-same-window . nil)))
     :custom
-    (vterm-max-scrollback 10000)
-    :config
-    (define-key vterm-mode-map (kbd "M-SPC") nil))
-  (keymap-global-set "M-SPC v" 'vterm-other-window)
+    (vterm-max-scrollback 10000))
 #+end_src
 
 The custom function `hesam/vterm-project-shell` is for usage with
@@ -1768,9 +1692,8 @@ decorate.
 
 And to quickly switch between tabs we bind convenient keys
 #+begin_src emacs-lisp
-  (general-define-key
-   "s-n" 'tab-next
-   "s-p" 'tab-previous)
+  (global-set-key (kbd "s-n") 'tab-next)
+  (global-set-key (kbd "s-p") 'tab-previous)
 #+end_src
 
 We want to repeat closing tabs. Hence we insert it in the repeat-map
@@ -1807,8 +1730,7 @@ and build upon that to close the tab as well, bind this `C-x t k`.
 
   ;; Usually we don't bind custom keys to C-x but make an exception this
   ;; time to gather all tab commands with the one defined.
-  (general-define-key
-   "C-x t k" 'hesam/kill-buffer-on-close-tab)
+  (global-set-key (kbd "C-x t k") 'hesam/kill-buffer-on-close-tab)
 #+end_src
 
 But sometimes we just want to kill next window in cyclic order and to
@@ -1819,9 +1741,6 @@ do that we make use of `other-window` function.
     (interactive)
     (other-window 1)
     (delete-window))
-
-  (leader-window
-    "0" 'hesam/switch-and-close-next-window)
 #+end_src
 
 Enable `winner-mode` everywhere which will allow undo and redo for
@@ -1838,38 +1757,30 @@ feature and winner mode. We are inspired by Vim bindings to allow for
 fast display of next buffers. Winner mode is naturally bound to `u`
 and `r`.
 #+begin_src emacs-lisp
-  (leader-window
-     "k" 'windmove-display-up
-     "j" 'windmove-display-down
-     "h" 'windmove-display-left
-     "l" 'windmove-display-right
-     "s" 'windmove-display-same-window
-     "r" 'winner-redo
-     "u" 'winner-undo)
-#+end_src
+  (global-set-key (kbd "C-c w k") 'windmove-display-up)
+  (global-set-key (kbd "C-c w j") 'windmove-display-down)
+  (global-set-key (kbd "C-c w h") 'windmove-display-left)
+  (global-set-key (kbd "C-c w l") 'windmove-display-right)
+  (global-set-key (kbd "C-c w s") 'windmove-display-same-window)
+  (global-set-key (kbd "C-c w r") 'winner-redo)
+  (global-set-key (kbd "C-c w u") 'winner-undo)
 
-Sometimes we have two windows in a frame and want to change
-orientation from
-#+begin_src emacs-lisp
-  (use-package transpose-frame
-    :config
-    (leader-window
-      "f" 'transpose-frame))
 #+end_src
 
 Here we bind convenient bindings for easy traversal between buffers in
 a window. Additionally we define keys for swapping buffer locations.
 #+begin_src emacs-lisp
-  (general-define-key
-   "s-k" 'windmove-up
-   "s-j" 'windmove-down
-   "s-h" 'windmove-left
-   "s-l" 'windmove-right
+  ;; Define windmove keybindings
+  (global-set-key (kbd "s-k") 'windmove-up)
+  (global-set-key (kbd "s-j") 'windmove-down)
+  (global-set-key (kbd "s-h") 'windmove-left)
+  (global-set-key (kbd "s-l") 'windmove-right)
 
-   "s-K" 'windmove-swap-states-up
-   "s-J" 'windmove-swap-states-down
-   "s-H" 'windmove-swap-states-left
-   "s-L" 'windmove-swap-states-right)
+  ;; Define windmove-swap-states keybindings
+  (global-set-key (kbd "s-K") 'windmove-swap-states-up)
+  (global-set-key (kbd "s-J") 'windmove-swap-states-down)
+  (global-set-key (kbd "s-H") 'windmove-swap-states-left)
+  (global-set-key (kbd "s-L") 'windmove-swap-states-right)
 #+end_src
 
 ** Marginalia
