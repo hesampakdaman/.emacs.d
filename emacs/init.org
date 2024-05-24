@@ -852,24 +852,6 @@ Demand the new treesitter mode for Rust.
   (use-package rust-ts-mode
     :demand t)
 #+end_src
-The `rustic` package enriches Emacs for editing rust source code.
-However, at the time of writing `rustic` is incompatible with
-`rust-ts-mode`. But seeing as we would like to retain the compilation
-convenience functions, we still install the package and use its
-bindings in `rust-ts-mode`.
-#+begin_src emacs-lisp
-  (use-package rustic
-    :config
-    (setq rustic-format-on-save nil
-          rustic-lsp-client nil)
-    :bind (:map rust-ts-mode-map
-                ("C-c C-c C-c" . rustic-recompile)
-                ("C-c C-c C-r" . rustic-cargo-run)
-                ("C-c C-c C-l" . rustic-cargo-clippy-run)
-                ("C-c C-c C-f" . rustic-cargo-clippy-fix)
-                ("C-c C-c C-r" . rustic-cargo-run)
-                ("C-c C-c C-t" . rustic-cargo-test)))
-  #+end_src
 
 *** Python
 Python-specific settings and packages.
