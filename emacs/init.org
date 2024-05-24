@@ -1300,24 +1300,6 @@ and have requirements on how and when a new window is created.
                 (vterm-send-C-l)))))))
 #+end_src
 
-** xterm colors
-Enables full color support in Emacs comint buffers.
-#+begin_src emacs-lisp
-  (use-package xterm-color
-    :config
-    ;; Provides colors for comint buffers
-    (setq comint-output-filter-functions
-          (remove 'ansi-color-process-output comint-output-filter-functions))
-    :hook
-    (shell-mode . (lambda ()
-                    ;; Disable font-locking in this buffer to improve performance
-                    (font-lock-mode -1)
-                    ;; Prevent font-locking from being re-enabled in this buffer
-                    (make-local-variable 'font-lock-function)
-                    (setq font-lock-function (lambda (_) nil))
-                    (add-hook 'comint-preoutput-filter-functions 'xterm-color-filter nil t))))
-#+end_src
-
 * UI Enhancement settings
 Settings for the feel and look of Emacs. We may also have some options
 configured elsewhere which affects the look of Emacs. One such example
