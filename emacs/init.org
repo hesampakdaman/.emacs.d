@@ -285,10 +285,6 @@ opening `.doc` files in `libreoffice`.
                     "avi" "wmv" "wav" "mov" "flv"
                     "ogm" "ogg" "mkv" "rar"))
                  "mpv --no-border"
-                 '(file))
-           (list (openwith-make-extension-regexp
-                  '("doc" "xls" "ppt" "odt" "ods" "odg" "odp"))
-                 "libreoffice"
                  '(file))))
     (openwith-mode 1))
 #+end_src
