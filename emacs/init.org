@@ -974,6 +974,16 @@ Out of intereset here is the setting `flymake-no-changes-timeout`. If set to a n
           flymake-fringe-indicator-position 'left-fringe))
 #+end_src
 
+*** sideline
+Shows flymake messages on the margin of choice.
+#+begin_src emacs-lisp
+  (use-package sideline-flymake
+    :init
+    (setq sideline-flymake-display-mode 'line
+          sideline-backends-right '(sideline-flymake))
+    :hook (flymake-mode . sideline-mode))
+#+end_src
+
 ** git
 *** Magit
 git porcelain
