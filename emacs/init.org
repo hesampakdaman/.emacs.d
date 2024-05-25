@@ -876,7 +876,7 @@ Use `pyvenv` to manage Python virtual environments.
   (use-package pyvenv)
 #+end_src
 
-** Language Server Protocol
+** eglot
 Setup Language Server Protocol (LSP) for different programming
 languages. We use eglot which is built-in >= Emacs 29.
 #+begin_src emacs-lisp
