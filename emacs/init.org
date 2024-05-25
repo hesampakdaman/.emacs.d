@@ -376,7 +376,7 @@ General autocompletion system, but mostly used in programming
 contexts. We complete text with `TAB` across Emacs' buffers.
 #+begin_src emacs-lisp
   (use-package corfu
-    :demand t
+    :defer 1
     :custom
     (corfu-auto t)
     (corfu-cycle t)
@@ -413,7 +413,7 @@ the search string `g l` will match both if we have set `'orderless`
 style (ie. the order of your serach words does not matter).
 #+begin_src emacs-lisp
   (use-package orderless
-    :demand t
+    :defer 2
     :config
     (setq completion-styles '(orderless basic)
           completion-category-defaults nil
@@ -850,7 +850,7 @@ and feel if appropriate. But first... let's get rid of tabs!
 Demand the new treesitter mode for Rust.
 #+begin_src emacs-lisp
   (use-package rust-ts-mode
-    :demand t)
+    :defer 1)
 #+end_src
 
 *** Python
@@ -995,7 +995,7 @@ git porcelain
 *** auto
 #+begin_src emacs-lisp
   (use-package treesit-auto
-    :demand t
+    :defer 2
     :config
     (setq treesit-auto-install t)
     (global-treesit-auto-mode))
@@ -1515,7 +1515,7 @@ them under the major mode. Now all relevant minor modes are shown
 under a hidden list.
 #+begin_src emacs-lisp
   (use-package minions
-    :demand t
+    :defer 1
     :config (minions-mode t))
 #+end_src
 
@@ -1716,7 +1716,7 @@ that can be called interactively. `Marginalia` will show their
 descriptions on the right hand side -- at the margin if you will.
 #+begin_src emacs-lisp
   (use-package marginalia
-    :demand t
+    :defer 2
     :config
     (marginalia-mode))
 #+end_src
@@ -1729,7 +1729,7 @@ is on the bottom and pagination is done by `C-h n` for next and `C-h
 p` for previous.
 #+begin_src emacs-lisp
   (use-package which-key
-    :demand t
+    :defer 2
     :config
     (which-key-mode t)
     (which-key-setup-side-window-bottom))
