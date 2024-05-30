@@ -574,14 +574,15 @@ connection with programming.
 ** elfeed
 RSS reader that we configure with org.
 #+begin_src emacs-lisp
-  (use-package elfeed)
-
-  (use-package elfeed-org
+  (use-package elfeed
     :config
-    (elfeed-org)
-    (setq rmh-elfeed-org-files
-          (list (file-name-concat (expand-file-name "~") ".elfeed.org"))))
+    (use-package elfeed-org
+      :config
+      (setq rmh-elfeed-org-files
+            (list (file-name-concat (expand-file-name "~") ".elfeed.org")))
+      (elfeed-org)))
 #+end_src
+
 ** embark
 A package that provides a minibuffer UI for actions on things. We install =embark= and =embark-consult= for previewing targets.
 #+begin_src emacs-lisp
