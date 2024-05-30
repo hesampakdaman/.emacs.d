@@ -571,7 +571,17 @@ motivate putting elsewhere under our directory tree.
 For example, in `programming.org` we have declared `magit`
 package. But it makes sense to have it there since it has a clear
 connection with programming.
+** elfeed
+RSS reader that we configure with org.
+#+begin_src emacs-lisp
+  (use-package elfeed)
 
+  (use-package elfeed-org
+    :config
+    (elfeed-org)
+    (setq rmh-elfeed-org-files
+          (list (file-name-concat (expand-file-name "~") ".elfeed.org"))))
+#+end_src
 ** embark
 A package that provides a minibuffer UI for actions on things. We install =embark= and =embark-consult= for previewing targets.
 #+begin_src emacs-lisp
@@ -883,7 +893,6 @@ languages. We use eglot which is built-in >= Emacs 29.
   (use-package eglot
     :defer 1
     :config
-    (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver" "--stdio")))
     (set-face-attribute 'eglot-highlight-symbol-face nil
                         :inherit 'match)
     (setq eglot-sync-connect 1)
