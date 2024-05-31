@@ -1216,6 +1216,8 @@ colorful a delight.
   (use-package vterm
     :after project
     :init
+    (if (eq system-type 'darwin)
+        (setq vterm-shell "/bin/zsh"))
     (add-to-list 'project-switch-commands '(hesam/vterm-project-shell "vterm" ?s))
     (advice-add #'project-shell :override #'hesam/vterm-project-shell)
     (add-to-list 'display-buffer-alist
