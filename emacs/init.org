@@ -576,11 +576,13 @@ RSS reader that we configure with org.
 #+begin_src emacs-lisp
   (use-package elfeed
     :config
-    (use-package elfeed-org
-      :config
-      (setq rmh-elfeed-org-files
-            (list (file-name-concat (expand-file-name "~") ".elfeed.org")))
-      (elfeed-org)))
+    (elfeed-org))
+
+  (use-package elfeed-org
+    :defer 2
+    :config
+    (setq rmh-elfeed-org-files
+          (list (file-name-concat (expand-file-name "~") ".elfeed.org"))))
 #+end_src
 
 ** embark
