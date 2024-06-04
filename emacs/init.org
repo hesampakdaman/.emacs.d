@@ -376,7 +376,7 @@ General autocompletion system, but mostly used in programming
 contexts. We complete text with `TAB` across Emacs' buffers.
 #+begin_src emacs-lisp
   (use-package corfu
-    :defer 1
+    :demand t
     :custom
     (corfu-auto t)
     (corfu-cycle t)
@@ -413,7 +413,7 @@ the search string `g l` will match both if we have set `'orderless`
 style (ie. the order of your serach words does not matter).
 #+begin_src emacs-lisp
   (use-package orderless
-    :defer 2
+    :demand t
     :config
     (setq completion-styles '(orderless basic)
           completion-category-defaults nil
