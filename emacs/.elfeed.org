@@ -4,8 +4,9 @@
 ** emacs                                                              :emacs:
 *** [[https://karthinks.com/index.xml][karthinks]]
 ** rust                                                                :rust:
-*** [[https://matklad.github.io/feed.xml][matklad]]
+*** [[https://blog.burntsushi.net/index.xml][burntsushi]]
 *** [[https://fasterthanli.me/index.xml][fasterthanli]]
-*** [[https://tmandry.gitlab.io/blog/index.xml][tmandry]]
-*** [[https://lcnr.de/feed.xml][lcnr]]
 *** [[http://blog.ihatereality.space/rss.xml][ihatereality]]
+*** [[https://lcnr.de/feed.xml][lcnr]]
+*** [[https://matklad.github.io/feed.xml][matklad]]
+*** [[https://tmandry.gitlab.io/blog/index.xml][tmandry]]
