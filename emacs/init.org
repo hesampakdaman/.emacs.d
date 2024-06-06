@@ -859,10 +859,9 @@ and feel if appropriate. But first... let's get rid of tabs!
 #+end_src
 
 ** Programming Languages Modes
-*** Rust
-Demand the new treesitter mode for Rust.
+*** Go
 #+begin_src emacs-lisp
-  (use-package rust-ts-mode
+  (use-package go-ts-mode
     :defer 1)
 #+end_src
 
@@ -880,6 +879,13 @@ Use `pyvenv` to manage Python virtual environments.
   (use-package pyvenv)
 #+end_src
 
+*** Rust
+Demand the new treesitter mode for Rust.
+#+begin_src emacs-lisp
+  (use-package rust-ts-mode
+    :defer 1)
+#+end_src
+
 ** eglot
 Setup Language Server Protocol (LSP) for different programming
 languages. We use eglot which is built-in >= Emacs 29.
@@ -887,15 +893,14 @@ languages. We use eglot which is built-in >= Emacs 29.
   (use-package eglot
     :defer 1
     :config
-    (set-face-attribute 'eglot-highlight-symbol-face nil
-                        :inherit 'match)
     (setq eglot-sync-connect 1)
+    (set-face-attribute 'eglot-highlight-symbol-face nil :inherit 'match)
     :bind (:map eglot-mode-map
                 ("C-c e r" . eglot-rename)
                 ("C-c e f" . eglot-format)
                 ("C-c e d" . eglot-find-declaration)
                 ("C-c e i" . eglot-find-implementation))
-    :hook ((rust-ts-mode python-ts-mode haskell-ts-mode) . eglot-ensure))
+    :hook ((go-ts-mode python-ts-mode rust-ts-mode) . eglot-ensure))
 
   (use-package eglot-booster
     :if (file-exists-p "~/.local/bin/emacs-lsp-booster")
