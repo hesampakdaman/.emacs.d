@@ -868,15 +868,6 @@ Demand the new treesitter mode for Rust.
 
 *** Python
 Python-specific settings and packages.
-**** auto-virtualenv
-Automatically activate Python virtual environments with `auto-virtualenv`.
-#+begin_src emacs-lisp
-  (use-package auto-virtualenv
-    :config
-    (advice-add #'project-switch-to-buffer :after #'auto-virtualenv-set-virtualenv)
-    :hook (python-ts-mode . auto-virtualenv-set-virtualenv))
-#+end_src
-
 **** black
 #+begin_src emacs-lisp
   (use-package python-black
