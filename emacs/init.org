@@ -862,7 +862,9 @@ and feel if appropriate. But first... let's get rid of tabs!
 *** Go
 #+begin_src emacs-lisp
   (use-package go-ts-mode
-    :defer 1)
+    :defer 1
+    :config
+    (setq go-ts-mode-indent-offset 4))
 #+end_src
 
 *** Python
