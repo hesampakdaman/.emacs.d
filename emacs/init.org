@@ -862,8 +862,8 @@ and feel if appropriate. But first... let's get confgiurer tabs!
 ** auto-mode
 We associate some file extensions with major modes not included by default
 #+begin_src emacs-lisp
-  (add-to-list auto-mode-alist '("Dockerfile" . dockerfile-ts-mode))
-  (add-to-list auto-mode-alist '("\\y[a]ml \\" . yaml-ts-mode))
+  (add-to-list 'auto-mode-alist '("Dockerfile" . dockerfile-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.y[a]?ml\\'" . yaml-ts-mode))
 #+end_src
 
 ** eglot
