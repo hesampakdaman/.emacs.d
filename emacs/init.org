@@ -859,6 +859,13 @@ and feel if appropriate. But first... let's get confgiurer tabs!
                 tab-width 4)
 #+end_src
 
+** auto-mode
+We associate some file extensions with major modes not included by default
+#+begin_src emacs-lisp
+  (add-to-list auto-mode-alist '("Dockerfile" . dockerfile-ts-mode))
+  (add-to-list auto-mode-alist '("\\y[a]ml \\" . yaml-ts-mode))
+#+end_src
+
 ** eglot
 Setup Language Server Protocol (LSP) for different programming
 languages. We use eglot which is built-in >= Emacs 29.
