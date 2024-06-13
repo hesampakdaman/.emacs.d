@@ -859,36 +859,6 @@ and feel if appropriate. But first... let's get confgiurer tabs!
                 tab-width 4)
 #+end_src
 
-** Programming Languages Modes
-*** Go
-#+begin_src emacs-lisp
-  (use-package go-ts-mode
-    :defer 1
-    :config
-    (setq go-ts-mode-indent-offset 4))
-#+end_src
-
-*** Python
-Python-specific settings and packages.
-**** black
-#+begin_src emacs-lisp
-  (use-package python-black
-    :hook (python-ts-mode . python-black-on-save-mode-enable-dwim))
-#+end_src
-
-**** pyenv
-Use `pyvenv` to manage Python virtual environments.
-#+begin_src emacs-lisp
-  (use-package pyvenv)
-#+end_src
-
-*** Rust
-Demand the new treesitter mode for Rust.
-#+begin_src emacs-lisp
-  (use-package rust-ts-mode
-    :defer 1)
-#+end_src
-
 ** eglot
 Setup Language Server Protocol (LSP) for different programming
 languages. We use eglot which is built-in >= Emacs 29.
@@ -911,53 +881,6 @@ languages. We use eglot which is built-in >= Emacs 29.
   ;;   :after eglot
   ;;   :config
   ;;   (eglot-booster-mode))
-#+end_src
-
-** Modes
-Many of these mode are activated by adding a hook to `prog-mode-hook`
-or is highly associated with programming.
-*** ediff
-Ediff is used for viewing diffs and acting upon them. We want the
-control that normally displays in another frame to be place in the
-same window.
-#+begin_src emacs-lisp
-  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
-#+end_src
-
-*** electric mode
-Automatically add closing brackets and indent code in `prog-mode`.
-#+begin_src emacs-lisp
-  (defun hesam/electric ()
-    (electric-pair-local-mode t)
-    (electric-indent-local-mode t))
-  (add-hook 'prog-mode-hook #'hesam/electric)
-#+end_src
-
-*** hideshow
-Set up the `hideshow` minor mode for `prog-mode`.
-#+begin_src emacs-lisp
-  (setq hs-allow-nesting t)
-  (add-hook 'prog-mode-hook 'hs-minor-mode)
-  (eval-after-load 'prog-mode
-    '(define-key prog-mode-map (kbd "C-<return>") 'hs-toggle-hiding))
-#+end_src
-
-Another symbol to be used for collapsed text.
-#+begin_src emacs-lisp
-  (set-display-table-slot standard-display-table
-                          'selective-display (string-to-vector " [+] "))
-#+end_src
-
-*** row/column/line numbers
-Shows column number in `mode-line` in addtion to row number.
-#+begin_src emacs-lisp
-  (add-hook 'prog-mode-hook 'column-number-mode)
-#+end_src
-
-*** Show parent
-Highlights matching parens in prog-mode.
-#+begin_src emacs-lisp
-  (add-hook 'prog-mode-hook 'show-paren-mode)
 #+end_src
 
 ** envrc
@@ -1010,6 +933,83 @@ git porcelain
                  (mode magit-mode)
                  (window . root)
                  (direction . right))))
+#+end_src
+
+** modes
+Many of these mode are activated by adding a hook to `prog-mode-hook`
+or is highly associated with programming.
+*** ediff
+Ediff is used for viewing diffs and acting upon them. We want the
+control that normally displays in another frame to be place in the
+same window.
+#+begin_src emacs-lisp
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+#+end_src
+
+*** electric mode
+Automatically add closing brackets and indent code in `prog-mode`.
+#+begin_src emacs-lisp
+  (defun hesam/electric ()
+    (electric-pair-local-mode t)
+    (electric-indent-local-mode t))
+  (add-hook 'prog-mode-hook #'hesam/electric)
+#+end_src
+
+*** hideshow
+Set up the `hideshow` minor mode for `prog-mode`.
+#+begin_src emacs-lisp
+  (setq hs-allow-nesting t)
+  (add-hook 'prog-mode-hook 'hs-minor-mode)
+  (eval-after-load 'prog-mode
+    '(define-key prog-mode-map (kbd "C-<return>") 'hs-toggle-hiding))
+#+end_src
+
+Another symbol to be used for collapsed text.
+#+begin_src emacs-lisp
+  (set-display-table-slot standard-display-table
+                          'selective-display (string-to-vector " [+] "))
+#+end_src
+
+*** row/column/line numbers
+Shows column number in `mode-line` in addtion to row number.
+#+begin_src emacs-lisp
+  (add-hook 'prog-mode-hook 'column-number-mode)
+#+end_src
+
+*** show parent
+Highlights matching parens in prog-mode.
+#+begin_src emacs-lisp
+  (add-hook 'prog-mode-hook 'show-paren-mode)
+#+end_src
+
+** programming modes
+*** Go
+#+begin_src emacs-lisp
+  (use-package go-ts-mode
+    :defer 1
+    :config
+    (setq go-ts-mode-indent-offset 4))
+#+end_src
+
+*** Python
+Python-specific settings and packages.
+**** black
+#+begin_src emacs-lisp
+  (use-package python-black
+    :hook (python-ts-mode . python-black-on-save-mode-enable-dwim))
+#+end_src
+
+**** pyenv
+Use `pyvenv` to manage Python virtual environments.
+#+begin_src emacs-lisp
+  (use-package pyvenv)
+#+end_src
+
+*** Rust
+Demand the new treesitter mode for Rust.
+#+begin_src emacs-lisp
+  (use-package rust-ts-mode
+    :defer 1)
 #+end_src
 
 ** treesit
@@ -1450,15 +1450,7 @@ Ligatures are a way to display multiple characters as a single glyph. Here we us
 #+begin_src emacs-lisp
   (use-package modus-themes
     :config
-    (setq modus-themes-bold-constructs t
-          modus-themes-common-palette-overrides
-          '((builtin fg-main)
-            (constant fg-main)
-            (fnname fg-main)
-            (identifier fg-main)
-            (keyword fg-main)
-            (type cyan)
-            (variable fg-main))))
+    (setq modus-themes-bold-constructs t))
 #+end_src
 
 *** Tok
