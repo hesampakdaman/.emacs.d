@@ -989,7 +989,7 @@ Highlights matching parens in prog-mode.
   (add-hook 'prog-mode-hook 'show-paren-mode)
 #+end_src
 
-** programming modes
+** programming
 *** Go
 #+begin_src emacs-lisp
   (use-package go-ts-mode
