@@ -853,9 +853,10 @@ SRC blocks in latex should be syntax highlighted
 Programming related settings and packages defined here. Language
 Server Protocol (LSP) provides IDE-like features and is configured
 here. Some relevant minor modes also set here, including their look
-and feel if appropriate. But first... let's get rid of tabs!
+and feel if appropriate. But first... let's get confgiurer tabs!
 #+begin_src emacs-lisp
-  (setq-default indent-tabs-mode nil)
+  (setq-default indent-tabs-mode nil
+                tab-width 4)
 #+end_src
 
 ** Programming Languages Modes
