@@ -905,12 +905,12 @@ languages. We use eglot which is built-in >= Emacs 29.
                 ("C-c e i" . eglot-find-implementation))
     :hook ((go-ts-mode python-ts-mode rust-ts-mode) . eglot-ensure))
 
-  (use-package eglot-booster
-    :if (file-exists-p "~/.local/bin/emacs-lsp-booster")
-    :defer 2
-    :after eglot
-    :config
-    (eglot-booster-mode))
+  ;; (use-package eglot-booster
+  ;;   :if (file-exists-p "~/.local/bin/emacs-lsp-booster")
+  ;;   :defer 2
+  ;;   :after eglot
+  ;;   :config
+  ;;   (eglot-booster-mode))
 #+end_src
 
 ** Modes
