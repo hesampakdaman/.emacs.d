@@ -817,7 +817,7 @@ devices.
 #+begin_src emacs-lisp
   (setq org-capture-templates
         '(("i" "Inbox" entry
-           (file+headline gtd-file "Inbox") "* %u %i%?")
+           (file gtd-file) "* %u %i%?")
           ("p" "Planned" entry
            (file+headline gtd-file "Planned") "* %t %i%?")))
 #+end_src
