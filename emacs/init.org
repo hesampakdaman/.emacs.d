@@ -906,7 +906,7 @@ Out of intereset here is the setting `flymake-no-changes-timeout`. If set to a n
 #+begin_src emacs-lisp
   (use-package flymake
     :config
-    (setq flymake-no-changes-timeout 9999
+    (setq flymake-no-changes-timeout 0.25
           flymake-proc-compilation-prevents-syntax-check t
           flymake-start-on-flymake-mode t
           flymake-start-on-save-buffer t
