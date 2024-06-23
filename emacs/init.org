@@ -377,32 +377,23 @@ contexts. We complete text with `TAB` across Emacs' buffers.
 #+begin_src emacs-lisp
   (use-package corfu
     :demand t
+    :init
+    (global-corfu-mode)
+    :bind (:map corfu-map ("SPC" . corfu-insert-separator))
     :custom
-    (corfu-auto t)
     (corfu-cycle t)
     (corfu-preselect 'first)
-    (corfu-preview-current nil)
-    (corfu-quit-at-boundary nil)
-    :bind (:map corfu-map
-                ("TAB"     . corfu-insert)
-                ([tab]     . corfu-insert)
-                ("S-TAB"   . corfu-previous)
-                ([backtab] . corfu-previous))
-    :init
-    (global-corfu-mode))
-
-  ;; Do not cycle commands instead give me the corfu pop-up
-  (setq completion-cycle-threshold nil)
-
-  ;; Hide commands in M-x which do not apply to the current mode. Corfu
-  ;; commands are hidden, since they are not supposed to be used via
-  ;; M-x.
-  (setq read-extended-command-predicate
-        #'command-completion-default-include-p)
-
-  ;; Enable indentation+completion using the TAB key.
-  ;; `completion-at-point' is often bound to M-TAB.
-  (setq tab-always-indent 'complete)
+    :config
+    ;; Do not cycle commands instead give me the corfu pop-up
+    (setq completion-cycle-threshold nil)
+    ;; Hide commands in M-x which do not apply to the current mode. Corfu
+    ;; commands are hidden, since they are not supposed to be used via
+    ;; M-x.
+    (setq read-extended-command-predicate
+          #'command-completion-default-include-p)
+    ;; Enable indentation+completion using the TAB key.
+    ;; `completion-at-point' is often bound to M-TAB.
+    (setq tab-always-indent 'complete))
 #+end_src
 
 ** Orderless
