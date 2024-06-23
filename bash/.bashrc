@@ -26,7 +26,7 @@ dotfiles=$HOME/dotfiles
 
 # simple prompt that goes well with TRAMP
 PROMPT_DIRTRIM=2
-export PS1="\e[35;1m[\t][\h][\w]$ \e[m"
+export PS1="\e[35;1m[\h][\w]$ \e[m"
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
