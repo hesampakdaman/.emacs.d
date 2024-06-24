@@ -16,3 +16,5 @@
 ** emacs                                                              :emacs:
 *** [[https://karthinks.com/index.xml][karthinks]]
 *** [[https://irreal.org/blog/?feed=rss2][irreal]]
+** tech                                                                :tech:
+*** [[https://blog.mozilla.org/feed/][mozilla]]
