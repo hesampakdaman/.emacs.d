@@ -13,6 +13,7 @@
 **** [[https://blog.rust-lang.org/feed.xml][rust main blog]]
 **** [[https://tmandry.gitlab.io/blog/index.xml][tmandry]]
 *** [[https://benhoyt.com/writings/rss.xml][ben hoyt]]                                                             :go:
+*** [[https://www.thecodedmessage.com/tags/computers/index.xml][thecodedmsg]]
 ** emacs                                                              :emacs:
 *** [[https://karthinks.com/index.xml][karthinks]]
 *** [[https://irreal.org/blog/?feed=rss2][irreal]]
