@@ -1185,17 +1185,28 @@ that project.
 #+end_src
 
 * Shell settings
-Shell related packages and configurations. Our main emulator is
-vterm. In order to get all environment variables correctly we define
-them in `.bash_profile`, let the package `exec-path-from-shell` read
-them and intialize our terminal correctly.
+Shell related packages and configurations. In order to get all environment variables correctly we define them in `.bash_profile`, let the package `exec-path-from-shell` read them and intialize our terminal correctly.
 
-** Options
 Use completions other than for binaries.
 #+begin_src emacs-lisp
   (setq shell-completion-execonly nil)
 #+end_src
 
+** eshell
+#+begin_src emacs-lisp
+  (use-package eshell
+    :after esh-mode
+    :bind (:map eshell-mode-map
+                ("C-l" . hesam/eshell-clear-buffer))
+    :config
+    (defun hesam/eshell-clear-buffer ()
+      "Clear the eshell buffer."
+      (interactive)
+      (let ((inhibit-read-only t))
+        (erase-buffer)
+        (eshell-send-input))))
+
+#+end_src
 ** exec-path-from-shell
 Uses environment variables defined in your env files
 correctly. Otherwise, we have executables that are not reconginzed by
