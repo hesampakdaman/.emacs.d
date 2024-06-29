@@ -1204,7 +1204,15 @@ Use completions other than for binaries.
       (interactive)
       (let ((inhibit-read-only t))
         (erase-buffer)
-        (eshell-send-input))))
+        (eshell-send-input)))
+      (add-to-list 'display-buffer-alist
+                 '(".*shell\\*"
+                   (display-buffer-in-direction)
+                   (direction . below)
+                   (dedicated . t)
+                   (window . root)
+                   (window-height . 0.3)
+                   (inhibit-same-window . nil))))
 
 #+end_src
 ** exec-path-from-shell
