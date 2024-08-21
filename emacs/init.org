@@ -1251,6 +1251,7 @@ correctly. Otherwise, we have executables that are not reconginzed by
 Emacs shells.
 #+begin_src emacs-lisp
   (use-package exec-path-from-shell
+    :defer 1
     :config
     (exec-path-from-shell-initialize))
 #+end_src
