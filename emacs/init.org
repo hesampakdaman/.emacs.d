@@ -562,6 +562,36 @@ motivate putting elsewhere under our directory tree.
 For example, in `programming.org` we have declared `magit`
 package. But it makes sense to have it there since it has a clear
 connection with programming.
+** denote
+#+begin_src emacs-lisp
+  (use-package denote
+    :defer 2
+    :config
+    (let ((my-denote-dir (expand-file-name "~/Dropbox/denote/")))
+      (setq denote-directory my-denote-dir
+            denote-dired-directories (list my-denote-dir)))
+    :hook (dired-mode . denote-dired-mode-in-directories)
+    :bind (("C-c n n" . denote)
+           ("C-c n c" . denote-region) ; "contents" mnemonic
+           ("C-c n N" . denote-type)
+           ("C-c n d" . (lambda () (interactive) (dired denote-directory)))
+           ("C-c n z" . denote-signature) ; "zettelkasten" mnemonic
+           ("C-c n s" . denote-subdirectory)
+           ("C-c n t" . denote-template)
+           ("C-c n i" . denote-link) ; "insert" mnemonic
+           ("C-c n I" . denote-add-links)
+           ("C-c n b" . denote-backlinks)
+           ("C-c n f f" . denote-find-link)
+           ("C-c n f b" . denote-find-backlink)
+           ("C-c n r" . denote-rename-file)
+           ("C-c n R" . denote-rename-file-using-front-matter)
+           :map dired-mode-map
+           ("C-c C-d C-i" . denote-link-dired-marked-notes)
+           ("C-c C-d C-r" . denote-dired-rename-files)
+           ("C-c C-d C-k" . denote-dired-rename-marked-files-with-keywords)
+           ("C-c C-d C-R" . denote-dired-rename-marked-files-using-front-matter)))
+#+end_src
+
 ** elfeed
 RSS reader that we configure with org.
 #+begin_src emacs-lisp
