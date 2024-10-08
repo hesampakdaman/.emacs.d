@@ -75,12 +75,9 @@ same directory as =early-init.el=.
 
 * Global settings
 It is of most important that this file is loaded first. Here we define
-global variables, such as theme-colors, that are
-assumed to exists in other configuration files.
-
-In this file we define global variables to be consumed in other
-files. For example, theming variables for colors too.
-
+global variables that are assumed to exists in other configuration
+files.
+** Packaging
 #+begin_src emacs-lisp
   (require 'use-package-ensure)
   (setq use-package-always-defer t
@@ -102,24 +99,6 @@ other `defcustom` commands. If we ever search for groups in
   (defgroup hesam nil
     "Parent group for my personal Emacs customization settings."
     :group 'emacs)
-#+end_src
-
-** Theme hooks
-These are used to override certain faces defined by the theme
-author. Any function added to the hook receives the theme symbol and
-is run either after `(load-theme ...)` or `(enable-theme ...)`. Usage
-is simple `(add-hook 'after-load-theme-hook (lambda (theme) body))`.
-#+begin_src emacs-lisp
-  (defvar after-load-theme-hook nil
-    "Hook run after a theme is loaded using `load-theme'.")
-
-  (defun run-after-load-theme-hook (theme &rest args)
-    "Run `after-load-theme-hook' with theme as argument."
-    (sit-for 0.5)
-    (run-hook-with-args 'after-load-theme-hook theme))
-
-  (advice-add 'load-theme :after #'run-after-load-theme-hook)
-  (advice-add 'enable-theme :after #'run-after-load-theme-hook)
 #+end_src
 
 * General settings
@@ -1521,7 +1500,7 @@ Set fringes to be invisible by inheriting from 'default. Hook it so it
 updates when changing themes.
 #+begin_src emacs-lisp
   (add-hook
-   'after-load-theme-hook
+   'enable-theme-functions
    (lambda (&optional args) (set-face-attribute 'fringe nil :background 'unspecified)))
 #+end_src
 
@@ -1628,7 +1607,7 @@ divider -- using `:underline` to highlight where the tab-bar starts.
   ;; And add it as a hook to adhere with changes when switching theme
   ;; during run-time.
   (add-hook
-   'after-load-theme-hook
+   'enable-theme-functions
    (lambda (&optional theme) (hesam/set-tab-face-attributes)))
 #+end_src
 
