@@ -896,7 +896,8 @@ here.
 #+begin_src emacs-lisp
   (use-package flymake
     :config
-    (setq flymake-suppress-zero-counters t))
+    (setq flymake-show-diagnostics-at-end-of-line t
+          flymake-suppress-zero-counters t))
 #+end_src
 
 ** git
