@@ -866,6 +866,7 @@ languages. We use eglot which is built-in >= Emacs 29.
     :config
     (setq eglot-sync-connect 1)
     (set-face-attribute 'eglot-highlight-symbol-face nil :inherit 'match)
+    (add-to-list 'eglot-server-programs '(typst-ts-mode . ("tinymist")))
     :bind (:map eglot-mode-map
                 ("C-c e a" . eglot-code-actions)
                 ("C-c e d" . eglot-find-declaration)
@@ -987,6 +988,20 @@ Demand the new treesitter mode for Rust.
 #+begin_src emacs-lisp
   (use-package rust-ts-mode
     :defer 1)
+#+end_src
+
+*** Typst
+#+begin_src emacs-lisp
+  (use-package typst-ts-mode
+    :defer 1
+    :vc (:url "https://git.sr.ht/~meow_king/typst-ts-mode")
+    :config
+    (add-to-list 'auto-mode-alist (cons "\\.typ\\'" 'typst-ts-mode))
+    :custom
+    (typst-ts-watch-options "--open")
+    (typst-ts-mode-grammar-location (expand-file-name "tree-sitter/libtree-sitter-typst.so" user-emacs-directory))
+    (typst-ts-mode-enable-raw-blocks-highlight t)
+    (typst-ts-mode-highlight-raw-blocks-at-startup t))
 #+end_src
 
 ** treesit
