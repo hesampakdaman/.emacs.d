@@ -602,8 +602,7 @@ A package that provides a minibuffer UI for actions on things. We install =embar
                    (window-parameters (mode-line-format . none)))))
 
   (use-package embark-consult
-    :hook
-    (embark-collect-mode . consult-preview-at-point-mode))
+    :hook (embark-collect-mode . consult-preview-at-point-mode))
 #+end_src
 By default =embark= will show a preview window. We don't want that and instead prefer a =which-key= like popup. We can do that by adding the following to our config, directly copied from [[https://github.com/oantolin/embark/wiki/Additional-Configuration#use-which-key-like-a-key-menu-prompt][the wiki]].
 #+begin_src emacs-lisp
@@ -820,13 +819,13 @@ use it. [[https://github.com/minad/org-modern/issues/134][See this Github issue]
 #+begin_src emacs-lisp
   (use-package org-modern
     :config (setq org-modern-star nil)
-    :hook (org-mode . org-modern-mode))
+    :hook org-mode)
 #+end_src
 
 So in order to get nice bullet points we use `org-bullets`.
 #+begin_src emacs-lisp
   (use-package org-bullets
-    :hook (org-mode . org-bullets-mode))
+    :hook org-mode)
 #+end_src
 
 Hook `visual-line-mode` to `org-mode`
@@ -1060,7 +1059,7 @@ fly, navigate it and make Emacs go to that state. Born is the package
 Removes trailing space and tabs from this user modified lines.
 #+begin_src emacs-lisp
   (use-package ws-butler
-    :hook ((prog-mode text-mode) . ws-butler-mode))
+    :hook (prog-mode text-mode))
 #+end_src
 
 * Search settings
@@ -1462,7 +1461,7 @@ Ligatures are a way to display multiple characters as a single glyph. Here we us
        "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
        ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:"
        "-:" "=:" "<******>" "++" "+++"))
-    :hook (prog-mode . ligature-mode))
+    :hook prog-mode)
 #+end_src
 
 ** Themes
