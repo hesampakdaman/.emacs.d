@@ -888,12 +888,32 @@ Automatically loads `.envrc` files when visiting a directory.
 Flymake is an built-in syntax checker for Emacs to be used everywhere,
 but it's stronlgy linked to programming and that is why we define it
 here.
-
 #+begin_src emacs-lisp
   (use-package flymake
+    :bind (("C-c f d" . flymake-show-project-diagnostics)
+           :map flymake-mode-map
+           ("C-c f n" . flymake-goto-next-error)
+           ("C-c f p" . flymake-goto-prev-error))
     :config
     (setq flymake-show-diagnostics-at-end-of-line t
-          flymake-suppress-zero-counters t))
+          flymake-suppress-zero-counters t)
+    (add-to-list 'display-buffer-alist
+                 '("\\*Flymake diagnostics for.*"
+                   (display-buffer-in-direction)
+                   (direction . above)
+                   (dedicated . t)
+                   (window . root)
+                   (window-height . 0.20)
+                   (inhibit-same-window . nil))))
+
+  (defvar flymake-repeat-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map (kbd "n") 'flymake-goto-next-error)
+      (define-key map (kbd "p") 'flymake-goto-prev-error)
+      map))
+
+  (put 'flymake-goto-next-error 'repeat-map 'flymake-repeat-map)
+  (put 'flymake-goto-prev-error 'repeat-map 'flymake-repeat-map)
 #+end_src
 
 ** git
