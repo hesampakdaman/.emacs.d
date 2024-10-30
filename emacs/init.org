@@ -994,9 +994,10 @@ Demand the new treesitter mode for Rust.
 #+begin_src emacs-lisp
   (use-package typst-ts-mode
     :defer 1
-    :vc (:url "https://git.sr.ht/~meow_king/typst-ts-mode")
+    :vc (:url "https://codeberg.org/meow_king/typst-ts-mode")
     :config
     (add-to-list 'auto-mode-alist (cons "\\.typ\\'" 'typst-ts-mode))
+    :hook ((typst-ts-mode . visual-line-mode) (typst-ts-mode . flyspell-mode))
     :custom
     (typst-ts-watch-options "--open")
     (typst-ts-mode-grammar-location (expand-file-name "tree-sitter/libtree-sitter-typst.so" user-emacs-directory))
