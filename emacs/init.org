@@ -251,23 +251,6 @@ alamrs we turn all of them completely off.
   (setq server-client-instructions nil)
 #+end_src
 
-** Openwith
-A package that helps with opening files in an external app, such as
-opening `.doc` files in `libreoffice`.
-#+begin_src emacs-lisp
-  (use-package openwith
-    :config
-    (setq openwith-associations
-          (list
-           (list (openwith-make-extension-regexp
-                  '("mpg" "mpeg" "mp3" "mp4"
-                    "avi" "wmv" "wav" "mov" "flv"
-                    "ogm" "ogg" "mkv" "rar"))
-                 "mpv --no-border"
-                 '(file))))
-    (openwith-mode 1))
-#+end_src
-
 ** Repeat mode
 Allows us to repeat commands. For example, to use the next tab command
 we do "C-x t o" twice. But with repeat mode it suffices to do "C-x t
