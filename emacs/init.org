@@ -51,6 +51,9 @@ same directory as =early-init.el=.
   (load-theme 'modus-vivendi t)
   (set-face-attribute 'fringe nil :background 'unspecified)
 
+  ;; sets custom file (loading occurs in init.el)
+  (setq custom-file "~/.emacs.d/emacs-custom.el")
+
   (dolist (frame-option
            '((undecorated . t) (internal-border-width . 15) (drag-internal-border . 5)))
     (add-to-list 'default-frame-alist frame-option))
@@ -214,7 +217,6 @@ load-average
 Emacs customization options are not tracked by git and will be saved
 in another file instead of in this init file.
 #+begin_src emacs-lisp
-  (setq custom-file "~/.emacs.d/emacs-custom.el")
   (if (file-exists-p custom-file)
       (load-file custom-file))
 #+end_src
