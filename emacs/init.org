@@ -842,7 +842,6 @@ languages. We use eglot which is built-in >= Emacs 29.
   (use-package eglot
     :defer 1
     :config
-    (setq eglot-sync-connect 1)
     (set-face-attribute 'eglot-highlight-symbol-face nil :inherit 'match)
     (add-to-list 'eglot-server-programs '(typst-ts-mode . ("tinymist")))
     :bind (:map eglot-mode-map
@@ -852,7 +851,14 @@ languages. We use eglot which is built-in >= Emacs 29.
                 ("C-c e i" . eglot-find-implementation)
                 ("C-c e q" . eglot-code-action-quickfix)
                 ("C-c e r" . eglot-rename))
-    :hook ((go-ts-mode python-ts-mode rust-ts-mode typst-ts-mode) . eglot-ensure))
+    :hook ((go-ts-mode python-ts-mode rust-ts-mode typst-ts-mode) . eglot-ensure)
+    (before-save . hesam/eglot-format-buffer))
+
+  (defun hesam/eglot-format-buffer ()
+    "Format buffer if Eglot server supports formatting."
+    (when (and (eglot-managed-p)
+               (eglot-server-capable :documentFormattingProvider))
+      (eglot-format-buffer)))
 #+end_src
 
 ** envrc
