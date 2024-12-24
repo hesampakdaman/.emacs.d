@@ -1,0 +1,152 @@
+@import "mocha.css";
+
+* {
+    font-family: "Iosevka Nerd Font Mono";
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 0px;
+    min-height: 0;
+}
+
+window#waybar {
+    background-color: transparent;
+    /* color: #ffffff; */
+    transition-property: background-color;
+    transition-duration: .5s;
+    /* background-color: @base; */
+    /* border: 1.5px solid; */
+    /* border-color: @surface0; */
+    border-radius: 12px;
+}
+
+#custom-start {
+    margin: 5px;
+    padding: 2px 4px 2px 12px;
+    font-size: 20px;
+    /* border-radius: 8px; */
+    /* border: 1.5px solid; */
+    /* border-color: @surface0; */
+    background-color: @base;
+    color: @surface2;
+    transition: 0.2s all;
+}
+
+#custom-start:hover {
+    /* border: 1.5px solid; */
+    /* border-color: @surface1; */
+    /* background-color: @surface0; */
+    /* color: @mauve; */
+}
+
+#workspaces {
+    margin: 0px;
+    padding: 0px 10px;
+    border-radius: 8px;
+    background-color: @base;
+}
+
+
+#workspaces button {
+    margin: 10px 4px;
+    padding: 4px;
+    border-radius: 20px;
+    border: 1.5px solid;
+    border-color: @surface0;
+    background-color: @surface0;
+    color: @text;
+    transition: 0.2s all;
+}
+
+#workspaces button:hover {
+    /* border: 1.5px solid; */
+    border-color: @surface1;
+    background-color: @surface0;
+    color: @mauve;
+}
+
+#workspaces button.active {
+    border-color: @mauve;
+    background-color: @mauve;
+    color: @base;
+    /* padding: 8px 6px; */
+}
+
+#workspaces button.active:hover {
+    border-color: @mauve;
+}
+
+#clock {
+    margin: 5px 2px;
+    padding: 4px 12px;
+    border-radius: 8px;
+    border: 1.5px solid;
+    border-color: @surface0;
+    background-color: @surface0;
+    color: @text;
+    transition: 0.2s all;
+}
+
+#tray {
+    margin: 5px 2px;
+    padding: 4px 12px;
+    border-radius: 8px;
+    border: 1.5px solid;
+    border-color: @surface0;
+    background-color: @surface0;
+    color: @text;
+    transition: 0.2s all;
+}
+
+#clock:hover {
+    border: 1.5px solid;
+    border-color: @surface1;
+    background-color: @surface0;
+    color: @mauve;
+}
+
+#custom-sep {
+    color: @surface1;
+    margin: 0 5px;
+}
+
+#pulseaudio {
+    margin: 5px 3px;
+    padding: 4px 12px;
+    border-radius: 8px;
+    border: 1.5px solid;
+    border-color: @surface0;
+    background-color: @surface0;
+    color: @text;
+    transition: 0.2s all;
+}
+
+#pulseaudio:hover {
+    border: 1.5px solid;
+    border-color: @surface1;
+    background-color: @surface0;
+    color: @mauve;
+}
+
+#pulseaudio.muted {
+    color: @red;
+}
+
+#custom-power {
+    margin: 5px;
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 20px;
+    border: 1.5px solid;
+    border-color: @surface0;
+    background-color: @base;
+    color: @mauve;
+    transition: 0.2s all;
+}
+
+#custom-power:hover {
+    border: 1.5px solid;
+    border-color: @surface1;
+    background-color: @surface0;
+    color: @mauve;
+}

@@ -1,0 +1,39 @@
+{
+  "position": "bottom",
+  "layer": "bottom",
+  "margin": "2 6 8 6",
+  "modules-left": [ "hyprland/workspaces"],
+  "modules-right": [ "pulseaudio", "clock", "tray", "custom/power" ],
+  "custom/start": {
+    "format": "λ"
+  },
+  "custom/sep": {
+    "format": "|",
+    "interval": "once",
+    "tooltip": false
+  },
+  "clock": {
+    "interval": 60,
+    "format": "{:%H:%M}",
+    "on-click": "gnome-calendar"
+  },
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-muted": "  0%",
+    "format-icons": {
+      "default": ["", "", ""] 
+    },
+    "icon-size": 20,
+    "scroll-step": 5,
+    "on-click": "wpctl set-mute @DEFAULT_SINK@ toggle"
+  },
+  "custom/power": {  
+    "on-click": "nwg-bar",
+    "icon-size": 20,
+    "format": ""
+  },
+  "tray": {
+    "icon-size": 20,
+    "spacing": 10
+  }
+}
