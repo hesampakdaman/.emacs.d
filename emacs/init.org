@@ -59,9 +59,9 @@ same directory as =early-init.el=.
     (add-to-list 'default-frame-alist frame-option))
 
   ;; Warnings
-  (setq byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local cl-functions))
+  (setq byte-compile-warnings '(not obsolete free-vars unresolved noruntime lexical make-local cl-functions))
+  (setq warning-suppress-log-types '((comp) (bytecomp)))
   (setq native-comp-async-report-warnings-errors 'silent)
-  (setq warning-suppress-types '((comp)))
 
   ;; Misc Optimizations
   (setq-default cursor-in-non-selected-windows nil)
