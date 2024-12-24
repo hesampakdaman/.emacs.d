@@ -868,6 +868,7 @@ Automatically loads `.envrc` files when visiting a directory.
     :config
     (envrc-global-mode))
 #+end_src
+
 ** flymake
 Flymake is an built-in syntax checker for Emacs to be used everywhere,
 but it's stronlgy linked to programming and that is why we define it
@@ -1032,6 +1033,7 @@ Demand the new treesitter mode for Rust.
           (typescript-mode . typescript-ts-mode)
           (yaml-mode . yaml-ts-mode)))
 #+end_src
+
 ** vundo
 In this excellet [[https://archive.casouri.cc/note/2021/visual-undo-tree/index.html][blog]] Yuan Fu describes a way of creating an undo-tree
 from Emacs' linear tree. This enables us to build an undo-tree on the
