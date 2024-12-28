@@ -338,10 +338,11 @@ contexts. We complete text with `TAB` across Emacs' buffers.
     :init
     (global-corfu-mode)
     :bind (:map corfu-map ("SPC" . corfu-insert-separator))
-    :custom
-    (corfu-cycle t)
-    (corfu-preselect 'first)
     :config
+    (setq corfu-auto t
+          corfu-cycle t
+          corfu-preselect 'first
+          corfu-count 20)
     ;; Do not cycle commands instead give me the corfu pop-up
     (setq completion-cycle-threshold nil)
     ;; Hide commands in M-x which do not apply to the current mode. Corfu
@@ -880,9 +881,10 @@ here.
            ("C-c f n" . flymake-goto-next-error)
            ("C-c f p" . flymake-goto-prev-error))
     :config
-    (setq flymake-show-diagnostics-at-end-of-line t
-          flymake-suppress-zero-counters t
-          flymake-no-changes-timeout 9999)
+    (setq flymake-no-changes-timeout 0.25
+          flymake-show-diagnostics-at-end-of-line t
+          flymake-start-on-save-buffer nil
+          flymake-suppress-zero-counters t)
     (add-to-list 'display-buffer-alist
                  '("\\*Flymake diagnostics for.*"
                    (display-buffer-in-direction)
