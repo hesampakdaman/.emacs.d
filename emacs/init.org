@@ -899,12 +899,16 @@ Out of intereset here is the setting `flymake-no-changes-timeout`. If set to a n
   (use-package flymake
     :config
     (setq flymake-no-changes-timeout 0.25
-          flymake-proc-compilation-prevents-syntax-check t
-          flymake-start-on-flymake-mode t
-          flymake-start-on-save-buffer t
-          flymake-suppress-zero-counters t
-          flymake-wrap-around nil
-          flymake-fringe-indicator-position 'left-fringe))
+          flymake-start-on-save-buffer nil
+          flymake-suppress-zero-counters t)
+    (add-to-list 'display-buffer-alist
+                 '("\\*Flymake diagnostics for.*"
+                   (display-buffer-in-direction)
+                   (direction . above)
+                   (dedicated . t)
+                   (window . root)
+                   (window-height . 0.20)
+                   (inhibit-same-window . nil))))
 #+end_src
 
 *** sideline
