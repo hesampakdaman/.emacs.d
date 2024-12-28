@@ -3,7 +3,7 @@
   "layer": "bottom",
   "margin": "2 6 8 6",
   "modules-left": [ "hyprland/workspaces"],
-  "modules-right": [ "pulseaudio", "clock", "tray", "custom/power" ],
+  "modules-right": [ "pulseaudio", "tray", "clock", "custom/power" ],
   "custom/start": {
     "format": "λ"
   },
