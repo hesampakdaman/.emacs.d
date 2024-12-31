@@ -377,8 +377,9 @@ contexts. We complete text with `TAB` across Emacs' buffers.
 
   (unless (display-graphic-p)
     (use-package corfu-terminal
-      :demand t)
-    (corfu-terminal-mode))
+      :demand t
+      :config
+      (corfu-terminal-mode)))
 #+end_src
 
 ** Orderless
@@ -1242,8 +1243,8 @@ Makes sure that key inputs in the terminal works as expected.
 #+begin_src emacs-lisp
   (unless (display-graphic-p)
     (use-package kkp
-      :demand t)
-    (global-kkp-mode))
+      :demand t
+      :config (global-kkp-mode)))
 #+end_src
 
 ** vterm
