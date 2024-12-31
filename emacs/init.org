@@ -857,7 +857,8 @@ languages. We use eglot which is built-in >= Emacs 29.
                 ("C-c e i" . eglot-find-implementation)
                 ("C-c e q" . eglot-code-action-quickfix)
                 ("C-c e r" . eglot-rename))
-    :hook ((go-ts-mode python-ts-mode rust-ts-mode typst-ts-mode) . eglot-ensure)
+    :hook
+    ((go-ts-mode python-ts-mode rust-ts-mode typst-ts-mode) . eglot-ensure)
     (before-save . hesam/eglot-format-buffer))
 
   (defun hesam/eglot-format-buffer ()
