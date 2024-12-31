@@ -1231,6 +1231,15 @@ Emacs shells.
     (exec-path-from-shell-initialize))
 #+end_src
 
+** kitty keyboard protocol
+Makes sure that key inputs in the terminal works as expected.
+#+begin_src emacs-lisp
+  (unless (display-graphic-p)
+    (use-package kkp
+      :demand t)
+    (global-kkp-mode))
+#+end_src
+
 ** vterm
 Powerful terminal emulator based on libvterm written in C. Fast,
 colorful a delight.
