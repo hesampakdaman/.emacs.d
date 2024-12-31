@@ -353,6 +353,11 @@ contexts. We complete text with `TAB` across Emacs' buffers.
     ;; Enable indentation+completion using the TAB key.
     ;; `completion-at-point' is often bound to M-TAB.
     (setq tab-always-indent 'complete))
+
+  (unless (display-graphic-p)
+    (use-package corfu-terminal
+      :demand t)
+    (corfu-terminal-mode))
 #+end_src
 
 ** Orderless
@@ -1219,6 +1224,7 @@ Use completions other than for binaries.
                    (inhibit-same-window . nil))))
 
 #+end_src
+
 ** exec-path-from-shell
 Uses environment variables defined in your env files
 correctly. Otherwise, we have executables that are not reconginzed by
@@ -1228,6 +1234,15 @@ Emacs shells.
     :defer 1
     :config
     (exec-path-from-shell-initialize))
+#+end_src
+
+** kitty keyboard protocol
+Makes sure that key inputs in the terminal works as expected.
+#+begin_src emacs-lisp
+  (unless (display-graphic-p)
+    (use-package kkp
+      :demand t)
+    (global-kkp-mode))
 #+end_src
 
 ** vterm
