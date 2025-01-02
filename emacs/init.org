@@ -360,8 +360,7 @@ contexts. We complete text with `TAB` across Emacs' buffers.
     (global-corfu-mode)
     :bind (:map corfu-map ("SPC" . corfu-insert-separator))
     :config
-    (setq corfu-auto t
-          corfu-cycle t
+    (setq corfu-cycle t
           corfu-preselect 'first
           corfu-count 20)
     ;; Do not cycle commands instead give me the corfu pop-up
