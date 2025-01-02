@@ -48,7 +48,6 @@ same directory as =early-init.el=.
   (menu-bar-mode -1)
 
   ;; load a default theme
-  (load-theme 'modus-vivendi t)
   (set-face-attribute 'fringe nil :background 'unspecified)
 
   (dolist (frame-option
@@ -1471,6 +1470,15 @@ Ligatures are a way to display multiple characters as a single glyph. Here we us
 #+end_src
 
 ** Themes
+Chosen theme that is loaded when starting Emacs can be customized.
+#+begin_src emacs-lisp
+  (defcustom hesam-selected-theme 'modus-vivendi
+    "Theme that is loaded at startup."
+    :type 'string
+    :group 'hesam)
+  (add-hook 'emacs-startup-hook (lambda () (load-theme hesam-selected-theme t)))
+#+end_src
+
 *** Ef
 #+begin_src emacs-lisp
   (use-package ef-themes)
