@@ -1470,13 +1470,14 @@ Ligatures are a way to display multiple characters as a single glyph. Here we us
 #+end_src
 
 ** Themes
+*** Default
 Chosen theme that is loaded when starting Emacs can be customized.
 #+begin_src emacs-lisp
-  (defcustom hesam-selected-theme 'modus-vivendi
+  (defcustom hesam-default-theme 'modus-vivendi
     "Theme that is loaded at startup."
     :type 'string
     :group 'hesam)
-  (add-hook 'emacs-startup-hook (lambda () (load-theme hesam-selected-theme t)))
+  (add-hook 'emacs-startup-hook (lambda () (load-theme hesam-default-theme t)))
 #+end_src
 
 *** Ef
