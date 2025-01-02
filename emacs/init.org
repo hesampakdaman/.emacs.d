@@ -1484,6 +1484,11 @@ Chosen theme that is loaded when starting Emacs can be customized.
   (use-package ef-themes)
 #+end_src
 
+*** Doom
+#+begin_src emacs-lisp
+  (use-package doom-themes)
+#+end_src
+
 *** Modus
 #+begin_src emacs-lisp
   (use-package modus-themes
