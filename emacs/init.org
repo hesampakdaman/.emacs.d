@@ -48,7 +48,6 @@ same directory as =early-init.el=.
   (menu-bar-mode -1)
 
   ;; load a default theme
-  (load-theme 'modus-vivendi t)
   (set-face-attribute 'fringe nil :background 'unspecified)
 
   ;; sets custom file (loading occurs in init.el)
@@ -339,8 +338,7 @@ contexts. We complete text with `TAB` across Emacs' buffers.
     (global-corfu-mode)
     :bind (:map corfu-map ("SPC" . corfu-insert-separator))
     :config
-    (setq corfu-auto t
-          corfu-cycle t
+    (setq corfu-cycle t
           corfu-preselect 'first
           corfu-count 20)
     ;; Do not cycle commands instead give me the corfu pop-up
@@ -1472,9 +1470,24 @@ Ligatures are a way to display multiple characters as a single glyph. Here we us
 #+end_src
 
 ** Themes
+*** Default
+Chosen theme that is loaded when starting Emacs can be customized.
+#+begin_src emacs-lisp
+  (defcustom hesam-default-theme 'modus-vivendi
+    "Theme that is loaded at startup."
+    :type 'string
+    :group 'hesam)
+  (add-hook 'emacs-startup-hook (lambda () (load-theme hesam-default-theme t)))
+#+end_src
+
 *** Ef
 #+begin_src emacs-lisp
   (use-package ef-themes)
+#+end_src
+
+*** Doom
+#+begin_src emacs-lisp
+  (use-package doom-themes)
 #+end_src
 
 *** Modus
