@@ -852,6 +852,7 @@ languages. We use eglot which is built-in >= Emacs 29.
   (use-package eglot
     :defer 1
     :config
+    (setq eglot-send-changes-idle-time 0.1)
     (set-face-attribute 'eglot-highlight-symbol-face nil :inherit 'match)
     (add-to-list 'eglot-server-programs '(typst-ts-mode . ("tinymist")))
     :bind (:map eglot-mode-map
