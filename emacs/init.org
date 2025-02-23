@@ -893,8 +893,8 @@ here.
            ("C-c f p" . flymake-goto-prev-error))
     :config
     (setq flymake-no-changes-timeout 0.25
-          flymake-show-diagnostics-at-end-of-line t
-          flymake-start-on-save-buffer nil
+          flymake-show-diagnostics-at-end-of-line nil
+          flymake-start-on-save-buffer t
           flymake-suppress-zero-counters t)
     (add-to-list 'display-buffer-alist
                  '("\\*Flymake diagnostics for.*"
