@@ -1,4 +1,0 @@
-autorandr horizontal
-feh --no-fehbg --bg-scale '/usr/share/backgrounds/warty-final-ubuntu.png'
-input-remapper-control --command autoload
-xset r rate 180 80
