@@ -1615,35 +1615,33 @@ divider -- using `:underline` to highlight where the tab-bar starts.
     Note: The function should be invoked after any theme or face customizations
     to ensure consistency with the default face attributes."
     (when (and (face-foreground 'default) (face-background 'default))
-        (set-face-attribute 'tab-bar nil
-                        :height 0.95
-                        :family hesam-default-font-family
-                        :weight 'normal
-                        :foreground (face-foreground 'default)
-                        :background (face-background 'default)
-                        :underline (face-foreground 'default)
-                        :box nil)
+      (set-face-attribute 'tab-bar nil
+                          :height 0.95
+                          :family hesam-default-font-family
+                          :weight 'normal
+                          :foreground (face-foreground 'default)
+                          :background (face-background 'default)
+                          :underline (face-foreground 'default)
+                          :box nil)
 
-    ;; To differentiate between active/inactive tabs we make adjustments
-    ;; to the text weight.
-    (set-face-attribute 'tab-bar-tab nil
-                        :inherit 'tab-bar
-                        :weight 'ultra-bold
-                        :underline (face-foreground 'default)
-                        :background (face-background 'default)
-                        :box `(:line-width (1 . 10) :color ,(face-background 'default) :style nil))
+      ;; To differentiate between active/inactive tabs we make adjustments
+      ;; to the text weight.
+      (set-face-attribute 'tab-bar-tab nil
+                          :inherit 'tab-bar
+                          :weight 'ultra-bold
+                          :underline (face-foreground 'default)
+                          :background (face-background 'default)
+                          :box `(:line-width (1 . 10) :color ,(face-background 'default) :style nil))
 
-    (set-face-attribute 'tab-bar-tab-inactive nil
-                        :inherit 'tab-bar
-                        :weight 'light
-                        :background (face-background 'default)
-                        :box `(:line-width (1 . 10) :color ,(face-background 'default) :style nil))))
+      (set-face-attribute 'tab-bar-tab-inactive nil
+                          :inherit 'tab-bar
+                          :weight 'light
+                          :background (face-background 'default)
+                          :box `(:line-width (1 . 10) :color ,(face-background 'default) :style nil))))
 
   ;; Add it as a hook to adhere with changes when switching theme
   ;; during run-time.
-  (add-hook
-   'enable-theme-functions
-   (lambda (&optional theme) (hesam/set-tab-face-attributes)))
+  (add-hook 'enable-theme-functions (lambda (&optional theme) (hesam/set-tab-face-attributes)))
 #+end_src
 
 Next we decide what to display in the tab bar. This is done by adding
