@@ -330,9 +330,14 @@ It's a good idea to be aware of Emacs' startup time. In case any new setting has
 * Completion settings
 ** Completion preview
 #+begin_src emacs-lisp
-  (add-hook 'prog-mode-hook 'completion-preview-mode)
-  (add-hook 'comint-mode-hook 'completion-preview-mode)
+  (use-package completion-preview
+    :bind (:map completion-preview-active-mode-map
+                ("M-n" . completion-preview-next-candidate)
+                ("M-p" . completion-preview-prev-candidate)
+                ("C-i" . indent-for-tab-command))
+    :hook (org-mode comint-mode prog-mode))
 #+end_src
+
 ** Corfu
 General autocompletion system, but mostly used in programming
 contexts. We complete text with `TAB` across Emacs' buffers.
