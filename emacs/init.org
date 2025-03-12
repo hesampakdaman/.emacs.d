@@ -360,6 +360,7 @@ contexts. We complete text with `TAB` across Emacs' buffers.
   (unless (display-graphic-p)
     (use-package corfu-terminal
       :demand t
+      :after corfu
       :config
       (corfu-terminal-mode)))
 #+end_src
