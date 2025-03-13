@@ -660,48 +660,42 @@ works best in PDF tools which is why we explicitly set it for
 #+end_src
 
 * Org mode settings
-At this point we assume `Org` is required and ready to go. This is
-safe because in our `init.el` we use babel to load all modules and
-therefore `Org` is required.
-
 First set up our org mode directory
 #+begin_src emacs-lisp
   (defcustom hesam-org-directory "~/Dropbox/org"
     "Default directory for where Org will look at put files."
     :type 'directory
     :group 'hesam)
-  (setq org-directory hesam-org-directory)
 #+end_src
 
-We want to display Org SRC code blocks in the same window
 #+begin_src emacs-lisp
-  (setq org-src-window-setup 'current-window)
-#+end_src
-
-When invoking `imenu` we would like to search through at least 5
-subsections.
-#+begin_src emacs-lisp
-  (setq org-imenu-depth 5)
-#+end_src
-
-** Agenda and GTD
-Agenda files are stored in Dropbox under `org/agenda`. If we put our
-GTD file inside `org-agenda-files`, then any dates in the GTD file
-will be seen by org agenda. We also define some nice tags to use so
-that we can filter on them in the Agenda view.
-#+begin_src emacs-lisp
+  (use-package org
+    :config
     (setq gtd-file (concat (eval org-directory) "/agenda/gtd.org"))
     (setq org-agenda-files `(,gtd-file)
           org-default-notes-file "~/Dropbox/org/notes.org"
           org-tag-alist '(("@work" . ?w) ("@home" . ?h)))
-#+end_src
+    (setq org-capture-templates
+          '(("i" "Inbox" entry
+             (file gtd-file) "* %u %i%?")
+            ("p" "Planned" entry
+             (file+headline gtd-file "Planned") "* %t %i%?")))
+    :custom
+    ;; misc
 
-`org-outline-path-complete-in-steps` when set to nil allows selection
-of the refile target using a single completion step, which will
-provide a faster selection method if you have deeply nested
-structures.
-#+begin_src emacs-lisp
-  (setq org-outline-path-complete-in-steps t)
+    org-imenu-depth 5
+    org-outline-path-complete-in-steps t
+    org-src-window-setup 'current-window
+    org-latex-src-block-backend 'engraved
+    org-directory hesam-org-directory
+
+    ;; agenda
+    org-agenda-start-on-weekday nil
+    org-agenda-skip-deadline-if-done t
+    org-agenda-skip-scheduled-if-done t
+    org-agenda-show-all-dates t
+    :bind ("C-c c" . org-capture)
+    :hook ((org-mode . visual-line-mode) (org-mode . flyspell-mode)))
 #+end_src
 
 When refiling target is GTD file we want to automatically save the
@@ -717,83 +711,6 @@ buffer.
       (save-buffer)))
 
   (advice-add 'org-refile :after 'hesam/org-refile-save)
-#+end_src
-
-Defines a toggler to show our GTD file whenever it is not visible in
-the window and to hide it if it is.
-#+begin_src emacs-lisp
-  (defun gtd/toggle-doing ()
-    "Access the GTD gtd.org file inside `gtd-directory'.
-    The tasks in this file are actively working on. If the buffer
-    is visible then delete it, else open it in another window."
-    (interactive)
-    (let ((buf (get-buffer "gtd.org")))
-      (if (and buf (get-buffer-window buf))
-          (delete-window (get-buffer-window buf))
-        (find-file-other-window gtd-file))))
-#+end_src
-
-*** View
-Start with current day and do not show tasks that are done.
-#+begin_src emacs-lisp
-  (setq org-agenda-start-on-weekday nil
-        org-agenda-skip-deadline-if-done t
-        org-agenda-skip-scheduled-if-done t
-        org-agenda-show-all-dates t)
-#+end_src
-
-From emacs cafe [[https://emacs.cafe/emacs/orgmode/gtd/2017/06/30/orgmode-gtd.html][blog]] to get gtd context filtered in the dispatcher.
-#+begin_src emacs-lisp
-  (setq org-agenda-custom-commands
-        '(("w" "Context work" tags-todo "@work"
-           ((org-agenda-overriding-header "Work")
-            (org-agenda-skip-function #'my-org-agenda-skip-all-siblings-but-first)))
-          ("h" "Context home" tags-todo "@home"
-           ((org-agenda-overriding-header "Home")
-            (org-agenda-skip-function #'my-org-agenda-skip-all-siblings-but-first)))))
-
-  (defun my-org-agenda-skip-all-siblings-but-first ()
-    "Skip all but the first non-done entry."
-    (let (should-skip-entry)
-      (unless (org-current-is-todo)
-        (setq should-skip-entry t))
-      (save-excursion
-        (while (and (not should-skip-entry) (org-goto-sibling t))
-          (when (org-current-is-todo)
-            (setq should-skip-entry t))))
-      (when should-skip-entry
-        (or (outline-next-heading)
-            (goto-char (point-max))))))
-
-  (defun org-current-is-todo ()
-    (string= "TODO" (org-get-todo-state)))
-#+end_src
-
-And lastly to cleanup the Org agenda TODO view
-#+begin_src emacs-lisp
-(setq org-agenda-prefix-format
-      '((agenda . " %i %-12:c%?-12t% s")
-        (todo   . " ")
-        (tags   . " %i %-12:c")
-        (search . " %i %-12:c")))
-#+end_src
-
-*** Keybindings
-For accessing Org agenda and GTD quickly.
-#+begin_src emacs-lisp
-  ;; capture to template Inbox "i" directly
-  (keymap-global-set "C-c c" #'(lambda () (interactive) (org-capture nil "i")))
-
-  ;; (leader-org-mode
-  ;;   "a" 'org-agenda
-  ;;   "c" 'org-capture
-  ;;   "g" 'gtd/toggle-doing
-  ;;   "l" 'org-store-link
-  ;;   "x" 'org-archive-subtree)
-
-  ;; (leader-org-mode
-  ;;   :keymaps 'org-mode-map
-  ;;   "r" 'org-refile)
 #+end_src
 
 *** Templates
@@ -821,17 +738,6 @@ So in order to get nice bullet points we use `org-bullets`.
 #+begin_src emacs-lisp
   (use-package org-bullets
     :hook org-mode)
-#+end_src
-
-Hook `visual-line-mode` to `org-mode`
-#+begin_src emacs-lisp
-  (add-hook 'org-mode-hook 'visual-line-mode)
-#+end_src
-
-** LaTeX
-SRC blocks in latex should be syntax highlighted
-#+begin_src emacs-lisp
-  (setq org-latex-src-block-backend 'engraved)
 #+end_src
 
 * Programming settings
