@@ -682,7 +682,6 @@ First set up our org mode directory
              (file+headline gtd-file "Planned") "* %t %i%?")))
     :custom
     ;; misc
-
     org-imenu-depth 5
     org-outline-path-complete-in-steps t
     org-src-window-setup 'current-window
@@ -713,28 +712,16 @@ buffer.
   (advice-add 'org-refile :after 'hesam/org-refile-save)
 #+end_src
 
-*** Templates
-Storage for Org capture is set to Dropbox to provide syncing between
-devices.
-#+begin_src emacs-lisp
-  (setq org-capture-templates
-        '(("i" "Inbox" entry
-           (file gtd-file) "* %u %i%?")
-          ("p" "Planned" entry
-           (file+headline gtd-file "Planned") "* %t %i%?")))
-#+end_src
-
-** Appearance
 We basically use org-modern for look and feel. But using
 `org-modern-star` screws with navigation `C-n/p`. We therefore don't
 use it. [[https://github.com/minad/org-modern/issues/134][See this Github issue]].
 #+begin_src emacs-lisp
   (use-package org-modern
-    :config (setq org-modern-star nil)
+    :config
+    (setq org-modern-star nil)
     :hook org-mode)
 #+end_src
 
-So in order to get nice bullet points we use `org-bullets`.
 #+begin_src emacs-lisp
   (use-package org-bullets
     :hook org-mode)
