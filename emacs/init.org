@@ -1484,108 +1484,36 @@ under a hidden list.
 #+end_src
 
 ** Tabs and Windows
-Start with configuring the behavior and look of the tab bar, for
-example we enable the functionality and hide the close tab button.
 #+begin_src emacs-lisp
-  (setq tab-bar-show 1
-        tab-bar-close-button-show nil
-        tab-bar-auto-width nil)
-#+end_src
+  (use-package tab-bar
+    :bind (("s-n" . tab-next)
+           ("s-p" . tab-previous))
+    :config
+    (push (lambda (name tab tab-number) (upcase name)) tab-bar-tab-name-format-functions)
 
-Sets the look of tab bar. We choose =not= to extenuate it and let it
-melt with the 'default background. However, we make sure to have a
-divider -- using `:underline` to highlight where the tab-bar starts.
-#+begin_src emacs-lisp
-  (defun hesam/set-tab-face-attributes ()
-    "Set the face attributes for the tab-bar and its tabs.
+    ;; The tab bar format tabs string prepends a separator on the very
+    ;; left side. We'll remove it with this advice
+    (advice-add
+     'tab-bar-format-tabs
+     :around (lambda (orig-fun) (cdr (funcall orig-fun))))
 
-    This function achieves the following:
-    1. Configures the default appearance of the tab-bar to match the default
-       face's foreground and background, with adjustments for height, font
-       family, weight, and underlining.
-    2. Differentiates between active and inactive tabs by setting distinct
-       face attributes. Active tabs have a more pronounced appearance
-       with an ultra-bold weight, while inactive tabs are lighter.
+    ;; Define repeatable keymap for managing tabs
+    (defvar tab-manage-repeat-map
+      (let ((map (make-sparse-keymap)))
+        (define-key map (kbd "0") #'tab-close)
+        (define-key map (kbd "2") #'tab-new)
+        map))
+    (put 'tab-close 'repeat-map 'tab-manage-repeat-map)
+    (put 'tab-new 'repeat-map 'tab-manage-repeat-map)
 
-    Prerequisites:
-    - Requires the default face's foreground and background to be set.
-    - Relies on the `hesam-default-font-family` variable for font specification.
-
-    Note: The function should be invoked after any theme or face customizations
-    to ensure consistency with the default face attributes."
-    (when (and (face-foreground 'default) (face-background 'default))
-      (set-face-attribute 'tab-bar nil
-                          :height 0.95
-                          :family hesam-default-font-family
-                          :weight 'normal
-                          :foreground (face-foreground 'default)
-                          :background (face-background 'default)
-                          :underline (face-foreground 'default)
-                          :box nil)
-
-      ;; To differentiate between active/inactive tabs we make adjustments
-      ;; to the text weight.
-      (set-face-attribute 'tab-bar-tab nil
-                          :inherit 'tab-bar
-                          :weight 'ultra-bold
-                          :underline (face-foreground 'default)
-                          :background (face-background 'default)
-                          :box `(:line-width (1 . 10) :color ,(face-background 'default) :style nil))
-
-      (set-face-attribute 'tab-bar-tab-inactive nil
-                          :inherit 'tab-bar
-                          :weight 'light
-                          :background (face-background 'default)
-                          :box `(:line-width (1 . 10) :color ,(face-background 'default) :style nil))))
-
-  ;; Add it as a hook to adhere with changes when switching theme
-  ;; during run-time.
-  (add-hook 'enable-theme-functions (lambda (&optional theme) (hesam/set-tab-face-attributes)))
-#+end_src
-
-Next we decide what to display in the tab bar. This is done by adding
-functions to a variable that does something in the tab bar (like
-returning a string). The `tab-bar-format-global` option will display
-info that are of _global_ nature, such as the time with
-`display-time-mode`.
-#+begin_src emacs-lisp
-  (setq tab-bar-format
-        '(tab-bar-format-tabs
-          tab-bar-separator
-          tab-bar-format-align-right
-          tab-bar-format-global))
-#+end_src
-
-However, the tab bar format tabs string prepends a separator on the
-very left side. We'll remove it.
-#+begin_src emacs-lisp
-  (advice-add
-   'tab-bar-format-tabs :around (lambda (orig-fun) (cdr (funcall orig-fun))))
-#+end_src
-
-Next we want all tabs to be displayed in UPCASE. The function that
-automatically names tabs is `tab-bar-tab-name-current` which we
-decorate.
-#+begin_src emacs-lisp
-  (defun hesam/uppercase-tab-name-current (original-function &rest args)
-    (upcase (apply original-function args)))
-  (advice-add 'tab-bar-tab-name-current :around #'hesam/uppercase-tab-name-current)
-#+end_src
-
-And to quickly switch between tabs we bind convenient keys
-#+begin_src emacs-lisp
-  (global-set-key (kbd "s-n") 'tab-next)
-  (global-set-key (kbd "s-p") 'tab-previous)
-#+end_src
-
-We want to repeat closing tabs. Hence we insert it in the repeat-map
-table.
-#+begin_src emacs-lisp
-  (defvar tab-close-repeat-map
-    (let ((map (make-sparse-keymap)))
-      (define-key map (kbd "0") #'tab-close)
-      map))
-  (put 'tab-close 'repeat-map 'tab-close-repeat-map)
+    :custom
+    (tab-bar-show 1)
+    (tab-bar-close-button-show nil)
+    (tab-bar-auto-width nil)
+    (tab-bar-format '(tab-bar-format-tabs
+                      tab-bar-separator
+                      tab-bar-format-align-right
+                      tab-bar-format-global)))
 #+end_src
 
 Define a function that kills all buffers associated with a window
