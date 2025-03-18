@@ -29,7 +29,8 @@
   },
   "custom/power": {  
     "on-click": "nwg-bar",
-    "icon-size": 20,
+    "icon-size": 15,
+    "tooltip": false,
     "format": ""
   },
   "tray": {
