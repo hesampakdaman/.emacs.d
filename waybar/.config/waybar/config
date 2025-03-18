@@ -13,15 +13,16 @@
     "tooltip": false
   },
   "clock": {
-    "interval": 60,
-    "format": "{:%H:%M}",
+    "interval": 30,
+    "format": "{:%a %b %d %H:%M}",
+    "tooltip": false,
     "on-click": "gnome-calendar"
   },
   "pulseaudio": {
     "format": "{icon} {volume}%",
-    "format-muted": "  0%",
+    "format-muted": "",
     "format-icons": {
-      "default": ["", "", ""] 
+      "default": ["", " ", "  "]
     },
     "icon-size": 20,
     "scroll-step": 5,
