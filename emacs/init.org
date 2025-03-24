@@ -1094,12 +1094,6 @@ that project.
 #+end_src
 
 *** Keybindings
-** Regexp is default search
-#+begin_src emacs-lisp
-  (global-set-key (kbd "C-s") 'isearch-forward-regexp)
-  (global-set-key (kbd "C-r") 'isearch-backward-regexp)
-#+end_src
-
 * Shell settings
 Shell related packages and configurations. In order to get all environment variables correctly we define them in `.bash_profile`, let the package `exec-path-from-shell` read them and intialize our terminal correctly.
 
