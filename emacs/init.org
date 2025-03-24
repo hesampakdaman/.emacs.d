@@ -1043,57 +1043,6 @@ Settings for searching buffers, notes and more.
 
 #+end_src
 
-** deft
-deft is a roam-like utility for quickly creating notes and searching
-for them.
-#+begin_src emacs-lisp
-  (use-package deft
-    :commands (deft)
-    :config  (setq deft-file-naming-rules	;; use dots as delimiters in filename and downcase
-                   '((noslash . ".")
-                     (nospace . ".")
-                     (case-fn . downcase))
-                   deft-use-filename-as-title nil
-                   deft-use-filter-string-for-filename t
-                   deft-extensions '("org")
-                   deft-default-extension "org"))
-#+end_src
-*** director
-Chooses which directory to run deft in. Courtesy of [[http://pragmaticemacs.com/category/deft/][bjm]].
-#+begin_src emacs-lisp
-  (defun hesam/deft-director (dir)
-    "Run deft in directory DIR"
-    (setq deft-directory dir)
-    (switch-to-buffer "*Deft*")
-    (kill-this-buffer)
-    (deft))
-#+end_src
-*** projects
-We define different projects under a common deft directory.
-#+begin_src emacs-lisp
-  (defcustom hesam-deft-directory "~/Dropbox/org/deft"
-    "Directory for Deft notes in Hesam's Emacs configuration."
-    :type 'directory
-    :group 'hesam)
-#+end_src
-
-Now we declare projects which invokes the director with the root to
-that project.
-#+begin_src emacs-lisp
-  (defun hesam/recipes ()
-    "Open the recipes project for searching and taking cooking-related notes.
-  This function uses hesam/deft-director to open the recipes project directory."
-    (interactive)
-    (hesam/deft-director (concat hesam-deft-directory "/recipes")))
-
-  (defun hesam/notes ()
-    "Open the notes project for general note-taking.
-  This function uses hesam/deft-director to open the notes project directory."
-    (interactive)
-    (hesam/deft-director (concat hesam-deft-directory "/notes")))
-#+end_src
-
-*** Keybindings
 * Shell settings
 Shell related packages and configurations. In order to get all environment variables correctly we define them in `.bash_profile`, let the package `exec-path-from-shell` read them and intialize our terminal correctly.
 
