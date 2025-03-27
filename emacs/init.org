@@ -453,6 +453,16 @@ Simple function to delete blank lines from cursor downwards.
     (flush-lines "^$"))
 #+end_src
 
+** jinx
+#+begin_src emacs-lisp
+  (use-package jinx
+    :defer 2
+    :config
+    (global-jinx-mode)
+    :bind (("M-$" . jinx-correct)
+           ("C-." . jinx-correct-nearest)))
+#+end_src
+
 ** sudo-edit
 When buffer is locked for editing due to permissons we can use this
 package to make editing with sudo access easily. We extensively use
