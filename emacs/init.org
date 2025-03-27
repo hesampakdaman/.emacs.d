@@ -1498,44 +1498,38 @@ do that we make use of `other-window` function.
     (delete-window))
 #+end_src
 
-Enable `winner-mode` everywhere which will allow undo and redo for
-tabs and windows. Windmove allows for easy navigation inside a
-window. We configure windmove to wrap around when moving buffers
-around (windmove is enabled by default).
+** windmove and winner-mode
+=windmove= allows for easy navigation inside a window. We configure =windmove= to wrap around when moving buffers around (=windmove= is enabled by default).
+#+begin_src emacs-lisp
+  (use-package windmove
+    :bind
+    (("s-h" . windmove-left)
+     ("s-j" . windmove-down)
+     ("s-k" . windmove-up)
+     ("s-l" . windmove-right)
+     ("s-H" . windmove-swap-states-left)
+     ("s-J" . windmove-swap-states-down)
+     ("s-K" . windmove-swap-states-up)
+     ("s-L" . windmove-swap-states-right)
+
+     ;; Under prefix `C-c w` we define keybindings for windmove's display
+     ;; feature and winner mode. We are inspired by Vim bindings to allow for
+     ;; fast display of next buffers. Winner mode is naturally bound to `u`
+     ;; and `r`.
+     ("C-c w k" . 'windmove-display-up)
+     ("C-c w j" . 'windmove-display-down)
+     ("C-c w h" . 'windmove-display-left)
+     ("C-c w l" . 'windmove-display-right)
+     ("C-c w s" . 'windmove-display-same-window))
+    :custom
+    (windmove-wrap-around nil))
+#+end_src
+
+=winner-mode= allows for redo and undo for buffers and tabs.
 #+begin_src emacs-lisp
   (winner-mode t)
-  (setq windmove-wrap-around t)
-#+end_src
-
-Under prefix `C-c w` we define keybindings for windmov's display
-feature and winner mode. We are inspired by Vim bindings to allow for
-fast display of next buffers. Winner mode is naturally bound to `u`
-and `r`.
-#+begin_src emacs-lisp
-  (global-set-key (kbd "C-c w k") 'windmove-display-up)
-  (global-set-key (kbd "C-c w j") 'windmove-display-down)
-  (global-set-key (kbd "C-c w h") 'windmove-display-left)
-  (global-set-key (kbd "C-c w l") 'windmove-display-right)
-  (global-set-key (kbd "C-c w s") 'windmove-display-same-window)
   (global-set-key (kbd "C-c w r") 'winner-redo)
   (global-set-key (kbd "C-c w u") 'winner-undo)
-
-#+end_src
-
-Here we bind convenient bindings for easy traversal between buffers in
-a window. Additionally we define keys for swapping buffer locations.
-#+begin_src emacs-lisp
-  ;; Define windmove keybindings
-  (global-set-key (kbd "s-k") 'windmove-up)
-  (global-set-key (kbd "s-j") 'windmove-down)
-  (global-set-key (kbd "s-h") 'windmove-left)
-  (global-set-key (kbd "s-l") 'windmove-right)
-
-  ;; Define windmove-swap-states keybindings
-  (global-set-key (kbd "s-K") 'windmove-swap-states-up)
-  (global-set-key (kbd "s-J") 'windmove-swap-states-down)
-  (global-set-key (kbd "s-H") 'windmove-swap-states-left)
-  (global-set-key (kbd "s-L") 'windmove-swap-states-right)
 #+end_src
 
 ** Marginalia
