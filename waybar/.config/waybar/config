@@ -20,9 +20,9 @@
   },
   "wireplumber": {
     "format": "{icon} {volume}%",
-    "format-muted": "",
+    "format-muted": " 0%",
     "format-icons": {
-      "default": ["", " ", "  "]
+      "default": ["", " ", "  " ]
     },
     "icon-size": 20,
     "scroll-step": 5,
