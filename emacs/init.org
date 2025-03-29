@@ -597,8 +597,7 @@ A package that provides a minibuffer UI for actions on things. We install =embar
     :init
     (setq prefix-help-command #'embark-prefix-help-command)
     :bind
-    (("C-." . embark-act)
-     ("C-;" . embark-dwim)
+    (("C-;" . embark-act)
      ("C-h B" . embark-bindings))
     :config
     (add-to-list 'display-buffer-alist
