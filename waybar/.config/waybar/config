@@ -30,9 +30,9 @@
   },
   "custom/power": {  
     "on-click": "nwg-bar",
-    "icon-size": 15,
+    "icon-size": 10,
     "tooltip": false,
-    "format": ""
+    "format": "λ"
   },
   "tray": {
     "icon-size": 20,
