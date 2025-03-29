@@ -3,7 +3,7 @@
   "layer": "bottom",
   "margin": "2 6 8 6",
   "modules-left": [ "hyprland/workspaces"],
-  "modules-right": [ "pulseaudio", "tray", "clock", "custom/power" ],
+  "modules-right": [ "wireplumber", "tray", "clock", "custom/power" ],
   "custom/start": {
     "format": "λ"
   },
@@ -18,7 +18,7 @@
     "tooltip": false,
     "on-click": "gnome-calendar"
   },
-  "pulseaudio": {
+  "wireplumber": {
     "format": "{icon} {volume}%",
     "format-muted": "",
     "format-icons": {

@@ -110,7 +110,7 @@ window#waybar {
     margin: 0 5px;
 }
 
-#pulseaudio {
+#wireplumber {
     margin: 5px 3px;
     padding: 4px 12px;
     border-radius: 8px;
@@ -121,14 +121,14 @@ window#waybar {
     transition: 0.2s all;
 }
 
-#pulseaudio:hover {
+#wireplumber:hover {
     border: 1.5px solid;
     border-color: @surface1;
     background-color: @surface0;
     color: @mauve;
 }
 
-#pulseaudio.muted {
+#wireplumber.muted {
     color: @red;
 }
 
