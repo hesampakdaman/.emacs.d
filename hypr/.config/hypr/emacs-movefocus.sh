@@ -4,11 +4,11 @@
 key="$1"
 
 case "$key" in
-  h) dir="left";  hdir="l" ;;
-  j) dir="down";  hdir="d" ;;
-  k) dir="up";    hdir="u" ;;
-  l) dir="right"; hdir="r" ;;
+  h) dir="left" ;;
+  j) dir="down" ;;
+  k) dir="up" ;;
+  l) dir="right" ;;
   *) exit 1 ;;
 esac
 
-emacsclient -e "(my-windmove-or-hyprland '$dir \"$hdir\")"
+emacsclient -e "(my-windmove-or-hyprland '$dir)"
