@@ -2,7 +2,7 @@
   "position": "bottom",
   "layer": "bottom",
   "margin": "2 6 8 6",
-  "modules-left": [ "hyprland/workspaces"],
+  "modules-left": [ "hyprland/workspaces", "sway/workspaces"],
   "modules-right": [ "wireplumber", "tray", "clock", "custom/power" ],
   "custom/start": {
     "format": "λ"
