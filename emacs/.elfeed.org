@@ -18,5 +18,3 @@
 *** [[https://karthinks.com/index.xml][karthinks]]
 *** [[https://irreal.org/blog/?feed=rss2][irreal]]
 *** [[http://yummymelon.com/devnull/feeds/tags/emacs.atom.xml][notes from /dev/null]]
-** tech
-*** [[https://news.ycombinator.com/rss][Hacker News]]
