@@ -720,16 +720,7 @@ buffer.
   (advice-add 'org-refile :after 'hesam/org-refile-save)
 #+end_src
 
-We basically use org-modern for look and feel. But using
-`org-modern-star` screws with navigation `C-n/p`. We therefore don't
-use it. [[https://github.com/minad/org-modern/issues/134][See this Github issue]].
-#+begin_src emacs-lisp
-  (use-package org-modern
-    :config
-    (setq org-modern-star nil)
-    :hook org-mode)
-#+end_src
-
+This package provides very nice bullet points
 #+begin_src emacs-lisp
   (use-package org-bullets
     :hook org-mode)
