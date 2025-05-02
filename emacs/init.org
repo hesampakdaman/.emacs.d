@@ -715,6 +715,21 @@ And the following for some keeping a journal compatible with org.
     (org-journal-file-format "%Y-%m-%d.org")
     (org-journal-date-format "%a %Y-%m-%d")
     (org-journal-time-format "%H:%M "))
+
+  (defun hesam/org-journal-today-file ()
+    (expand-file-name
+     (format-time-string org-journal-file-format)
+     org-journal-dir))
+
+  (defun hesam/org-journal-heading ()
+    (format-time-string org-journal-date-format))
+
+  (setq org-capture-templates
+        `(("j" "Journal quick note"
+           entry (file+headline ,(hesam/org-journal-today-file)
+                                ,(hesam/org-journal-heading))
+           "** %(format-time-string \"%H:%M\") %?\n"
+           :kill-buffer t)))
 #+end_src
 
 * Programming settings
