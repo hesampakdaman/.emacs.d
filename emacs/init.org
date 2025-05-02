@@ -680,44 +680,21 @@ First set up our org mode directory
 #+begin_src emacs-lisp
   (use-package org
     :config
-    (setq gtd-file (concat org-directory "/agenda/gtd.org"))
-    (setq org-agenda-files gtd-file
-          org-default-notes-file (concat org-directory "/notes.org")
-          org-directory hesam-org-directory
+    (setq org-directory hesam-org-directory
           org-latex-src-block-backend 'engraved
           org-src-window-setup 'current-window
           org-tag-alist '(("@work" . ?w) ("@home" . ?h)))
-    (setq org-capture-templates
-          '(("i" "Inbox" entry
-             (file gtd-file) "* %u %i%?")
-            ("p" "Planned" entry
-             (file+headline gtd-file "Planned") "* %t %i%?")))
     :custom
     ;; misc
-    org-imenu-depth 5
-    org-outline-path-complete-in-steps t
+    (org-imenu-depth 5)
+    (org-outline-path-complete-in-steps t)
     ;; agenda
-    org-agenda-start-on-weekday nil
-    org-agenda-skip-deadline-if-done t
-    org-agenda-skip-scheduled-if-done t
-    org-agenda-show-all-dates t
+    (org-agenda-start-on-weekday nil)
+    (org-agenda-skip-deadline-if-done t)
+    (org-agenda-skip-scheduled-if-done t)
+    (org-agenda-show-all-dates t)
     :bind ("C-c c" . org-capture)
     :hook ((org-mode . visual-line-mode)))
-#+end_src
-
-When refiling target is GTD file we want to automatically save the
-buffer.
-#+begin_src emacs-lisp
-  (defun hesam/org-refile-save (&rest _)
-    "Save the buffer after refiling.
-
-     This function checks if the current buffer is visiting 'gtd.org'.
-     If so, it saves the buffer. It is used as an advice to `org-refile`,
-     meaning it is called every time after `org-refile` is invoked."
-    (when (eq (current-buffer) (find-buffer-visiting "gtd.org"))
-      (save-buffer)))
-
-  (advice-add 'org-refile :after 'hesam/org-refile-save)
 #+end_src
 
 This package provides very nice bullet points
