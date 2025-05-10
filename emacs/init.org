@@ -703,14 +703,14 @@ This package provides very nice bullet points
     :hook org-mode)
 #+end_src
 
-And the following for some keeping a journal compatible with org.
+** org-journal
 #+begin_src emacs-lisp
   (use-package org-journal
     :init
     (setq org-journal-prefix-key "C-c j ") ; needs to be set before loading the package
     :bind ("C-c j" . org-journal-new-entry))
 
-  (setq org-journal-dir (concat hesam-org-directory "/journal/"))
+  (setq org-journal-dir (expand-file-name "journal" hesam-org-directory))
   (setq org-journal-file-format "%Y-%m-%d.org")
   (setq org-journal-date-format "%a %Y-%m-%d")
   (setq org-journal-time-format "%H:%M ")
@@ -722,12 +722,18 @@ And the following for some keeping a journal compatible with org.
 
   (defun hesam/org-journal-heading ()
     (format-time-string org-journal-date-format))
+#+end_src
 
+** org-templates
+#+begin_src emacs-lisp
   (setq org-capture-templates
         `(("j" "Journal quick note"
            entry (file+headline ,(hesam/org-journal-today-file)
                                 ,(hesam/org-journal-heading))
            "** %(format-time-string \"%H:%M\") %?\n"
+           :kill-buffer t)
+          ("t" "Todo" entry (file ,(expand-file-name "todo.org" hesam-org-directory))
+           "* TODO %?\n  %i\n  %a"
            :kill-buffer t)))
 #+end_src
 
