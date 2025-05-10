@@ -1071,12 +1071,11 @@ Use completions other than for binaries.
       (add-to-list 'display-buffer-alist
                  '(".*shell\\*"
                    (display-buffer-in-direction)
-                   (direction . below)
+                   (direction . above)
                    (dedicated . t)
                    (window . root)
                    (window-height . 0.3)
                    (inhibit-same-window . nil))))
-
 #+end_src
 
 ** exec-path-from-shell
