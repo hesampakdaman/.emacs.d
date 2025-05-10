@@ -708,13 +708,12 @@ And the following for some keeping a journal compatible with org.
   (use-package org-journal
     :init
     (setq org-journal-prefix-key "C-c j ") ; needs to be set before loading the package
-    :bind ("C-c j" . org-journal-new-entry)
-    :config
-    (setq org-journal-dir (concat hesam-org-directory "/journal/"))
-    :custom
-    (org-journal-file-format "%Y-%m-%d.org")
-    (org-journal-date-format "%a %Y-%m-%d")
-    (org-journal-time-format "%H:%M "))
+    :bind ("C-c j" . org-journal-new-entry))
+
+  (setq org-journal-dir (concat hesam-org-directory "/journal/"))
+  (setq org-journal-file-format "%Y-%m-%d.org")
+  (setq org-journal-date-format "%a %Y-%m-%d")
+  (setq org-journal-time-format "%H:%M ")
 
   (defun hesam/org-journal-today-file ()
     (expand-file-name
