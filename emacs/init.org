@@ -1061,7 +1061,7 @@ Use completions other than for binaries.
   (use-package eshell
     :after esh-mode
     :bind (:map eshell-mode-map
-                ("C-l" . hesam/eshell-clear-buffer))
+                ("C-u C-l" . hesam/eshell-clear-buffer))
     :config
     (defun hesam/eshell-clear-buffer ()
       "Clear the eshell buffer."
