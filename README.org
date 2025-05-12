@@ -1,13 +1,22 @@
 * GNU Emacs
 [[file:emacs.png]]
 
-This configuration requires =Emacs 29.1+= to run. After installing
-Emacs run the command
+This configuration requires =Emacs 30.1+= to run. Usually, I build
+Emacs from source with the following configuration
+#+begin_src bash
+  ./configure --with-pgtk \
+              --with-native-compilation \
+              --with-tree-sitter \
+              --with-xinput2 \
+              --with-mailutils \
+              --disable-gc-mark-trace \
+              CFLAGS="-O2 -mtune=native -march=native -fomit-frame-pointer"
+#+end_src
 
+After installing Emacs run the command
 #+begin_src bash
   $ emacs --batch -l org ./emacs/init.org -f org-babel-tangle
 #+end_src
-
 which generates an =init.el= file inside Emacs default configuration
 directory. Now open up Emacs and it will automatically download,
 install and compile all declared packages the first time. That's it!
