@@ -11,4 +11,4 @@ case "$key" in
   *) exit 1 ;;
 esac
 
-emacsclient -e "(my-windmove-or-hyprland '$dir)"
+emacsclient -e "(hesam/windmove-or-hyprland '$dir)"

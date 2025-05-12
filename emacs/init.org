@@ -1397,6 +1397,60 @@ updates when changing themes.
    (lambda (&optional args) (set-face-attribute 'fringe nil :background 'unspecified)))
 #+end_src
 
+** Hyrpland movement
+#+begin_src emacs-lisp
+  (defun hesam/windmove-or-hyprland (dir)
+    "If focused window is Emacs, try to move using windmove.
+  If that fails or not in Emacs, fallback to Hyprland movefocus.
+  DIR should be one of the symbols: 'left, 'right, 'up, or 'down."
+    (hesam/hyprland-ensure-env)
+    (if (hesam/hyprland-emacs-window-p)
+        (hesam/hyprland-windmove-or-fallback dir)
+      (hesam/hyprland-move-focus dir)))
+
+  (defun hesam/hyprland-emacs-window-p ()
+    "Return t if the currently focused Hyprland window is Emacs."
+    (let* ((json (shell-command-to-string "hyprctl activewindow -j"))
+           (class (when (string-match "\"class\": \"\\([^\"]+\\)\"" json)
+                    (match-string 1 json))))
+      (string= class "emacs")))
+
+  (defun hesam/hyprland-windmove-or-fallback (dir)
+    "Try to move focus in Emacs in direction DIR using windmove.
+  If that fails (no window), fallback to Hyprland's movefocus.
+  DIR should be one of the symbols: 'left, 'right, 'up, or 'down."
+    (let ((fn (pcase dir
+                ('left  #'windmove-left)
+                ('right #'windmove-right)
+                ('up    #'windmove-up)
+                ('down  #'windmove-down)
+                (_ (error "Invalid windmove direction: %s" dir)))))
+      (condition-case nil
+          (funcall fn)
+        (user-error
+         (hesam/hyprland-move-focus dir)))))
+
+  (defun hesam/hyprland-move-focus (dir)
+    "Move focus in Hyprland in direction DIR.
+  DIR should be one of the symbols: 'left, 'right, 'up, 'down."
+    (let ((hypr-dir (pcase dir
+                      ('left  "l")
+                      ('right "r")
+                      ('up    "u")
+                      ('down  "d")
+                      (_ (error "Invalid direction: %s" dir)))))
+      (call-process "hyprctl" nil 0 nil "dispatch" "movefocus" hypr-dir)))
+
+  (defun hesam/hyprland-ensure-env ()
+    "Set HYPRLAND_INSTANCE_SIGNATURE using the currently running Hyprland instance.
+  Uses `hyprctl instances` to get the active signature."
+    (unless (getenv "HYPRLAND_INSTANCE_SIGNATURE")
+      (when-let* ((output (ignore-errors (shell-command-to-string "hyprctl instances")))
+                  (match (string-match "^instance \\([^\n:]+\\):" output))
+                  (sig (match-string 1 output)))
+        (setenv "HYPRLAND_INSTANCE_SIGNATURE" sig))))
+#+end_src
+
 ** Mode-line
 We like a compact mode-line and since VC mode will display potentially
 long branch names we remove it from the mode-line. To be safe we
