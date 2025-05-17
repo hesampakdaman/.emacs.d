@@ -680,12 +680,11 @@ First set up our org mode directory
 #+begin_src emacs-lisp
   (use-package org
     :config
-    (setq org-directory hesam-org-directory
-          org-latex-src-block-backend 'engraved
+    (setq org-latex-src-block-backend 'engraved
           org-src-window-setup 'current-window
           org-tag-alist '(("@work" . ?w) ("@home" . ?h)))
     :custom
-    ;; misc
+    (org-directory hesam-org-directory)
     (org-imenu-depth 5)
     (org-outline-path-complete-in-steps t)
     ;; agenda
