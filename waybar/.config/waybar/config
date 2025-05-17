@@ -3,10 +3,7 @@
   "layer": "bottom",
   "margin": "2 6 8 6",
   "modules-left": [ "hyprland/workspaces", "sway/workspaces"],
-  "modules-right": [ "wireplumber", "tray", "clock", "custom/power" ],
-  "custom/start": {
-    "format": "λ"
-  },
+  "modules-right": [ "wireplumber", "tray", "clock", "battery" ],
   "custom/sep": {
     "format": "|",
     "interval": "once",
@@ -24,15 +21,18 @@
     "format-icons": {
       "default": ["", " ", "  " ]
     },
-    "icon-size": 20,
-    "scroll-step": 5,
+    "scroll-step": 1,
     "on-click": "wpctl set-mute @DEFAULT_SINK@ toggle"
   },
-  "custom/power": {  
-    "on-click": "nwg-bar",
-    "icon-size": 10,
-    "tooltip": false,
-    "format": "λ"
+  "battery": {
+    "interval": 60,
+    "states": {
+      "warning": 20,
+      "critical": 10
+    },
+    "format": " {capacity}%  {icon} ",
+    "format-icons": ["", "", "", "", ""],
+    "on-click": "nwg-bar"
   },
   "tray": {
     "icon-size": 20,

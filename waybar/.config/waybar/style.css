@@ -20,32 +20,12 @@ window#waybar {
     border-radius: 12px;
 }
 
-#custom-start {
-    margin: 5px;
-    padding: 2px 4px 2px 12px;
-    font-size: 20px;
-    /* border-radius: 8px; */
-    /* border: 1.5px solid; */
-    /* border-color: @surface0; */
-    background-color: @base;
-    color: @surface2;
-    transition: 0.2s all;
-}
-
-#custom-start:hover {
-    /* border: 1.5px solid; */
-    /* border-color: @surface1; */
-    /* background-color: @surface0; */
-    /* color: @mauve; */
-}
-
 #workspaces {
     margin: 0px;
     padding: 0px 10px;
     border-radius: 8px;
     background-color: @base;
 }
-
 
 #workspaces button {
     margin: 10px 4px;
@@ -105,11 +85,6 @@ window#waybar {
     color: @mauve;
 }
 
-#custom-sep {
-    color: @surface1;
-    margin: 0 5px;
-}
-
 #wireplumber {
     margin: 5px 3px;
     padding: 4px 12px;
@@ -132,21 +107,13 @@ window#waybar {
     color: @red;
 }
 
-#custom-power {
+#battery {
     margin: 5px;
     padding: 4px 12px;
     border-radius: 8px;
-    font-size: 20px;
     border: 1.5px solid;
     border-color: @surface0;
     background-color: @base;
     color: @mauve;
     transition: 0.2s all;
-}
-
-#custom-power:hover {
-    border: 1.5px solid;
-    border-color: @surface1;
-    background-color: @surface0;
-    color: @mauve;
 }
