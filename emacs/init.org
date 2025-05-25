@@ -1,4 +1,4 @@
-# -*- after-save-hook: (org-babel-tangle); before-save-hook: (delete-trailing-whitespace)-*-
+# -*- lexical-binding: t; after-save-hook: (org-babel-tangle); before-save-hook: (delete-trailing-whitespace) -*-
 #+TITLE: Emacs configuration
 #+AUTHOR: Hesam Pakdaman
 #+STARTUP: overview
@@ -8,6 +8,11 @@ This Emacs configuration will be tangled to =init.el= inside Emacs'
 configuration directory -- usually =~/.emacs.d= -- with one exception:
 the code in subsection [[Early initialization]] below will be tangled to the
 same directory as =early-init.el=.
+
+This will make sure that the tangled file has lexical binding.
+#+begin_src emacs-lisp :tangle (concat user-emacs-directory "init.el")
+;; -*- lexical-binding: t; -*-
+#+end_src
 
 * Early initialization
 :PROPERTIES:
