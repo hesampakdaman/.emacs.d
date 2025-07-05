@@ -837,8 +837,9 @@ This package provides very nice bullet points
 #+begin_src emacs-lisp
   (setq org-capture-templates
         `(("j" "Journal quick note"
-           entry (file+headline ,(hesam/org-journal-today-file)
-                                ,(hesam/org-journal-heading))
+           entry (file+headline
+                  (lambda () (hesam/org-journal-today-file))
+                  ,(hesam/org-journal-heading))
            "** %(format-time-string \"%H:%M\") %?\n"
            :kill-buffer t)
           ("t" "Todo" entry (file ,(expand-file-name "todo.org" hesam-org-directory))
