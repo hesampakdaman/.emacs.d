@@ -583,6 +583,7 @@ connection with programming.
 ** emacs-reader
 #+begin_src emacs-lisp
   (use-package reader
+    :defer 2
     :vc (:url "https://codeberg.org/divyaranjan/emacs-reader"))
 #+end_src
 ** elfeed
