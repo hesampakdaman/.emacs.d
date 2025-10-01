@@ -1,9 +1,0 @@
-# appearance
-theme = Catppuccin Mocha
-window-decoration = false
-window-padding-x = 15
-window-padding-y = 10,8
-
-# keybinds
-keybind = ctrl+enter=unbind
-keybind = ctrl+comma=unbind
