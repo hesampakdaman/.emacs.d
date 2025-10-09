@@ -19,6 +19,8 @@ This will make sure that the tangled file has lexical binding.
 :header-args: :tangle (concat user-emacs-directory "early-init.el")
 :END:
 #+begin_src emacs-lisp
+  ;; -*- lexical-binding: t; -*-
+
   ;; Increase garbage collection threshold to delay GC during startup.
   ;; this decreases startup time.
   (setq gc-cons-threshold (* 100 (expt 10 6)) ; 100MB
