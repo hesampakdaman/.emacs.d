@@ -48,6 +48,11 @@ This will make sure that the tangled file has lexical binding.
   (setq fast-but-imprecise-scrolling t)
   (setq pixel-scroll-precision-mode t)
 
+  (setq inhibit-splash-screen t
+        inhibit-startup-screen t
+        inhibit-startup-message t
+        inhibit-startup-buffer-menu t)
+
   ;; set these early to reduce flickering/resizing on startup
   (setq default-frame-alist '((width . 70) (height . 35)))
   (scroll-bar-mode -1)
