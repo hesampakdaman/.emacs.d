@@ -920,7 +920,7 @@ here.
            ("C-c f p" . flymake-goto-prev-error))
     :config
     (setq flymake-no-changes-timeout 0.25
-          flymake-show-diagnostics-at-end-of-line nil
+          flymake-show-diagnostics-at-end-of-line 'short
           flymake-start-on-save-buffer t
           flymake-suppress-zero-counters t)
     (add-to-list 'display-buffer-alist
