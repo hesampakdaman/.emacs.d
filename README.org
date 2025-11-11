@@ -4,13 +4,16 @@
 This configuration requires =Emacs 30.1+= to run. Usually, I build
 Emacs from source with the following configuration
 #+begin_src bash
-  ./configure --with-pgtk \
-              --with-native-compilation \
-              --with-tree-sitter \
-              --with-xinput2 \
-              --with-mailutils \
-              --disable-gc-mark-trace \
-              CFLAGS="-O2 -mtune=native -march=native -fomit-frame-pointer"
+  ./configure \
+      --disable-gc-mark-trace \
+      --with-dbus \
+      --with-native-compilation \
+      --with-pgtk \
+      --with-tree-sitter \
+      --with-x-toolkit=no \
+      --without-compress-install \
+      --without-xaw3d \
+      CFLAGS="-O2 -march=native -mtune=native -fomit-frame-pointer"
 #+end_src
 
 After installing Emacs run the command
