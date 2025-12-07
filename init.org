@@ -548,6 +548,16 @@ and let Emacs know about it
   (global-unset-key (kbd "`"))
 #+end_src
 
+** Inhibit mouse
+#+begin_src emacs-lisp
+  (use-package inhibit-mouse
+    :defer 2
+    :custom
+    ;; Enables highlighting of clickable text such as URLs and hyperlinks when
+    ;; hovered by the mouse pointer.
+    (inhibit-mouse-adjust-mouse-highlight nil))
+#+end_src
+
 * Miscellaneous Packages
 This is not an exhaustive list of all packages used in our
 configuration. Rather we have put packages here that we couldn't
