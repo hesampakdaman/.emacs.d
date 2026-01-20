@@ -597,8 +597,13 @@ connection with programming.
 #+end_src
 ** emacs-reader
 #+begin_src emacs-lisp
+  (setq package-vc-allow-build-commands t)
   (use-package reader
-    :vc (:url "https://codeberg.org/divyaranjan/emacs-reader"))
+    :defer 2
+    :custom
+    (reader-current-doc-theme nil)
+    :vc (:url "https://codeberg.org/divyaranjan/emacs-reader"
+    	        :make "all"))
 #+end_src
 ** elfeed
 RSS reader that we configure with org.
