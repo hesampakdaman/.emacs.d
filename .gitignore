@@ -1,4 +1,34 @@
-/xmonad/.xmonad/xmonad-x86_64-linux
-/xmonad/.xmonad/xmonad.errors
-/xmonad/.xmonad/xmonad.hi
-/xmonad/.xmonad/xmonad.o
+# elsip files
+*.el
+
+# compiled files
+*.elc
+*.eln
+*.so
+
+# Package manger
+/elpa/
+
+# state & history
+/auto-save-list/
+/backups/
+/url/
+/transient/
+/projects
+/places
+/diary
+history
+savehist
+bookmarks
+
+# org & eshell
+.org-id-locations
+/eshell/history
+/eshell/lastdir
+
+# system & tmp
+*~
+\#*\#
+*.tmp
+tramp
+/session*
