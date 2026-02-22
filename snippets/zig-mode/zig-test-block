@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: zig-test-block
+# key: gwt
+# --
+test "${1:description}" {
+    // Given
+    $2
+
+    // When
+    $3
+
+    // Then
+    $0
+}
