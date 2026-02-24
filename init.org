@@ -1746,8 +1746,8 @@ descriptions on the right hand side -- at the margin if you will.
   (defun hesam/pick-ef-theme-by-hsl (primary-hsl surface-hsl)
     "Pick ef-theme using primary color for hue and surface color for light/dark."
     (require 'ef-themes)
-    (let* ((primary (my/parse-hsl primary-hsl))
-           (surface (my/parse-hsl surface-hsl))
+    (let* ((primary (hesam/parse-hsl primary-hsl))
+           (surface (hesam/parse-hsl surface-hsl))
            (hue (nth 0 primary))
            (sat (nth 1 primary))
            (bg-light (nth 2 surface))
