@@ -925,14 +925,6 @@ languages. We use eglot which is built-in >= Emacs 29.
       (eglot-format-buffer)))
 #+end_src
 
-** envrc
-Automatically loads `.envrc` files when visiting a directory.
-#+begin_src emacs-lisp
-  (use-package envrc
-    :config
-    (envrc-global-mode))
-#+end_src
-
 ** flymake
 Flymake is an built-in syntax checker for Emacs to be used everywhere,
 but it's stronlgy linked to programming and that is why we define it
