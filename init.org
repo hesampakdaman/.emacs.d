@@ -1032,20 +1032,6 @@ Highlights matching parens in prog-mode.
     (setq go-ts-mode-indent-offset 4))
 #+end_src
 
-*** Python
-Python-specific settings and packages.
-**** black
-#+begin_src emacs-lisp
-  (use-package python-black
-    :hook (python-ts-mode . python-black-on-save-mode-enable-dwim))
-#+end_src
-
-**** pyenv
-Use `pyvenv` to manage Python virtual environments.
-#+begin_src emacs-lisp
-  (use-package pyvenv)
-#+end_src
-
 *** Rust
 Demand the new treesitter mode for Rust.
 #+begin_src emacs-lisp
