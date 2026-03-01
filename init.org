@@ -887,7 +887,7 @@ We associate some file extensions with major modes not included by default
 
 ** eglot
 Setup Language Server Protocol (LSP) for different programming
-languages. We use eglot which is built-in >= Emacs 29.
+languages.
 #+begin_src emacs-lisp
   (use-package eglot
     :defer 1
