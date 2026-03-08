@@ -1339,11 +1339,12 @@ is the face `hideshow` minor mode uses, which we have put in
 
     (defun hesam/dpi-scale (dpi)
       "Return a scale factor tuned for DPI."
+      (message (number-to-string dpi))
       (cond
-       ((< dpi 110) 1.15)   ;; typical 1080p / low DPI
+       ((< dpi 110) 1.30)   ;; typical 1080p / low DPI
        ((< dpi 140) 1.20)   ;; 1440p monitors
-       ((< dpi 180) 1.00)   ;; higher DPI
-       (t 0.90)))           ;; very high DPI (laptops / 4k)
+       ((< dpi 180) 1.10)   ;; higher DPI
+       (t 1.00)))           ;; very high DPI (laptops / 4k)
 
   (defun hesam/set-font-from-dpi (frame)
     "Set FRAME font size based on monitor DPI."
