@@ -402,6 +402,21 @@ style (ie. the order of your serach words does not matter).
           completion-category-overrides '((file (styles . (partial-completion))))))
 #+end_src
 
+** Tempel
+Template system similar to yassnippet.
+#+begin_src emacs-lisp
+  (use-package tempel
+    :bind (("M-+" . tempel-complete)
+           ("M-*" . tempel-insert))
+    :hook ((conf-mode . tempel-setup-capf)
+           (prog-mode . tempel-setup-capf)
+           (text-mode . tempel-setup-capf))
+    :init
+    (defun tempel-setup-capf ()
+      "Add Tempel to CAPF for standard modes."
+      (setq-local completion-at-point-functions
+                  (cons #'tempel-expand completion-at-point-functions))))
+#+end_src
 ** Vertico
 Minibuffer completion system. It will display a vertical scrolling
 minibuffer in modes like `M-x` or `(find-file)`.

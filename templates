@@ -1,0 +1,10 @@
+zig-mode
+
+(gwt "test \"" (p "description") "\" {" n>
+     "// Given" n>
+     p n n>
+     "// When" n>
+     p n n>
+     "// Then" n>
+     q n
+     "}")
