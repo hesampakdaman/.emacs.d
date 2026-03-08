@@ -1786,6 +1786,7 @@ descriptions on the right hand side -- at the margin if you will.
                ((< hue 0.75) 'ef-winter)
                ((< hue 0.90) 'ef-cherie)
                (t 'ef-autumn)))))
+      (setq hesam-default-theme theme)
       (ef-themes-load-theme theme)))
 #+end_src
 ** Which-key
