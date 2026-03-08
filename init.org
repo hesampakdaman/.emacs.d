@@ -347,7 +347,26 @@ It's a good idea to be aware of Emacs' startup time. In case any new setting has
                 ("C-i" . indent-for-tab-command))
     :hook (org-mode comint-mode prog-mode))
 #+end_src
+** cape
+More completion at point functions.
+#+begin_src emacs-lisp
+  (use-package cape
+    :defer 2
+    :bind (("C-c p" . cape-prefix-map)
+           ("M-/" . cape-dabbrev))
+    :hook (eglot-managed-mode . eglot-capf-setup)
+    :init
+    (defun eglot-capf-setup ()
+      (setq-local completion-at-point-functions
+                  (list (cape-capf-super
+                         #'eglot-completion-at-point
+                         #'tempel-expand
+                         #'cape-file))))
 
+    (add-hook 'completion-at-point-functions #'cape-dabbrev t)
+    (add-hook 'completion-at-point-functions #'cape-file t)
+    (add-hook 'completion-at-point-functions #'cape-elisp-block t))
+#+end_src
 ** Corfu
 General auto-completion system, but mostly used in programming
 contexts. We complete text with `TAB' across Emacs' buffers.
