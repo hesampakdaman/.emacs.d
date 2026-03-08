@@ -371,13 +371,20 @@ contexts. We complete text with `TAB' across Emacs' buffers.
     ;; Enable indentation+completion using the TAB key.
     ;; `completion-at-point' is often bound to M-TAB.
     (setq tab-always-indent 'complete))
+#+end_src
 
-  (unless (display-graphic-p)
-    (use-package corfu-terminal
-      :demand t
-      :after corfu
-      :config
-      (corfu-terminal-mode)))
+** dabbrev
+#+begin_src emacs-lisp
+  (use-package dabbrev
+    ;; Swap M-/ and C-M-/
+    :bind (("M-/" . dabbrev-completion) ;; shows up in corfu
+           ("C-M-/" . dabbrev-expand))
+    :config
+    (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+    (add-to-list 'dabbrev-ignored-buffer-modes 'authinfo-mode)
+    (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
+    (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
+    (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
 #+end_src
 
 ** Orderless
