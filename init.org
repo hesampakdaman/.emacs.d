@@ -349,8 +349,8 @@ It's a good idea to be aware of Emacs' startup time. In case any new setting has
 #+end_src
 
 ** Corfu
-General autocompletion system, but mostly used in programming
-contexts. We complete text with `TAB` across Emacs' buffers.
+General auto-completion system, but mostly used in programming
+contexts. We complete text with `TAB' across Emacs' buffers.
 #+begin_src emacs-lisp
   (use-package corfu
     :demand t
