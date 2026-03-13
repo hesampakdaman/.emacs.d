@@ -1375,14 +1375,10 @@ is the face `hideshow` minor mode uses, which we have put in
     (if hesam-dpi-mode
         (progn
           (add-hook 'after-make-frame-functions #'hesam/apply-font-to-frame)
-          (add-hook 'window-size-change-functions #'hesam/set-font-from-dpi)
+          (add-hook 'window-size-change-functions #'hesam/apply-font-to-frame)
           (hesam/apply-to-all-frames))
       (remove-hook 'after-make-frame-functions #'hesam/apply-font-to-frame)
-      (remove-hook 'window-size-change-functions #'hesam/set-font-from-dpi)))
-
-  (defun hesam/apply-to-all-frames ()
-    "Refresh font settings for every open frame."
-    (mapc #'hesam/apply-font-to-frame (frame-list)))
+      (remove-hook 'window-size-change-functions #'hesam/apply-font-to-frame)))
 
   (defun hesam/apply-to-all-frames ()
     "Refresh font settings for every open frame."
