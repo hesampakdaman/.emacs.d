@@ -1403,7 +1403,6 @@ Chosen theme that is loaded when starting Emacs can be customized.
 
   (use-package ef-themes)
   (use-package doric-themes)
-  (use-package doom-themes)
   (use-package modus-themes
     :custom
     (modus-themes-bold-constructs t))
