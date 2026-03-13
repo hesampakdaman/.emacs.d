@@ -1322,28 +1322,28 @@ is the face `hideshow` minor mode uses, which we have put in
 `programming.org` because it's directly related to programming.
 ** Fonts
 #+begin_src emacs-lisp
-    (defcustom hesam-default-font-family "JetBrainsMono Nerd Font"
-      "Default font family."
-      :type 'string
-      :group 'hesam)
+  (defcustom hesam-default-font-family "JetBrainsMono Nerd Font"
+    "Default font family."
+    :type 'string
+    :group 'hesam)
 
-    (defun hesam/display-dpi (frame)
-      "Return the horizontal DPI of FRAME."
-      (let* ((attrs (frame-monitor-attributes frame))
-             (geom  (alist-get 'geometry attrs))   ;; (x y width height)
-             (mm    (alist-get 'mm-size attrs))    ;; (width-mm height-mm)
-             (px-w  (nth 2 geom))
-             (mm-w  (car mm)))
-        (when (and mm-w (> mm-w 0))
-          (/ px-w (/ mm-w 25.4)))))
+  (defun hesam/display-dpi (frame)
+    "Return the horizontal DPI of FRAME."
+    (let* ((attrs (frame-monitor-attributes frame))
+           (geom  (alist-get 'geometry attrs))   ;; (x y width height)
+           (mm    (alist-get 'mm-size attrs))    ;; (width-mm height-mm)
+           (px-w  (nth 2 geom))
+           (mm-w  (car mm)))
+      (when (and mm-w (> mm-w 0))
+        (/ px-w (/ mm-w 25.4)))))
 
-    (defun hesam/dpi-scale (dpi)
-      "Return a scale factor tuned for DPI."
-      (cond
-       ((< dpi 110) 1.30)   ;; typical 1080p / low DPI
-       ((< dpi 140) 1.20)   ;; 1440p monitors
-       ((< dpi 180) 1.10)   ;; higher DPI
-       (t 1.00)))           ;; very high DPI (laptops / 4k)
+  (defun hesam/dpi-scale (dpi)
+    "Return a scale factor tuned for DPI."
+    (cond
+     ((< dpi 110) 1.30)   ;; typical 1080p / low DPI
+     ((< dpi 140) 1.20)   ;; 1440p monitors
+     ((< dpi 180) 1.10)   ;; higher DPI
+     (t 1.00)))           ;; very high DPI (laptops / 4k)
 
   (defun hesam/set-font-from-dpi (frame)
     "Set FRAME font size based on monitor DPI."
@@ -1360,21 +1360,21 @@ is the face `hideshow` minor mode uses, which we have put in
                           :family hesam-default-font-family
                           :inherit 'default)))
 
-    (defun hesam/apply-font-to-frame (frame)
-      "Apply Hesam font configuration to FRAME."
-      (with-selected-frame frame
-        (hesam/set-font-from-dpi frame)))
+  (defun hesam/apply-font-to-frame (frame)
+    "Apply Hesam font configuration to FRAME."
+    (with-selected-frame frame
+      (hesam/set-font-from-dpi frame)))
 
-    ;; Apply to existing frame
-    (hesam/apply-font-to-frame (selected-frame))
+  ;; Apply to existing frame
+  (hesam/apply-font-to-frame (selected-frame))
 
-    ;; Apply when creating frames
-    (add-hook 'after-make-frame-functions #'hesam/apply-font-to-frame)
+  ;; Apply when creating frames
+  (add-hook 'after-make-frame-functions #'hesam/apply-font-to-frame)
 
-    ;; Re-evaluate when frame size/monitor changes
-    (add-hook 'window-size-change-functions
-              (lambda (_frame)
-                (hesam/set-font-from-dpi (selected-frame))))
+  ;; Re-evaluate when frame size/monitor changes
+  (add-hook 'window-size-change-functions
+            (lambda (_frame)
+              (hesam/set-font-from-dpi (selected-frame))))
 #+end_src
 *** Ligatures
 Ligatures are a way to display multiple characters as a single glyph. Here we use the package `ligature` to enable ligatures in Emacs. We use the font Iosevka Term Font which has ligatures built-in. We also set the ligatures to be enabled in programming modes.
