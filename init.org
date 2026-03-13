@@ -1327,6 +1327,9 @@ is the face `hideshow` minor mode uses, which we have put in
     :type 'string
     :group 'hesam)
 
+  (defvar hesam/zoom-offset 0
+    "Manual font size adjustment that persists across DPI changes.")
+
   (defun hesam/display-dpi (frame)
     "Return the horizontal DPI of FRAME."
     (let* ((attrs (frame-monitor-attributes frame))
@@ -1349,7 +1352,7 @@ is the face `hideshow` minor mode uses, which we have put in
     "Set FRAME font size based on monitor DPI."
     (let* ((dpi (or (hesam/display-dpi frame) 96))
            (scale (hesam/dpi-scale dpi))
-           (height (round (* dpi scale))))
+           (height (+ (round (* dpi scale)) hesam/zoom-offset)))
       (set-face-attribute 'default frame
                           :family hesam-default-font-family
                           :weight 'regular
@@ -1365,16 +1368,71 @@ is the face `hideshow` minor mode uses, which we have put in
     (with-selected-frame frame
       (hesam/set-font-from-dpi frame)))
 
-  ;; Apply to existing frame
-  (hesam/apply-font-to-frame (selected-frame))
+  (define-minor-mode hesam-dpi-mode
+    "dpi-aware global zooming and auto-scaling."
+    :global t
+    :group 'hesam
+    (if hesam-dpi-mode
+        (progn
+          (add-hook 'after-make-frame-functions #'hesam/apply-font-to-frame)
+          (add-hook 'window-size-change-functions #'hesam/set-font-from-dpi)
+          (hesam/apply-to-all-frames))
+      (remove-hook 'after-make-frame-functions #'hesam/apply-font-to-frame)
+      (remove-hook 'window-size-change-functions #'hesam/set-font-from-dpi)))
 
-  ;; Apply when creating frames
-  (add-hook 'after-make-frame-functions #'hesam/apply-font-to-frame)
+  (defun hesam/apply-to-all-frames ()
+    "Refresh font settings for every open frame."
+    (mapc #'hesam/apply-font-to-frame (frame-list)))
 
-  ;; Re-evaluate when frame size/monitor changes
-  (add-hook 'window-size-change-functions
-            (lambda (_frame)
-              (hesam/set-font-from-dpi (selected-frame))))
+  (defun hesam/apply-to-all-frames ()
+    "Refresh font settings for every open frame."
+    (mapc #'hesam/apply-font-to-frame (frame-list)))
+
+  (defun hesam/zoom-in ()
+    "Increase font size across all frames."
+    (interactive)
+    (setq hesam/zoom-offset (+ hesam/zoom-offset 10))
+    (hesam/apply-to-all-frames))
+
+  (defun hesam/zoom-out ()
+    "Decrease font size across all frames."
+    (interactive)
+    (setq hesam/zoom-offset (- hesam/zoom-offset 10))
+    (hesam/apply-to-all-frames))
+
+  (defun hesam/zoom-reset ()
+    "Reset font size to DPI default across all frames."
+    (interactive)
+    (setq hesam/zoom-offset 0)
+    (hesam/apply-to-all-frames))
+
+  (defvar hesam-zoom-repeat-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map (kbd "=") #'hesam/zoom-in)
+      (define-key map (kbd "+") #'hesam/zoom-in)
+      (define-key map (kbd "-") #'hesam/zoom-out)
+      (define-key map (kbd "0") #'hesam/zoom-reset)
+      map)
+    "Keymap to repeat hesam zoom commands.")
+
+  (put #'hesam/zoom-in    'repeat-map 'hesam-zoom-repeat-map)
+  (put #'hesam/zoom-out   'repeat-map 'hesam-zoom-repeat-map)
+  (put #'hesam/zoom-reset 'repeat-map 'hesam-zoom-repeat-map)
+
+  (define-minor-mode hesam-zoom-mode
+    "A minor mode for DPI-aware global zooming."
+    :global t
+    :keymap
+    (let ((map (make-sparse-keymap)))
+      (define-key map (kbd "C-x C-M-=") #'hesam/zoom-in)
+      (define-key map (kbd "C-x C-M-+") #'hesam/zoom-in)
+      (define-key map (kbd "C-x C-M--") #'hesam/zoom-out)
+      (define-key map (kbd "C-x C-M-0") #'hesam/zoom-reset)
+      map))
+
+  (hesam-dpi-mode t)
+  (hesam-zoom-mode t)
+
 #+end_src
 *** Ligatures
 Ligatures are a way to display multiple characters as a single glyph. Here we use the package `ligature` to enable ligatures in Emacs. We use the font Iosevka Term Font which has ligatures built-in. We also set the ligatures to be enabled in programming modes.
