@@ -719,11 +719,13 @@ By default =embark= will show a preview window. We don't want that and instead p
               :around #'embark-hide-which-key-indicator)
 
 #+end_src
-** expand region
-Will expand mark in regions that makes sense, ie. is context aware.
+** expreg
+Will expand mark in regions that makes sense, i.e. is context aware, and has tree-sitter integration.
 #+begin_src emacs-lisp
-  (use-package expand-region
-    :bind ("C-c =" . 'er/expand-region))
+  (use-package expreg
+    :ensure t
+    :bind (("C-=" . expreg-expand)
+           ("C--" . expreg-contract)))
 #+end_src
 
 ** pdf-tools
