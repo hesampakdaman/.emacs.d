@@ -935,6 +935,10 @@ languages.
     :custom
     eglot-send-changes-idle-time 0.1
     :config
+    (defun hesam/eglot-format-buffer ()
+      (when (eglot-server-capable :documentFormattingProvider)
+        (eglot-format-buffer)))
+
     (setq-default eglot-workspace-configuration
                   '(:gopls
                     (:hints
@@ -945,9 +949,11 @@ languages.
                       :functionTypeParameters t
                       :parameterNames t
                       :rangeVariableTypes t))))
+
     (setq eglot-events-buffer-config '(:size 0 :format full))
     (set-face-attribute 'eglot-highlight-symbol-face nil :inherit 'match)
     (add-to-list 'eglot-server-programs '(typst-ts-mode . ("tinymist")))
+
     :bind (:map eglot-mode-map
                 ("C-c e a" . eglot-code-actions)
                 ("C-c e d" . eglot-find-declaration)
@@ -955,15 +961,10 @@ languages.
                 ("C-c e i" . eglot-find-implementation)
                 ("C-c e q" . eglot-code-action-quickfix)
                 ("C-c e r" . eglot-rename))
+
     :hook
     ((go-ts-mode python-ts-mode rust-ts-mode typst-ts-mode) . eglot-ensure)
-    (before-save . hesam/eglot-format-buffer))
-
-  (defun hesam/eglot-format-buffer ()
-    "Format buffer if Eglot server supports formatting."
-    (when (and (eglot-managed-p)
-               (eglot-server-capable :documentFormattingProvider))
-      (eglot-format-buffer)))
+    (eglot-managed-mode . (lambda () (add-hook 'before-save-hook #'hesam/eglot-format-buffer nil t))))
 #+end_src
 
 ** flymake
