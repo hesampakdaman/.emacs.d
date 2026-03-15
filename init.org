@@ -641,6 +641,7 @@ connection with programming.
   (setq package-vc-allow-build-commands t)
   (use-package reader
     :defer 2
+    :bind (:map reader-mode-map (("d" . reader-dark-mode)))
     :custom
     (reader-current-doc-theme nil)
     :vc (:url "https://codeberg.org/divyaranjan/emacs-reader"
