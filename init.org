@@ -1713,6 +1713,39 @@ descriptions on the right hand side -- at the margin if you will.
 #+end_src
 
 ** matugen
+*** dark mode toggle
+#+begin_src emacs-lisp
+  (defcustom hesam-current-wallpaper-path "~/.local/state/wallpaper_path"
+    "Path to the currently set wallpaper by Matugen"
+    :type 'file
+    :group 'hesam)
+
+  (defcustom hesam-darkmode-state "dark"
+    "Current theme state, either \"light\" or \"dark\"."
+    :type '(choice (const "light") (const "dark"))
+    :group 'hesam)
+
+  (defun hesam/get-wal-path ()
+    "Return the wallpaper path if file exists, otherwise nil."
+    (let ((file (expand-file-name hesam-current-wallpaper-path)))
+      (when (file-exists-p file)
+        (with-temp-buffer
+          (insert-file-contents file)
+          (string-trim (buffer-string))))))
+
+  (defun hesam/toggle-matugen ()
+    (interactive)
+    (when-let* ((wal-path (hesam/get-wal-path))
+                (new-state (if (string= hesam-darkmode-state "dark") "light" "dark")))
+      (customize-save-variable 'hesam-darkmode-state new-state)
+      (start-process "matugen-process" nil "matugen"
+                     "image" (expand-file-name wal-path)
+                     "-m" new-state
+                     "--source-color-index" "0")
+      (message "Matugen: Toggled to %s" new-state)))
+#+end_src
+
+*** ef-theme switching
 #+begin_src emacs-lisp
   (defun hesam/parse-hsl (hsl-string)
     "Helper to turn hsl(H, S%, L%) into a list of (H S L) as decimals."
