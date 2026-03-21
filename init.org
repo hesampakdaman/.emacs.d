@@ -188,38 +188,34 @@ Saving bookmarks to Dropbox and auto-saving upon change.
 ** Calendar and Time
 Configuration for calendar, setting ISO formats and start of week.
 #+begin_src emacs-lisp
-  ;; start with Mon
-  (setq calendar-week-start-day 1)
+  (use-package calendar
+    :init
+    ;; 1. Location & Solar (Stockholm)
+    (setq calendar-latitude 59.33
+          calendar-longitude 18.06
+          calendar-location-name "Stockholm, Sweden")
 
-  ;; EU style
-  (setq calendar-date-style 'european)
+    ;; 2. Date & Week Formatting (EU Standard)
+    (setq calendar-week-start-day 1
+          calendar-date-style 'european
+          calendar-date-display-form
+          '((if dayname (concat dayname ", ")) day " " monthname " " year))
 
-  ;; Date format
-  (setq calendar-date-display-form
-        '((if dayname
-              (concat dayname ", "))
-          day " " monthname " " year))
+    ;; 3. Time & Week Number Display
+    (setq calendar-time-display-form '(24-hours ":" minutes)
+          display-time-24hr-format t
+          display-time-day-and-date nil
+          display-time-default-load-average nil
+          calendar-intermonth-text
+          '(propertize
+            (format "W%2d"
+                    (car (calendar-iso-from-absolute
+                          (calendar-absolute-from-gregorian (list month day year)))))
+            'font-lock-face 'calendar-iso-week-face)))
 
-  ;; 24-clock
-  (setq calendar-time-display-form
-        '(24-hours ":" minutes))
-
-  ;; show week numbers
-  (setq calendar-intermonth-text
-        '(propertize
-          (format "W%2d"
-                  (car
-                   (calendar-iso-from-absolute
-                    (calendar-absolute-from-gregorian (list month day year)))))
-          'font-lock-face 'calendar-iso-week-face))
-#+end_src
-
-And if we ever need it the display is on 24h format, we don't display
-load-average
-#+begin_src emacs-lisp
-  (setq display-time-24hr-format t
-        display-time-day-and-date nil
-        display-time-default-load-average nil)
+  (use-package solar
+    :ensure nil
+    :after calendar)
 #+end_src
 
 ** Custom file settings
