@@ -213,9 +213,7 @@ Configuration for calendar, setting ISO formats and start of week.
                           (calendar-absolute-from-gregorian (list month day year)))))
             'font-lock-face 'calendar-iso-week-face)))
 
-  (use-package solar
-    :ensure nil
-    :after calendar)
+  (require 'solar)
 #+end_src
 
 ** Custom file settings
@@ -1716,18 +1714,15 @@ descriptions on the right hand side -- at the margin if you will.
     :type 'file
     :group 'hesam)
 
-  (defcustom hesam--darkmode-state "dark"
+  (defcustom hesam--darkmode-state 'dark
     "Current theme state, either `light' or `dark'."
-    :type '(choice (const "light") (const "dark"))
+    :type '(choice (const light) (const dark))
     :group 'hesam)
 
   (defun hesam--get-system-state ()
     "Query darkman for the current state, falling back to `hesam--darkmode-state'."
-    (let ((system-state (shell-command-to-string "darkman get")))
-      (cond
-       ((string-match-p "light" system-state) "light")
-       ((string-match-p "dark" system-state) "dark")
-       (t hesam--darkmode-state))))
+    (let ((state (string-trim (shell-command-to-string "darkman get"))))
+      (if (string= state "light") 'light 'dark)))
 
   (defun hesam--get-wal-path ()
     "Return the wallpaper path if file exists, otherwise nil."
@@ -1739,43 +1734,37 @@ descriptions on the right hand side -- at the margin if you will.
 
   (defun hesam--toggle-matugen ()
     (interactive)
-    (when-let* ((new-state (if (string= (hesam--get-system-state) "dark") "light" "dark")))
+    (when-let* ((new-state (if (eq (hesam--get-system-state) 'dark) 'light 'dark)))
       (start-process "matugen-process" nil "matugen"
                      "image" (hesam--get-wal-path)
-                     "-m" new-state
+                     "-m" (symbol-name new-state)
                      "--source-color-index" "0")
       (customize-save-variable 'hesam--darkmode-state new-state)
       (message "Matugen: Toggled to %s" new-state)))
 
-  (use-package solar
-    :ensure nil
-    :init
-    (setq calendar-location-name "Stockholm, Sweden"))
-
   (defun hesam--is-daylight-p ()
-    "Return non-nil if current time is between sunrise and sunset in Stockholm."
-    (require 'solar)
-    (let* ((now (decode-time))
-           (current-float (+ (nth 2 now) (/ (nth 1 now) 60.0)))
-           (sun-data (solar-sunrise-sunset (calendar-current-date)))
-           (sunrise-list (car (car sun-data)))
-           (sunset-list (car (nth 1 sun-data)))
-           (sunrise-float (+ (car sunrise-list) (/ (nth 1 sunrise-list) 60.0)))
-           (sunset-float (+ (car sunset-list) (/ (nth 1 sunset-list) 60.0))))
-      (and (>= current-float sunrise-float) (< current-float sunset-float))))
+    "Return non-nil if it's currently daylight at `calendar-location-name' using `solar'."
+    (let* ((times (solar-sunrise-sunset (calendar-current-date)))
+           (sunrise (caar times))
+           (sunset  (caadr times))
+           (now (decode-time (current-time)))
+           (current-hours (+ (nth 2 now) (/ (nth 1 now) 60.0))))
+      (and (<= sunrise current-hours) (<= current-hours sunset))))
 
   (defun hesam--apply-matugen-by-solar ()
-    "Updates matugen based on Stockholm's sunrise/sunset. Triggered by hypridle."
+    "Updates matugen based on `calendar-location-name'. Triggered by hypridle."
     (interactive)
-    (let* ((new-state (if (hesam--is-daylight-p) "light" "dark"))
+    (let* ((new-state (if (hesam--is-daylight-p) 'light 'dark))
            (wal-path (hesam--get-wal-path)))
       (when wal-path
         (start-process "matugen-process" nil "matugen"
                        "image" wal-path
-                       "-m" new-state
+                       "-m" (symbol-name new-state)
                        "--source-color-index" "0")
         (customize-save-variable 'hesam--darkmode-state new-state)
         (message "Stockholm Solar: Matugen set to %s" new-state))))
+
+  (add-hook 'emacs-startup-hook #'hesam--apply-matugen-by-solar)
 #+end_src
 
 *** ef-theme switching
