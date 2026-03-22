@@ -1769,49 +1769,135 @@ descriptions on the right hand side -- at the margin if you will.
 
 *** ef-theme switching
 #+begin_src emacs-lisp
-  (defun hesam/parse-hsl (hsl-string)
-    "Helper to turn hsl(H, S%, L%) into a list of (H S L) as decimals."
-    (if (string-match "hsl(\\([0-9.]+\\), \\([0-9.]+\\)%, \\([0-9.]+\\)%)" hsl-string)
-        (list (/ (string-to-number (match-string 1 hsl-string)) 360.0)
-              (/ (string-to-number (match-string 2 hsl-string)) 100.0)
-              (/ (string-to-number (match-string 3 hsl-string)) 100.0))
-      nil))
+  (require 'cl-lib)
+  (require 'ef-themes)
 
+  (defun hesam-matugen-pick-ef-theme-by-hsl (&rest colors)
+    "Parse HSL COLORS `plist', pick an `ef-theme', save it, and load it."
+    (let* ((parsed (hesam--matugen-parse-hsl-colors-plist colors))
+           (primary (plist-get parsed :primary))
+           (surface (plist-get parsed :surface)))
+      (unless (and primary surface)
+        (user-error "Missing required colors: :primary and :surface"))
+      (let ((theme (hesam--matugen-pick-ef-theme-from-normalized parsed)))
+        (unless theme
+          (user-error "Could not determine theme from Matugen colors"))
+        (customize-save-variable 'hesam-default-theme theme)
+        (ef-themes-load-theme theme))))
 
-  (defun hesam/pick-ef-theme-by-hsl (primary-hsl surface-hsl)
-    "Pick ef-theme using primary color for hue and surface color for light/dark."
-    (require 'ef-themes)
-    (let* ((primary (hesam/parse-hsl primary-hsl))
-           (surface (hesam/parse-hsl surface-hsl))
-           (hue (nth 0 primary))
-           (sat (nth 1 primary))
-           (bg-light (nth 2 surface))
-           theme)
-      (setq theme
-            (cond
-             ;; 1. Check Background Lightness (Threshold 0.5)
-             ((> bg-light 0.5)
-              (cond
-               ((< sat 0.1)  'ef-light)
-               ((< hue 0.10) 'ef-summer)
-               ((< hue 0.25) 'ef-spring)
-               ((< hue 0.55) 'ef-cyprus)
-               ((< hue 0.75) 'ef-frost)
-               ((< hue 0.90) 'ef-kassio)
-               (t 'ef-summer)))
-             ;; 2. Dark Themes (Background is dark)
-             (t
-              (cond
-               ((< sat 0.1)  'ef-dark)
-               ((< hue 0.10) 'ef-autumn)
-               ((< hue 0.20) 'ef-symbiosis)
-               ((< hue 0.45) 'ef-bio)
-               ((< hue 0.55) 'ef-maris-dark)
-               ((< hue 0.75) 'ef-winter)
-               ((< hue 0.90) 'ef-cherie)
-               (t 'ef-autumn)))))
-      (customize-save-variable 'hesam-default-theme theme)
-      (ef-themes-load-theme theme)))
+  (defconst hesam--matugen-ef-theme-targets
+    '((light
+       ;; neutral / general
+       (ef-light              :h 0.62 :s 0.20)
+       (ef-deuteranopia-light :h 0.55 :s 0.20)
+       (ef-tritanopia-light   :h 0.55 :s 0.20)
+
+       ;; warm
+       (ef-arbutus            :h 0.97 :s 0.55)
+       (ef-summer             :h 0.93 :s 0.65)
+       (ef-orange             :h 0.10 :s 0.85)
+       (ef-day                :h 0.12 :s 0.45)
+       (ef-eagle              :h 0.08 :s 0.25)
+       (ef-reverie            :h 0.11 :s 0.25)
+       (ef-melissa-light      :h 0.14 :s 0.55)
+
+       ;; green / earthy
+       (ef-spring             :h 0.36 :s 0.45)
+       (ef-elea-light         :h 0.32 :s 0.35)
+       (ef-cyprus             :h 0.14 :s 0.40)
+
+       ;; cool
+       (ef-duo-light          :h 0.58 :s 0.45)
+       (ef-frost              :h 0.58 :s 0.45)
+       (ef-maris-light        :h 0.54 :s 0.45)
+       (ef-kassio             :h 0.78 :s 0.25)
+       (ef-trio-light         :h 0.72 :s 0.35))
+
+      (dark
+       ;; neutral
+       (ef-dark               :h 0.62 :s 0.30)
+       (ef-deuteranopia-dark  :h 0.55 :s 0.20)
+       (ef-tritanopia-dark    :h 0.55 :s 0.20)
+
+       ;; warm / purple
+       (ef-autumn             :h 0.08 :s 0.55)
+       (ef-symbiosis          :h 0.14 :s 0.40)
+       (ef-cherie             :h 0.90 :s 0.60)
+       (ef-rosa               :h 0.94 :s 0.45)
+       (ef-dream              :h 0.78 :s 0.25)
+       (ef-winter             :h 0.82 :s 0.45)
+       (ef-trio-dark          :h 0.76 :s 0.35)
+       (ef-melissa-dark       :h 0.14 :s 0.55)
+
+       ;; green
+       (ef-bio                :h 0.38 :s 0.45)
+       (ef-elea-dark          :h 0.30 :s 0.35)
+
+       ;; cool / blue
+       (ef-fig                :h 0.82 :s 0.30) ; fixed
+       (ef-maris-dark         :h 0.56 :s 0.45)
+       (ef-night              :h 0.62 :s 0.35)
+       (ef-owl                :h 0.68 :s 0.20)
+       (ef-duo-dark           :h 0.58 :s 0.45)))
+    "Approximate hue/saturation anchors for Ef themes.")
+
+  (defun hesam--matugen-pick-ef-theme-from-normalized (colors)
+    "Pick the closest `ef-theme' from normalized COLORS plist.
+
+  COLORS is a plist like:
+
+    :primary (:h H :s S :l L)
+    :surface (:h H :s S :l L)
+
+  Return the chosen `ef-theme' symbol, or nil if required colors are
+  missing."
+    (let* ((primary (plist-get colors :primary))
+           (surface (plist-get colors :surface)))
+      (when (and primary surface)
+        (let* ((h (plist-get primary :h))
+               (s (plist-get primary :s))
+               (surface-l (plist-get surface :l))
+               (group (if (> surface-l 0.5) 'light 'dark))
+               (themes (cdr (assq group hesam--matugen-ef-theme-targets))))
+          (car
+           (cl-reduce
+            (lambda (a b)
+              (if (< (hesam--matugen-theme-distance h s a)
+                     (hesam--matugen-theme-distance h s b))
+                  a
+                b))
+            themes))))))
+
+  (defun hesam--matugen-theme-distance (h s theme-spec)
+    "Return distance between wallpaper H/S and THEME-SPEC."
+    (let ((theme-h (plist-get (cdr theme-spec) :h))
+          (theme-s (plist-get (cdr theme-spec) :s)))
+      (+ (* 2.5 (hesam--matugen-hue-distance h theme-h))
+         (abs (- s theme-s)))))
+
+  (defun hesam--matugen-hue-distance (a b)
+    "Return circular distance between hue A and B, both in [0,1]."
+    (let ((d (abs (- a b))))
+      (min d (- 1.0 d))))
+
+  (defun hesam--matugen-parse-hsl-colors-plist (colors)
+    "Parse COLORS plist of HSL strings into normalized plist."
+    (cl-loop for (key val) on colors by #'cddr
+             when val
+             for parsed = (hesam--matugen-parse-hsl val)
+             when parsed
+             collect key
+             collect parsed))
+
+  (defun hesam--matugen-parse-hsl (hsl-string)
+    "Parse HSL-STRING into a plist (:h H :s S :l L), values in [0,1]."
+    (when (and hsl-string
+               (string-match
+                "hsl(\\([0-9.]+\\),[[:space:]]*\\([0-9.]+\\)%,[[:space:]]*\\([0-9.]+\\)%\\(?:[[:space:]]*/[[:space:]]*[0-9.]+\\)?[[:space:]]*)"
+                hsl-string))
+      (list :h (/ (string-to-number (match-string 1 hsl-string)) 360.0)
+            :s (/ (string-to-number (match-string 2 hsl-string)) 100.0)
+            :l (/ (string-to-number (match-string 3 hsl-string)) 100.0))))
 #+end_src
 ** Which-key
 Displays available key chords after partially input. Hence, if we
