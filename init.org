@@ -516,6 +516,13 @@ either `(sudo-edit-current-file)` or `(sudo-edit-find-file)`.
   (use-package sudo-edit)
 #+end_src
 
+** surround
+#+begin_src emacs-lisp
+  (use-package surround
+    :defer 2
+    :bind-keymap ("M-'" . surround-keymap))
+#+end_src
+
 * Keybindings settings
 Here we define misc shortcuts to other programs or commands. Then we
 try and organize bindings depending on what they are used for.
