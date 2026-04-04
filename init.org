@@ -649,7 +649,6 @@ connection with programming.
                 ("j" . bookmark-jump))
     :custom
     (reader-current-doc-theme nil))
-
 #+end_src
 ** elfeed
 RSS reader that we configure with org.
