@@ -520,7 +520,7 @@ either `(sudo-edit-current-file)` or `(sudo-edit-find-file)`.
 #+begin_src emacs-lisp
   (use-package surround
     :defer 2
-    :bind-keymap ("M-'" . surround-keymap))
+    :bind-keymap ("C-c s" . surround-keymap))
 #+end_src
 
 * Keybindings settings
