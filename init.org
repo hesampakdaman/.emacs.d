@@ -641,12 +641,15 @@ connection with programming.
 #+begin_src emacs-lisp
   (setq package-vc-allow-build-commands t)
   (use-package reader
+    :vc (:url "https://codeberg.org/divyaranjan/emacs-reader" :make "all")
     :defer 2
-    :bind (:map reader-mode-map (("d" . reader-dark-mode)))
+    :bind (:map reader-mode-map
+                ("d" . reader-dark-mode)
+                ("b" . bookmark-set)
+                ("j" . bookmark-jump))
     :custom
-    (reader-current-doc-theme nil)
-    :vc (:url "https://codeberg.org/divyaranjan/emacs-reader"
-    	        :make "all"))
+    (reader-current-doc-theme nil))
+
 #+end_src
 ** elfeed
 RSS reader that we configure with org.
