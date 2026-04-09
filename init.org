@@ -1719,60 +1719,97 @@ descriptions on the right hand side -- at the margin if you will.
 *** dark mode toggle
 #+begin_src emacs-lisp
   (defcustom hesam-matugen-current-wallpaper-path "~/.local/state/wallpaper_path"
-    "Path to the currently set wallpaper by Matugen"
+    "Path to the file containing the current wallpaper path."
     :type 'file
     :group 'hesam)
 
   (defcustom hesam-matugen-darkmode-state 'dark
-    "Current theme state, either `light' or `dark'."
+    "Last applied Matugen mode."
     :type '(choice (const light) (const dark))
     :group 'hesam)
 
-  (defun hesam-matugen-toggle-matugen ()
-    (interactive)
-    (when-let* ((new-state (if (eq (hesam-matugen--get-system-state) 'dark) 'light 'dark)))
-      (start-process "matugen-process" nil "matugen"
-                     "image" (hesam-matugen--get-wal-path)
-                     "-m" (symbol-name new-state)
-                     "--source-color-index" "0")
-      (customize-save-variable 'hesam-matugen-darkmode-state new-state)
-      (message "Matugen: Toggled to %s" new-state)))
-
-  (defun hesam-matugen-apply-matugen-by-solar ()
-    "Updates matugen based on `calendar-location-name'. Triggered by hypridle."
-    (let* ((new-state (if (hesam-matugen--is-daylight-p) 'light 'dark))
-           (wal-path (hesam-matugen--get-wal-path)))
-      (when wal-path
-        (start-process "matugen-process" nil "matugen"
-                       "image" wal-path
-                       "-m" (symbol-name new-state)
-                       "--source-color-index" "0")
-        (customize-save-variable 'hesam-matugen-darkmode-state new-state)
-        (message "Stockholm Solar: Matugen set to %s" new-state))))
-
   (defun hesam-matugen--get-system-state ()
-    "Query darkman for the current state, falling back to `hesam-matugen-darkmode-state'."
+    "Return current system theme state as `light' or `dark'."
     (let ((state (string-trim (shell-command-to-string "darkman get"))))
       (if (string-match-p "light" state) 'light 'dark)))
 
-  (defun hesam-matugen--get-wal-path ()
-    "Return the wallpaper path if file exists, otherwise nil."
+  (defun hesam-matugen--get-wallpaper ()
+    "Return the current wallpaper path, or nil if unavailable."
     (let ((file (expand-file-name hesam-matugen-current-wallpaper-path)))
       (when (file-exists-p file)
         (with-temp-buffer
           (insert-file-contents file)
-          (expand-file-name (string-trim (buffer-string)))))))
+          (let ((wallpaper (string-trim (buffer-string))))
+            (unless (string-empty-p wallpaper)
+              (expand-file-name wallpaper)))))))
 
   (defun hesam-matugen--is-daylight-p ()
-    "Return non-nil if it's currently daylight at `calendar-location-name' using `solar'."
+    "Return non-nil when it is daylight at the current solar location."
     (let* ((times (solar-sunrise-sunset (calendar-current-date)))
            (sunrise (caar times))
-           (sunset  (caadr times))
+           (sunset (caadr times))
            (now (decode-time (current-time)))
-           (current-hours (+ (nth 2 now) (/ (nth 1 now) 60.0))))
-      (and (<= sunrise current-hours) (<= current-hours sunset))))
+           (current-hours (+ (decoded-time-hour now)
+                             (/ (decoded-time-minute now) 60.0))))
+      (and sunrise sunset
+           (<= sunrise current-hours)
+           (<= current-hours sunset))))
 
-  (add-hook 'emacs-startup-hook #'hesam-matugen-apply-matugen-by-solar)
+  (defun hesam-matugen--apply (state)
+    "Apply Matugen STATE using the current wallpaper."
+    (when-let* ((wallpaper (hesam-matugen--get-wallpaper)))
+      (start-process
+       "matugen-process" nil
+       "matugen" "image" wallpaper
+       "-m" (symbol-name state)
+       "--source-color-index" "0")
+      (customize-save-variable 'hesam-matugen-darkmode-state state)
+      (message "Matugen: set to %s" state)))
+
+  (defun hesam-matugen-toggle ()
+    "Toggle Matugen theme mode."
+    (interactive)
+    (hesam-matugen--apply
+     (if (eq (hesam-matugen--get-system-state) 'dark) 'light 'dark)))
+
+  (defun hesam-matugen-apply-by-solar ()
+    "Apply Matugen based on whether it is currently daylight."
+    (hesam-matugen--apply
+     (if (hesam-matugen--is-daylight-p) 'light 'dark)))
+
+  (defun hesam-matugen--missing-deps ()
+    "Signal an error if required external dependencies are missing."
+    (unless (executable-find "matugen")
+      (error "matugen not found"))
+    (unless (executable-find "darkman")
+      (error "darkman not found")))
+
+  (defun hesam-matugen--enable ()
+    "Enable `hesam-matugen-mode' internals."
+    (hesam-matugen--missing-deps)
+    (add-hook 'emacs-startup-hook #'hesam-matugen-apply-by-solar)
+    (when after-init-time
+      (hesam-matugen-apply-by-solar))
+    t)
+
+  (defun hesam-matugen--disable ()
+    "Disable hesam-matugen-mode' internals."
+    (remove-hook 'emacs-startup-hook #'hesam-matugen-apply-by-solar))
+
+   ;;;###autoload
+  (define-minor-mode hesam-matugen-mode
+    "Toggle automatic Matugen integration."
+    :global t
+    :group 'hesam
+    :lighter " Matugen"
+    (if hesam-matugen-mode
+        (hesam-matugen--enable)
+      (hesam-matugen--disable)))
+
+  (use-package hesam-matugen
+    :ensure nil
+    :defer 2
+    :init (hesam-matugen-mode))
 #+end_src
 
 *** ef-theme switching
