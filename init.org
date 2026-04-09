@@ -1718,40 +1718,52 @@ descriptions on the right hand side -- at the margin if you will.
 ** matugen
 *** dark mode toggle
 #+begin_src emacs-lisp
-  (defcustom hesam--current-wallpaper-path "~/.local/state/wallpaper_path"
+  (defcustom hesam-matugen-current-wallpaper-path "~/.local/state/wallpaper_path"
     "Path to the currently set wallpaper by Matugen"
     :type 'file
     :group 'hesam)
 
-  (defcustom hesam--darkmode-state 'dark
+  (defcustom hesam-matugen-darkmode-state 'dark
     "Current theme state, either `light' or `dark'."
     :type '(choice (const light) (const dark))
     :group 'hesam)
 
-  (defun hesam--get-system-state ()
-    "Query darkman for the current state, falling back to `hesam--darkmode-state'."
-    (let ((state (string-trim (shell-command-to-string "darkman get"))))
-      (if (string= state "light") 'light 'dark)))
+  (defun hesam-matugen-toggle-matugen ()
+    (interactive)
+    (when-let* ((new-state (if (eq (hesam-matugen--get-system-state) 'dark) 'light 'dark)))
+      (start-process "matugen-process" nil "matugen"
+                     "image" (hesam-matugen--get-wal-path)
+                     "-m" (symbol-name new-state)
+                     "--source-color-index" "0")
+      (customize-save-variable 'hesam-matugen-darkmode-state new-state)
+      (message "Matugen: Toggled to %s" new-state)))
 
-  (defun hesam--get-wal-path ()
+  (defun hesam-matugen-apply-matugen-by-solar ()
+    "Updates matugen based on `calendar-location-name'. Triggered by hypridle."
+    (let* ((new-state (if (hesam-matugen--is-daylight-p) 'light 'dark))
+           (wal-path (hesam-matugen--get-wal-path)))
+      (when wal-path
+        (start-process "matugen-process" nil "matugen"
+                       "image" wal-path
+                       "-m" (symbol-name new-state)
+                       "--source-color-index" "0")
+        (customize-save-variable 'hesam-matugen-darkmode-state new-state)
+        (message "Stockholm Solar: Matugen set to %s" new-state))))
+
+  (defun hesam-matugen--get-system-state ()
+    "Query darkman for the current state, falling back to `hesam-matugen-darkmode-state'."
+    (let ((state (string-trim (shell-command-to-string "darkman get"))))
+      (if (string-match-p "light" state) 'light 'dark)))
+
+  (defun hesam-matugen--get-wal-path ()
     "Return the wallpaper path if file exists, otherwise nil."
-    (let ((file (expand-file-name hesam--current-wallpaper-path)))
+    (let ((file (expand-file-name hesam-matugen-current-wallpaper-path)))
       (when (file-exists-p file)
         (with-temp-buffer
           (insert-file-contents file)
           (expand-file-name (string-trim (buffer-string)))))))
 
-  (defun hesam--toggle-matugen ()
-    (interactive)
-    (when-let* ((new-state (if (eq (hesam--get-system-state) 'dark) 'light 'dark)))
-      (start-process "matugen-process" nil "matugen"
-                     "image" (hesam--get-wal-path)
-                     "-m" (symbol-name new-state)
-                     "--source-color-index" "0")
-      (customize-save-variable 'hesam--darkmode-state new-state)
-      (message "Matugen: Toggled to %s" new-state)))
-
-  (defun hesam--is-daylight-p ()
+  (defun hesam-matugen--is-daylight-p ()
     "Return non-nil if it's currently daylight at `calendar-location-name' using `solar'."
     (let* ((times (solar-sunrise-sunset (calendar-current-date)))
            (sunrise (caar times))
@@ -1760,20 +1772,7 @@ descriptions on the right hand side -- at the margin if you will.
            (current-hours (+ (nth 2 now) (/ (nth 1 now) 60.0))))
       (and (<= sunrise current-hours) (<= current-hours sunset))))
 
-  (defun hesam--apply-matugen-by-solar ()
-    "Updates matugen based on `calendar-location-name'. Triggered by hypridle."
-    (interactive)
-    (let* ((new-state (if (hesam--is-daylight-p) 'light 'dark))
-           (wal-path (hesam--get-wal-path)))
-      (when wal-path
-        (start-process "matugen-process" nil "matugen"
-                       "image" wal-path
-                       "-m" (symbol-name new-state)
-                       "--source-color-index" "0")
-        (customize-save-variable 'hesam--darkmode-state new-state)
-        (message "Stockholm Solar: Matugen set to %s" new-state))))
-
-  (add-hook 'emacs-startup-hook #'hesam--apply-matugen-by-solar)
+  (add-hook 'emacs-startup-hook #'hesam-matugen-apply-matugen-by-solar)
 #+end_src
 
 *** ef-theme switching
