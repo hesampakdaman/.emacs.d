@@ -1,3 +1,12 @@
+org-mode
+
+(confsrc
+ "#+begin_src conf :tangle " (p "path") n
+ r n
+ "#+end_src"
+ :post (org-edit-src-code))
+
+
 zig-mode
 
 (gwt "test \"" (p "description") "\" {" n>
