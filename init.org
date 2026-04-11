@@ -88,6 +88,7 @@ It is of most important that this file is loaded first. Here we define
 global variables that are assumed to exists in other configuration
 files.
 ** Packaging
+*** use-package
 #+begin_src emacs-lisp
   (require 'use-package-ensure)
   (setq use-package-always-defer t
@@ -102,6 +103,59 @@ files.
 
   ;; follow symlinks without prompt
   (setq vc-follow-symlinks t)
+#+end_src
+
+*** system-pkg
+#+begin_src emacs-lisp
+  (require 'cl-lib)
+
+  (defgroup system-pkg nil
+    "Ensure system packages are installed."
+    :group 'hesam)
+
+  (defcustom system-pkg-install-command
+    (lambda (pkgs)
+      (format "yay -S --needed %s"
+              (mapconcat #'shell-quote-argument pkgs " ")))
+    "Function that takes a list of PKGS and returns a shell command string."
+    :type 'function)
+
+  (defvar system-pkg--queue nil)
+
+  (defun system-pkg--name (x)
+    (cond
+     ((symbolp x) (symbol-name x))
+     ((stringp x) x)
+     (t (error "Expected symbol or string, got: %S" x))))
+
+  (cl-defmacro system-pkg (pkg &key exe)
+    "Queue PKG or EXE for installation if it doesn't exists in PATH.
+
+  EXE may be a symbol or string naming the executable to check with
+  `executable-find`.
+
+  PKG may be a symbol or string naming the package to install, if different."
+    (declare (indent 1))
+    `(when system-pkg-mode
+       (unless (executable-find (system-pkg--name ',(or exe pkg)))
+         (cl-pushnew
+          (system-pkg--name ',pkg)
+          system-pkg--queue
+          :test #'string=))))
+
+  (defun system-pkg-install-queued ()
+    (interactive)
+    (when system-pkg--queue
+      (let ((pkgs (delete-dups (reverse system-pkg--queue))))
+        (setq system-pkg--queue nil)
+        (async-shell-command
+         (funcall system-pkg-install-command pkgs)
+         "*system-pkg-install*"))))
+
+  (define-minor-mode system-pkg-mode
+    "Toggle queued system package support."
+    :global t
+    :lighter " SysPkg")
 #+end_src
 
 ** Face group
