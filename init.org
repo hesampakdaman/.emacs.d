@@ -1,4 +1,4 @@
-# -*- lexical-binding: t; after-save-hook: (org-babel-tangle); before-save-hook: (delete-trailing-whitespace) -*-
+# -*- lexical-binding: t; after-save-hook: org-babel-tangle; before-save-hook: delete-trailing-whitespace; -*-
 #+TITLE: Emacs configuration
 #+AUTHOR: Hesam Pakdaman
 #+STARTUP: overview
