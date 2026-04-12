@@ -397,7 +397,7 @@ It's a good idea to be aware of Emacs' startup time. In case any new setting has
 #+end_src
 
 * Completion settings
-** Completion preview
+** completion preview
 #+begin_src emacs-lisp
   (use-package completion-preview
     :bind (:map completion-preview-active-mode-map
@@ -426,7 +426,7 @@ More completion at point functions.
     (add-hook 'completion-at-point-functions #'cape-file t)
     (add-hook 'completion-at-point-functions #'cape-elisp-block t))
 #+end_src
-** Corfu
+** corfu
 General auto-completion system, but mostly used in programming
 contexts. We complete text with `TAB' across Emacs' buffers.
 #+begin_src emacs-lisp
@@ -465,7 +465,7 @@ contexts. We complete text with `TAB' across Emacs' buffers.
     (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
 #+end_src
 
-** Orderless
+** orderless
 Provides completion styles to be used on top-of a completion packages
 such as `Vertico` or certain `Consult` functions. If we do `C-x C-f`
 and have two files `languages-and-modes.org` and `general.org` then
@@ -480,7 +480,7 @@ style (ie. the order of your serach words does not matter).
           completion-category-overrides '((file (styles . (partial-completion))))))
 #+end_src
 
-** Tempel
+** tempel
 Template system similar to yassnippet.
 #+begin_src emacs-lisp
   (use-package tempel
@@ -495,7 +495,7 @@ Template system similar to yassnippet.
       (setq-local completion-at-point-functions
                   (cons #'tempel-expand completion-at-point-functions))))
 #+end_src
-** Vertico
+** vertico
 Minibuffer completion system. It will display a vertical scrolling
 minibuffer in modes like `M-x` or `(find-file)`.
 #+begin_src emacs-lisp
