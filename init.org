@@ -115,7 +115,7 @@ files.
 
   (defcustom system-pkg-install-command
     (lambda (pkgs)
-      (format "yay -S --needed %s"
+      (format "yay -S --noconfirm --needed --noeditmenu %s"
               (mapconcat #'shell-quote-argument pkgs " ")))
     "Function that takes a list of PKGS and returns a shell command string."
     :type 'function
