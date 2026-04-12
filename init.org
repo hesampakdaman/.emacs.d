@@ -562,7 +562,48 @@ Simple function to delete blank lines from cursor downwards.
     (interactive)
     (flush-lines "^$"))
 #+end_src
+** clipboard
+#+begin_src emacs-lisp
+  (use-package emacs
+    :bind (("C-c C-y" . hesam-cliphist-select)
+           ("C-c C-c" . hesam-cliphist-copy)
+           ("C-c C-x" . hesam-cliphist-cut))
+    :preface
+    (defun hesam-cliphist-copy ()
+      (interactive)
+      (unless (use-region-p)
+        (user-error "No active region"))
+      (call-process-region
+       (if (use-region-p) (region-beginning) (point-min))
+       (if (use-region-p) (region-end)       (point-max))
+       "wl-copy"))
 
+    (defun hesam-cliphist-cut ()
+      (interactive)
+      (unless (use-region-p)
+        (user-error "No active region"))
+      (let ((text (buffer-substring-no-properties
+                   (region-beginning)
+                   (region-end))))
+        (kill-region (region-beginning) (region-end))
+        (with-temp-buffer
+          (insert text)
+          (call-process-region (point-min) (point-max) "wl-copy"))))
+
+    (defun hesam-cliphist--list ()
+      (mapcar (lambda (s)
+                (replace-regexp-in-string
+                 "^[0-9]+[[:space:]]+" "" s))
+              (process-lines "cliphist" "list")))
+
+    (defun hesam-cliphist-select ()
+      (interactive)
+      (let ((vertico-sort-function nil))
+        (let ((choice (completing-read "cliphist: " (hesam-cliphist--list) nil t)))
+          (when choice
+            (insert choice)
+            (kill-new choice))))))
+#+end_src
 ** jinx
 #+begin_src emacs-lisp
   (use-package jinx
