@@ -22,62 +22,47 @@ This will make sure that the tangled file has lexical binding.
   ;; -*- lexical-binding: t; -*-
 
   ;; increase garbage collection threshold to delay GC during startup.
-  ;; this decreases startup time.
+  ;; this decreases startup time
   (setq gc-cons-threshold (* 100 (expt 10 6)) ; 100MB
         gc-cons-percentage 0.8)
 
   ;; skip handling special file during startup. This decreases start
-  ;; time.
+  ;; time
   (defvar startup/file-name-handler-alist file-name-handler-alist)
   (setq file-name-handler-alist nil)
 
   ;; lower garbage collection threshold after startup to minimize impact
-  ;; of GC during normal use. Reset file-name-handler-alist.
+  ;; of GC during normal use. Reset file-name-handler-alist
   (add-hook 'emacs-startup-hook
             (lambda ()
               (setq gc-cons-threshold (* 50 (expt 10 6)) ; 50MB
                     gc-cons-percentage 0.1
                     file-name-handler-alist startup/file-name-handler-alist)))
 
-  ;; Improve performance with language servers.
-  (setq read-process-output-max (* 1024 1024)) ;; 1 MB
-
+  ;; use a simpler initial major mode during startup
   (setq initial-major-mode 'fundamental-mode)
 
-  ;; Frame decorations and size
-  ;; do not allow Emacs to resize frame
+  ;; prevent Emacs from automatically resizing the frame during startup
   (setq frame-inhibit-implied-resize t)
 
-  (setq frame-resize-pixelwise t)
-  (setq idle-update-delay 0.1)
-  (setq fast-but-imprecise-scrolling t)
-  (setq pixel-scroll-precision-mode t)
-
+  ;; no splash screen
   (setq inhibit-splash-screen t
         inhibit-startup-screen t
         inhibit-startup-message t
         inhibit-startup-buffer-menu t)
 
+  ;; prevent Emacs from automatically resizing the frame during startup
+  (setq frame-resize-pixelwise t)
+
   ;; set these early to reduce flickering/resizing on startup
-  (setq default-frame-alist '((width . 70) (height . 35)))
   (scroll-bar-mode -1)
   (tool-bar-mode -1)
   (menu-bar-mode -1)
 
-  ;; fringe tweak
-  (set-face-attribute 'fringe nil :background 'unspecified)
-
+  ;; no window decorations and increased invisible border widths
   (dolist (frame-option
            '((undecorated . t) (internal-border-width . 15) (drag-internal-border . 5)))
     (add-to-list 'default-frame-alist frame-option))
-
-  ;; Warnings
-  (setq byte-compile-warnings '(not obsolete free-vars unresolved noruntime lexical make-local cl-functions))
-  (setq warning-suppress-log-types '((comp) (bytecomp)))
-  (setq native-comp-async-report-warnings-errors 'silent)
-
-  ;; Misc Optimizations
-  (setq-default cursor-in-non-selected-windows nil)
 #+end_src
 
 * Global settings
@@ -278,6 +263,12 @@ Configuration for calendar, setting ISO formats and start of week.
   (require 'solar)
 #+end_src
 
+** Compilations and warnings
+#+begin_src emacs-lisp
+  (setq byte-compile-warnings '(not obsolete free-vars unresolved noruntime lexical make-local cl-functions))
+  (setq warning-suppress-log-types '((comp) (bytecomp)))
+  (setq native-comp-async-report-warnings-errors 'silent)
+#+end_src
 ** Custom file settings
 Emacs customization options are not tracked by git and will be saved
 in another file instead of in this init file.
@@ -310,6 +301,12 @@ alamrs we turn all of them completely off.
   ;; no beeping
   (setq ring-bell-function 'ignore)
   (setq server-client-instructions nil)
+#+end_src
+
+** Performance settings
+#+begin_src emacs-lisp
+  (setq read-process-output-max (* 1024 1024)) (setq read-process-output-max (* 1024 1024)) ;; improve subprocess throughput
+  (setq idle-update-delay 0.1) ;; UI responsiveness
 #+end_src
 
 ** Repeat mode
@@ -1452,6 +1449,11 @@ Settings for the feel and look of Emacs. We may also have some options
 configured elsewhere which affects the look of Emacs. One such example
 is the face `hideshow` minor mode uses, which we have put in
 `programming.org` because it's directly related to programming.
+** Faces
+#+begin_src emacs-lisp
+  ;; fringe tweak
+  (set-face-attribute 'fringe nil :background 'unspecified)
+#+end_src
 ** Fonts
 #+begin_src emacs-lisp
   (defcustom hesam-default-font-family "JetBrainsMono Nerd Font"
@@ -1595,11 +1597,10 @@ Chosen theme that is loaded when starting Emacs can be customized.
 #+end_src
 
 ** Cursor
-No blinking cursor!
 #+begin_src emacs-lisp
   (blink-cursor-mode -1)
+  (setq-default cursor-in-non-selected-windows nil)
 #+end_src
-
 ** Frame customization and decorations
 Lastly we use a little margin on both sides. Mainly because we want
 some padding between buffers. Recall that `internal-border` option is
@@ -2081,4 +2082,9 @@ p` for previous.
     :config
     (which-key-mode t)
     (which-key-setup-side-window-bottom))
+#+end_src
+** Scrolling
+#+begin_src emacs-lisp
+  (setq fast-but-imprecise-scrolling t)
+  (pixel-scroll-precision-mode 1)
 #+end_src
