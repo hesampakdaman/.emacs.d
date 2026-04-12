@@ -664,7 +664,8 @@ separate between custom commands prefixed by `C-c` and shadowing emacs
 default bindings defined with `C-x`.
 *** Custom C-c bindings
 #+begin_src emacs-lisp
-;; empty
+  (use-package emacs
+    :bind (("C-c o" . ffap)))
 #+end_src
 
 *** Shadowing emacs' C-x bindings
