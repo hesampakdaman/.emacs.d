@@ -573,10 +573,7 @@ Simple function to delete blank lines from cursor downwards.
       (interactive)
       (unless (use-region-p)
         (user-error "No active region"))
-      (call-process-region
-       (if (use-region-p) (region-beginning) (point-min))
-       (if (use-region-p) (region-end)       (point-max))
-       "wl-copy"))
+      (call-process-region (region-beginning) (region-end) "wl-copy"))
 
     (defun hesam-cliphist-cut ()
       (interactive)
@@ -590,19 +587,43 @@ Simple function to delete blank lines from cursor downwards.
           (insert text)
           (call-process-region (point-min) (point-max) "wl-copy"))))
 
-    (defun hesam-cliphist--list ()
-      (mapcar (lambda (s)
-                (replace-regexp-in-string
-                 "^[0-9]+[[:space:]]+" "" s))
-              (process-lines "cliphist" "list")))
+    (defun hesam-cliphist--entries ()
+      (mapcar
+       (lambda (line)
+         (cons (replace-regexp-in-string "^[0-9]+[[:space:]]+" "" line)
+               line))
+       (process-lines "cliphist" "list")))
 
-    (defun hesam-cliphist-select ()
-      (interactive)
-      (let ((vertico-sort-function nil))
-        (let ((choice (completing-read "cliphist: " (hesam-cliphist--list) nil t)))
-          (when choice
-            (insert choice)
-            (kill-new choice))))))
+    (defun hesam-cliphist--decode (raw)
+      (with-temp-buffer
+        (insert raw)
+        (call-process-region (point-min) (point-max) "cliphist" t t nil "decode")
+        (buffer-string)))
+
+    (defun hesam-cliphist-select--first ()
+      (let* ((entries (hesam-cliphist--entries))
+             (raw (cdar entries)))
+        (when raw
+          (let ((text (hesam-cliphist--decode raw)))
+            (insert text)
+            (kill-new text)))))
+
+    (defun hesam-cliphist-select--list ()
+      (let* ((entries (hesam-cliphist--entries))
+             (vertico-sort-function nil)
+             (choice (completing-read "cliphist: " entries nil t)))
+        (when choice
+          (let ((raw (cdr (assoc choice entries))))
+            (when raw
+              (let ((text (hesam-cliphist--decode raw)))
+                (insert text)
+                (kill-new text)))))))
+
+    (defun hesam-cliphist-select (arg)
+      (interactive "P")
+      (if arg
+          (hesam-cliphist-select--list)
+        (hesam-cliphist-select--first))))
 #+end_src
 ** jinx
 #+begin_src emacs-lisp
