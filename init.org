@@ -21,17 +21,17 @@ This will make sure that the tangled file has lexical binding.
 #+begin_src emacs-lisp
   ;; -*- lexical-binding: t; -*-
 
-  ;; Increase garbage collection threshold to delay GC during startup.
+  ;; increase garbage collection threshold to delay GC during startup.
   ;; this decreases startup time.
   (setq gc-cons-threshold (* 100 (expt 10 6)) ; 100MB
         gc-cons-percentage 0.8)
 
-  ;; Skip handling special file during startup. This decreases start
+  ;; skip handling special file during startup. This decreases start
   ;; time.
   (defvar startup/file-name-handler-alist file-name-handler-alist)
   (setq file-name-handler-alist nil)
 
-  ;; Lower garbage collection threshold after startup to minimize impact
+  ;; lower garbage collection threshold after startup to minimize impact
   ;; of GC during normal use. Reset file-name-handler-alist.
   (add-hook 'emacs-startup-hook
             (lambda ()
