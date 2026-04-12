@@ -565,9 +565,9 @@ Simple function to delete blank lines from cursor downwards.
 ** clipboard
 #+begin_src emacs-lisp
   (use-package emacs
-    :bind (("C-c C-y" . hesam-cliphist-select)
-           ("C-c C-c" . hesam-cliphist-copy)
-           ("C-c C-x" . hesam-cliphist-cut))
+    :bind (("C-c y" . hesam-cliphist-select)
+           ("C-c c" . hesam-cliphist-copy)
+           ("C-c x" . hesam-cliphist-cut))
     :preface
     (defun hesam-cliphist-copy ()
       (interactive)
