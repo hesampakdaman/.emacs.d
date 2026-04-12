@@ -111,7 +111,7 @@ files.
 
   (defgroup system-pkg nil
     "Ensure system packages are installed."
-    :group 'hesam)
+    :group 'external)
 
   (defcustom system-pkg-install-command
     (lambda (pkgs)
@@ -119,14 +119,14 @@ files.
               (mapconcat #'shell-quote-argument pkgs " ")))
     "Function that takes a list of PKGS and returns a shell command string."
     :type 'function
-    :group 'hesam)
+    :group 'system-pkg)
 
   (defcustom system-pkg-installed-p
-    (lambda (pkg)
-      (eq 0 (call-process "yay" nil nil nil "-Qi" (system-pkg--name pkg))))
+    (lambda (pkg-name)
+      (eq 0 (call-process "yay" nil nil nil "-Qi" pkg-name)))
     "Function that returns non-nil if PKG is installed."
     :type 'function
-    :group 'hesam)
+    :group system-pkg)
 
   (defvar system-pkg--queue nil)
 
