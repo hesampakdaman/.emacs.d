@@ -64,11 +64,8 @@ This will make sure that the tangled file has lexical binding.
   (tool-bar-mode -1)
   (menu-bar-mode -1)
 
-  ;; load a default theme
+  ;; fringe tweak
   (set-face-attribute 'fringe nil :background 'unspecified)
-
-  ;; sets custom file (loading occurs in init.el)
-  (setq custom-file "~/.emacs.d/emacs-custom.el")
 
   (dolist (frame-option
            '((undecorated . t) (internal-border-width . 15) (drag-internal-border . 5)))
@@ -285,8 +282,8 @@ Configuration for calendar, setting ISO formats and start of week.
 Emacs customization options are not tracked by git and will be saved
 in another file instead of in this init file.
 #+begin_src emacs-lisp
-  (if (file-exists-p custom-file)
-      (load-file custom-file))
+  (setq custom-file (locate-user-emacs-file "emacs-custom.el"))
+  (load custom-file 'noerror 'nomessage)
 #+end_src
 
 ** Disable suspend functions
