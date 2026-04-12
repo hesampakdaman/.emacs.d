@@ -118,7 +118,15 @@ files.
       (format "yay -S --needed %s"
               (mapconcat #'shell-quote-argument pkgs " ")))
     "Function that takes a list of PKGS and returns a shell command string."
-    :type 'function)
+    :type 'function
+    :group 'hesam)
+
+  (defcustom system-pkg-installed-p
+    (lambda (pkg)
+      (eq 0 (call-process "yay" nil nil nil "-Qi" (system-pkg--name pkg))))
+    "Function that returns non-nil if PKG is installed."
+    :type 'function
+    :group 'hesam)
 
   (defvar system-pkg--queue nil)
 
@@ -129,19 +137,22 @@ files.
      (t (error "Expected symbol or string, got: %S" x))))
 
   (cl-defmacro system-pkg (pkg &key exe)
-    "Queue PKG or EXE for installation if it doesn't exists in PATH.
+    "Ensure PKG is available, queuing it for installation if necessary.
 
-  EXE may be a symbol or string naming the executable to check with
-  `executable-find`.
+  PKG is the name of the system package to install.
 
-  PKG may be a symbol or string naming the package to install, if different."
+  EXE, if provided, specifies the executable to check for with
+  `executable-find`. Defaults to PKG.
+
+  A package is considered present if either the executable is found
+  in PATH or `system-pkg-installed-p` reports it as installed."
     (declare (indent 1))
     `(when system-pkg-mode
-       (unless (executable-find (system-pkg--name ',(or exe pkg)))
-         (cl-pushnew
-          (system-pkg--name ',pkg)
-          system-pkg--queue
-          :test #'string=))))
+       (let ((pkg-name (system-pkg--name ',pkg))
+             (exe-name (system-pkg--name ',(or exe pkg))))
+         (unless (or (executable-find exe-name)
+                     (funcall system-pkg-installed-p pkg-name))
+           (cl-pushnew pkg-name system-pkg--queue :test #'string=)))))
 
   (defun system-pkg-install-queued ()
     (interactive)
