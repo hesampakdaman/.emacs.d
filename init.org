@@ -126,7 +126,7 @@ files.
       (eq 0 (call-process "yay" nil nil nil "-Qi" pkg-name)))
     "Function that returns non-nil if PKG is installed."
     :type 'function
-    :group system-pkg)
+    :group 'system-pkg)
 
   (defvar system-pkg--queue nil)
 
