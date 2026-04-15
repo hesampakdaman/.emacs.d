@@ -172,10 +172,11 @@ this file allow for fine-tuned adjustments to individual aspects,
 promoting a coherent and unified configuration tailored to specific
 user needs.
 
-** Autosave and Backups
+
+** autosave and backups
 Saves all backups to user's Emacs directory and in addition creates
 numbered backups. First things first, we create autosave and backup
-directory where we put autosaves and backups respectevily.
+directory where we put autosaves and backups respectively.
 #+begin_src emacs-lisp
   (defcustom hesam-autosave-directory (expand-file-name "autosave/" user-emacs-directory)
     "Directory where autosave and backups are put."
@@ -198,13 +199,13 @@ Of course we need to make sure these directories exists
 Use the directory for backups. There are some other sane settings used
 described below with comments.
 #+begin_src emacs-lisp
-  (setq backup-directory-alist `(("." . ,hesam-backup-directory))
-	version-control t		  ; Use version numbers for backups.
-	vc-make-backup-files t	  ; Make backups for git files
-	kept-new-versions 1000	  ; Number of newest versions to keep.
-	kept-old-versions 0	  ; Number of oldest versions to keep.
-	delete-old-versions t ; Don't ask to delete excess backup versions.
-	backup-by-copying t)  ; Copy all files, don't rename them.
+  (setq backup-directory-alist `((".*" . ,hesam-backup-directory))
+        version-control t           ; Use version numbers for backups.
+        vc-make-backup-files t	  ; Make backups for git files
+        kept-new-versions 1000	  ; Number of newest versions to keep.
+        kept-old-versions 0         ; Number of oldest versions to keep.
+        delete-old-versions t ; Don't ask to delete excess backup versions.
+        backup-by-copying t)  ; Copy all files, don't rename them.
 #+end_src
 
 But backups are only created once when the buffer is visited. We want
