@@ -2087,5 +2087,4 @@ p` for previous.
 ** Scrolling
 #+begin_src emacs-lisp
   (setq fast-but-imprecise-scrolling t)
-  (pixel-scroll-precision-mode 1)
 #+end_src
