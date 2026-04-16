@@ -306,8 +306,8 @@ alamrs we turn all of them completely off.
 
 ** Performance settings
 #+begin_src emacs-lisp
-  (setq read-process-output-max (* 1024 1024)) (setq read-process-output-max (* 1024 1024)) ;; improve subprocess throughput
-  (setq idle-update-delay 0.1) ;; UI responsiveness
+  (setq read-process-output-max (* 4 1024 1024)) ;; 4MB to improve subprocess throughput
+  (setq idle-update-delay 0.1)                   ;; UI responsiveness
 #+end_src
 
 ** Repeat mode
