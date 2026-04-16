@@ -296,8 +296,7 @@ quitting with `q`) and tell Emacs to reuse the same window for all
 #+end_src
 
 ** Inhibiting Bells and Warnings
-Finding it too annoying hearing beeping sounds and seeing visual we
-alamrs we turn all of them completely off.
+Finding it too annoying hearing beeping sounds and seeing visual we alarms we turn all of them completely off.
 #+begin_src emacs-lisp
   ;; no beeping
   (setq ring-bell-function 'ignore)
@@ -318,9 +317,7 @@ Disables bidirectional text scanning. We assume left-to-right text everywhere to
 #+end_src
 
 ** Repeat mode
-Allows us to repeat commands. For example, to use the next tab command
-we do "C-x t o" twice. But with repeat mode it suffices to do "C-x t
-o" once and followed by arbitrarily many "o".
+Allows us to repeat commands. For example, to use the next tab command we do =C-x t o= twice. But with repeat mode it suffices to do =C-x t o= once and followed by arbitrarily many =o=.
 #+begin_src emacs-lisp
   (repeat-mode t)
 #+end_src
