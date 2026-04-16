@@ -566,6 +566,14 @@ Simple function to delete blank lines from cursor downwards.
     (flush-lines "^$"))
 #+end_src
 ** clipboard
+Save the contents of the clipboard to the kill-ring
+#+begin_src emacs-lisp
+  (use-package emacs
+    :init
+    (setq save-interprogram-paste-before-kill t))
+#+end_src
+
+A minor mode to interact with =cliphist= for copy, cut and selecting.
 #+begin_src emacs-lisp
   (use-package emacs
     :bind (("C-c y" . hesam-cliphist-select)
