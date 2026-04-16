@@ -31,9 +31,9 @@ This will make sure that the tangled file has lexical binding.
   (defvar startup/file-name-handler-alist file-name-handler-alist)
   (setq file-name-handler-alist nil)
 
-  ;; lower garbage collection threshold after startup to minimize impact
-  ;; of GC during normal use. Reset file-name-handler-alist
-  (add-hook 'emacs-startup-hook
+  ;; Lower garbage collection threshold after init to minimize impact
+  ;; of GC during normal use. Reset file-name-handler-alist.
+  (add-hook 'after-init-hook
             (lambda ()
               (setq gc-cons-threshold (* 50 (expt 10 6)) ; 50MB
                     gc-cons-percentage 0.1
