@@ -303,10 +303,14 @@ Finding it too annoying hearing beeping sounds and seeing visual we alarms we tu
   (setq server-client-instructions nil)
 #+end_src
 
-** Performance settings
+** performance settings
 #+begin_src emacs-lisp
-  (setq read-process-output-max (* 4 1024 1024)) ;; 4MB to improve subprocess throughput
-  (setq idle-update-delay 0.1)                   ;; UI responsiveness
+  (use-package emacs
+    :init
+    ;; 4MB to improve subprocess throughput
+    (setq read-process-output-max (* 4 1024 1024))
+    ;; UI responsiveness
+    (setq idle-update-delay 0.1))
 #+end_src
 
 Disables bidirectional text scanning. We assume left-to-right text everywhere to save Emacs having to do some work on every re-display
