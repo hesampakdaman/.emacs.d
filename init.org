@@ -315,9 +315,11 @@ Finding it too annoying hearing beeping sounds and seeing visual we alarms we tu
 
 Disables bidirectional text scanning. We assume left-to-right text everywhere to save Emacs having to do some work on every re-display
 #+begin_src emacs-lisp
-(setq-default bidi-display-reordering 'left-to-right
-              bidi-paragraph-direction 'left-to-right)
-(setq bidi-inhibit-bpa t)
+  (use-package emacs
+    :init
+    (setq-default bidi-display-reordering 'left-to-right
+                  bidi-paragraph-direction 'left-to-right)
+    (setq bidi-inhibit-bpa t))
 #+end_src
 
 Defer syntax-highlighting while typing. Scrolling and typing may feel smoother.
