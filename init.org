@@ -221,7 +221,7 @@ We also make sure to organize our autosaves in user's Emacs directory.
 	`((".*" ,hesam-autosave-directory t)))
 #+end_src
 
-** Bookmarks
+** bookmarks
 Saving bookmarks to Dropbox and auto-saving upon change.
 #+begin_src emacs-lisp
   (setq bookmark-default-file "~/Dropbox/emacs/bookmarks"
@@ -229,7 +229,7 @@ Saving bookmarks to Dropbox and auto-saving upon change.
         bookmark-save-flag 1)
 #+end_src
 
-** Calendar and Time
+** calendar and time
 Configuration for calendar, setting ISO formats and start of week.
 #+begin_src emacs-lisp
   (use-package calendar
@@ -260,13 +260,13 @@ Configuration for calendar, setting ISO formats and start of week.
   (require 'solar)
 #+end_src
 
-** Compilations and warnings
+** compilations and warnings
 #+begin_src emacs-lisp
   (setq byte-compile-warnings '(not obsolete free-vars unresolved noruntime lexical make-local cl-functions))
   (setq warning-suppress-log-types '((comp) (bytecomp)))
   (setq native-comp-async-report-warnings-errors 'silent)
 #+end_src
-** Custom file settings
+** custom file settings
 Emacs customization options are not tracked by git and will be saved
 in another file instead of in this init file.
 #+begin_src emacs-lisp
@@ -274,7 +274,7 @@ in another file instead of in this init file.
   (load custom-file 'noerror 'nomessage)
 #+end_src
 
-** Disable suspend functions
+** disable suspend functions
 We don't want to ever suspend Emacs or the frame. Therefore display a
 warning when these commands are run.
 #+begin_src emacs-lisp
@@ -282,7 +282,7 @@ warning when these commands are run.
   (put 'suspend-emacs 'disabled t)
 #+end_src
 
-** Help
+** help
 When spawning new `*Help*` buffers we select them (for ease of
 quitting with `q`) and tell Emacs to reuse the same window for all
 `*Help*` related buffers.
@@ -291,7 +291,7 @@ quitting with `q`) and tell Emacs to reuse the same window for all
         help-window-keep-selected t)      ; reuse help window for related buffers
 #+end_src
 
-** Inhibiting Bells and Warnings
+** inhibiting bells and warnings
 Finding it too annoying hearing beeping sounds and seeing visual we alarms we turn all of them completely off.
 #+begin_src emacs-lisp
   ;; no beeping
@@ -325,13 +325,13 @@ Defer syntax-highlighting while typing. Scrolling and typing may feel smoother.
     (setq redisplay-skip-fontification-on-input t))
 #+end_src
 
-** Repeat mode
+** repeat mode
 Allows us to repeat commands. For example, to use the next tab command we do =C-x t o= twice. But with repeat mode it suffices to do =C-x t o= once and followed by arbitrarily many =o=.
 #+begin_src emacs-lisp
   (repeat-mode t)
 #+end_src
 
-** Reverting
+** reverting
 Will automatically load changed buffers, this can for example happen
 if we use git to reset recent changes.
 #+begin_src emacs-lisp
@@ -344,13 +344,13 @@ And make use of the quick revert setting when reverting files with
   (setq revert-buffer-quick-short-answers t)
 #+end_src
 
-** Savehist mode
+** savehist mode
 Save minibuffer commands in a file that is loaded at startup
 #+begin_src emacs-lisp
   (savehist-mode t)
 #+end_src
 
-** Sentence end space
+** sentence end space
 One of the ways Emacs recognizes sentences is by a '.', ',', '?' or
 '!' followed by _two_ spaces. Hence sentence commands such as `M-k`
 will not work properly for text that does not follow this convention.
@@ -368,7 +368,7 @@ Mt. Everest is Earth's highest mountain.
 Putting the cursor at the character `M` in the quote above and
 pressing `M-e` leaves us in the space between `Mt.` and `Everest`.
 
-** Subword
+** subword
 Allows for moving over a word based on the subwords in the table
 below. From the manual we have a table to show us the meaning of this
 minor mode.
@@ -385,7 +385,7 @@ minor mode.
   (global-subword-mode 1)
 #+end_src
 
-** Narrow
+** narrow
 Allow narrowing `C-x n n` to a region. It makes sense to have it off
 and warn the user by default. But once you familiarize with the mode
 it's okay to allow it. Simply put, this command lets you only display
