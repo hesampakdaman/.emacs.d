@@ -527,53 +527,6 @@ minibuffer in modes like `M-x` or `(find-file)`.
 #+end_src
 
 * Editing settings
-** Custom editing functions
-Here we define custom functions that we use for editing simple
-text.
-*** Function definitions
-Now we define the functionality we bound above. For copying several
-lines of text this function below is a snipppet found on the Internet.
-#+begin_src emacs-lisp
-  (defun edit/copy-line (arg)
-    "Copy lines (as many as prefix argument) in the kill ring.
-        Ease of use features:
-        - Move to start of next line.
-        - Appends the copy on sequential calls.
-        - Use newline as last char even on the last line of the buffer.
-        - If region is active, copy its lines."
-    (interactive "p")
-    (let ((beg (line-beginning-position))
-          (end (line-end-position arg)))
-      (when mark-active
-        (if (> (point) (mark))
-            (setq beg (save-excursion (goto-char (mark)) (line-beginning-position)))
-          (setq end (save-excursion (goto-char (mark)) (line-end-position)))))
-      (if (eq last-command 'copy-line)
-          (kill-append (buffer-substring beg end) (< end beg))
-        (kill-ring-save beg end)))
-    (kill-append "\n" nil)
-    (beginning-of-line (or (and arg (1+ arg)) 2))
-    (if (and arg (not (= 1 arg))) (message "%d lines copied" arg)))
-#+end_src
-
-For vim-like deletion of a single word like we define this function
-#+begin_src emacs-lisp
-  (defun edit/delete-a-word (&optional args)
-    "Vim-like deletion of a single word.
-    Takes an optional integer argument ARGS to delete ARGS many
-    words."
-    (interactive "p")
-    (forward-char 1)			;if at beg. of word
-    (backward-word 1)
-    (kill-word args))
-#+end_src
-
-Simple function to delete blank lines from cursor downwards.
-#+begin_src emacs-lisp
-  (defun edit/remove-blank-lines ()
-    (interactive)
-    (flush-lines "^$"))
-#+end_src
 ** clipboard
 Deduplicate kill-ring entries and save the contents of the clipboard to the kill-ring.
 #+begin_src emacs-lisp
