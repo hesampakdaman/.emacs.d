@@ -68,7 +68,7 @@ This will make sure that the tangled file has lexical binding.
 It is of most important that this file is loaded first. Here we define
 global variables that are assumed to exists in other configuration
 files.
-** Packaging
+** packaging
 *** use-package
 #+begin_src emacs-lisp
   (require 'use-package-ensure)
@@ -76,6 +76,7 @@ files.
         use-package-always-ensure t)
 
   (use-package package
+    :demand t
     :config
     (setq package-check-signature nil
           package-native-compile t
@@ -150,7 +151,7 @@ files.
     :lighter " SysPkg")
 #+end_src
 
-** Face group
+** custom global group
 We define a customization group that we can use as a parent for all
 other `defcustom` commands. If we ever search for groups in
 `customize` we can easily find them.
