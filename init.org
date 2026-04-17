@@ -82,9 +82,6 @@ files.
           package-native-compile t
           package-quickstart t)
     (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/")))
-
-  ;; follow symlinks without prompt
-  (setq vc-follow-symlinks t)
 #+end_src
 
 *** system-pkg
@@ -201,7 +198,6 @@ described below with comments.
 #+begin_src emacs-lisp
   (setq backup-directory-alist `((".*" . ,hesam-backup-directory))
         version-control t           ; Use version numbers for backups.
-        vc-make-backup-files t	  ; Make backups for git files
         kept-new-versions 1000	  ; Number of newest versions to keep.
         kept-old-versions 0         ; Number of oldest versions to keep.
         delete-old-versions t ; Don't ask to delete excess backup versions.
@@ -1110,8 +1106,7 @@ here.
 #+end_src
 
 ** git
-*** Magit
-git porcelain
+=magit= is a git porcelain
 #+begin_src emacs-lisp
   (use-package magit
     :bind ("C-c g" . magit-status)
@@ -1126,17 +1121,23 @@ git porcelain
                  (direction . right))))
 #+end_src
 
-** modes
-Many of these mode are activated by adding a hook to `prog-mode-hook`
-or is highly associated with programming.
-*** ediff
-Ediff is used for viewing diffs and acting upon them. We want the
-control that normally displays in another frame to be place in the
-same window.
+We configure the built-in version control package.
 #+begin_src emacs-lisp
-  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+  (use-package vc
+    :init
+    (setq vc-follow-symlinks t            ; goes to the real file
+          vc-make-backup-files t))        ; Make backups for git files
 #+end_src
 
+=ediff= is used for viewing diffs and acting upon them. We want the control that normally displays in another frame to be place in the same window.
+#+begin_src emacs-lisp
+  (use-package ediff
+    :init
+    (setq ediff-window-setup-function 'ediff-setup-windows-plain))
+#+end_src
+
+** modes
+Many of these mode are activated by adding a hook to =prog-mode-hook= or is highly associated with programming.
 *** electric mode
 Automatically add closing brackets and indent code in `prog-mode`.
 #+begin_src emacs-lisp
