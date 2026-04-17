@@ -3,7 +3,7 @@
 #+AUTHOR: Hesam Pakdaman
 #+STARTUP: overview
 #+PROPERTY: header-args :mkdrip yes :tangle-mode o444 :results silent :tangle (concat user-emacs-directory "init.el")
-* Introduction
+* introduction
 This Emacs configuration will be tangled to =init.el= inside Emacs'
 configuration directory -- usually =~/.emacs.d= -- with one exception:
 the code in subsection [[early-init]] below will be tangled to the
@@ -13,7 +13,6 @@ This will make sure that the tangled file has lexical binding.
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "init.el")
 ;; -*- lexical-binding: t; -*-
 #+end_src
-
 * early-init
 :PROPERTIES:
 :header-args: :tangle (concat user-emacs-directory "early-init.el")
@@ -65,7 +64,7 @@ This will make sure that the tangled file has lexical binding.
     (add-to-list 'default-frame-alist frame-option))
 #+end_src
 
-* Global settings
+* global settings
 It is of most important that this file is loaded first. Here we define
 global variables that are assumed to exists in other configuration
 files.
@@ -161,7 +160,7 @@ other `defcustom` commands. If we ever search for groups in
     :group 'emacs)
 #+end_src
 
-* General settings
+* general settings
 This file encapsulates a collection of global settings and
 configurations that influence the behavior of Emacs across various
 domains. From handling autosaves and backups to managing calendars,
@@ -408,7 +407,7 @@ It's a good idea to be aware of Emacs' startup time. In case any new setting has
   (add-hook 'emacs-startup-hook #'hesam/display-startup-time)
 #+end_src
 
-* Completion settings
+* completion settings
 ** completion preview
 #+begin_src emacs-lisp
   (use-package completion-preview
@@ -526,7 +525,7 @@ minibuffer in modes like `M-x` or `(find-file)`.
                    args))))
 #+end_src
 
-* Editing settings
+* editing settings
 ** clipboard
 Deduplicate kill-ring entries and save the contents of the clipboard to the kill-ring.
 #+begin_src emacs-lisp
@@ -624,7 +623,7 @@ either `(sudo-edit-current-file)` or `(sudo-edit-find-file)`.
     :bind-keymap ("C-c s" . surround-keymap))
 #+end_src
 
-* Keybindings settings
+* keybindings settings
 Here we define misc shortcuts to other programs or commands. Then we
 try and organize bindings depending on what they are used for.
 
@@ -702,7 +701,7 @@ and let Emacs know about it
     (inhibit-mouse-adjust-mouse-highlight nil))
 #+end_src
 
-* Miscellaneous Packages
+* miscellaneous Packages
 This is not an exhaustive list of all packages used in our
 configuration. Rather we have put packages here that we couldn't
 motivate putting elsewhere under our directory tree.
@@ -843,7 +842,7 @@ works best in PDF tools which is why we explicitly set it for
     :defer 2)
 #+end_src
 
-* Org mode settings
+* org mode settings
 First set up our org mode directory
 #+begin_src emacs-lisp
   (defcustom hesam-org-directory "~/Dropbox/org"
@@ -1017,7 +1016,7 @@ This package provides very nice bullet points
            :kill-buffer t)))
 #+end_src
 
-* Programming settings
+* programming settings
 Programming related settings and packages defined here. Language
 Server Protocol (LSP) provides IDE-like features and is configured
 here. Some relevant minor modes also set here, including their look
@@ -1243,7 +1242,7 @@ Removes trailing space and tabs from this user modified lines.
     :hook (prog-mode text-mode))
 #+end_src
 
-* Search settings
+* search settings
 Settings for searching buffers, notes and more.
 ** consult
 #+begin_src emacs-lisp
@@ -1322,7 +1321,7 @@ Settings for searching buffers, notes and more.
 
 #+end_src
 
-* Shell settings
+* shell settings
 Shell related packages and configurations. In order to get all environment variables correctly we define them in `.bash_profile`, let the package `exec-path-from-shell` read them and intialize our terminal correctly.
 
 Use completions other than for binaries.
@@ -1424,7 +1423,7 @@ and have requirements on how and when a new window is created.
                 (vterm-send-C-l)))))))
 #+end_src
 
-* UI Enhancement settings
+* UI enhancement settings
 Settings for the feel and look of Emacs. We may also have some options
 configured elsewhere which affects the look of Emacs. One such example
 is the face `hideshow` minor mode uses, which we have put in
