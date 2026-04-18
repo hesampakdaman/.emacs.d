@@ -1821,26 +1821,32 @@ descriptions on the right hand side -- at the margin if you will.
            (<= sunrise current-hours)
            (<= current-hours sunset))))
 
-  (defun hesam-matugen--apply (state)
-    "Apply Matugen STATE using the current wallpaper."
-    (when-let* ((wallpaper (hesam-matugen--get-wallpaper)))
-      (start-process
-       "matugen-process" nil
-       "matugen" "image" wallpaper
-       "-m" (symbol-name state)
-       "--source-color-index" "0")
-      (customize-save-variable 'hesam-matugen-darkmode-state state)
-      (message "Matugen: set to %s" state)))
+  (defun hesam-matugen--apply (state wallpaper)
+    "Internal function to execute matugen for STATE and WALLPAPER."
+    (start-process
+     "matugen-process" nil
+     "matugen" "image" (expand-file-name wallpaper)
+     "-m" (symbol-name state)
+     "--source-color-index" "0")
+    (customize-save-variable 'hesam-matugen-darkmode-state state)
+    (message "Matugen: set to %s using %s" state wallpaper))
+
+  (defun hesam-matugen-apply (&optional state wallpaper)
+    "Apply Matugen using optional STATE and WALLPAPER.
+  Defaults to `hesam-matugen-darkmode-state` and saved wallpaper path."
+    (when-let* ((chosen-state (or state hesam-matugen-darkmode-state))
+                (chosen-wp (or wallpaper (hesam-matugen--get-wallpaper))))
+      (hesam-matugen--apply chosen-state chosen-wp)))
 
   (defun hesam-matugen-toggle ()
     "Toggle Matugen theme mode."
     (interactive)
-    (hesam-matugen--apply
+    (hesam-matugen-apply
      (if (eq (hesam-matugen--get-system-state) 'dark) 'light 'dark)))
 
   (defun hesam-matugen-apply-by-solar ()
     "Apply Matugen based on whether it is currently daylight."
-    (hesam-matugen--apply
+    (hesam-matugen-apply
      (if (hesam-matugen--is-daylight-p) 'light 'dark)))
 
   (defun hesam-matugen--missing-deps ()
