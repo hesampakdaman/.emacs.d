@@ -842,7 +842,7 @@ works best in PDF tools which is why we explicitly set it for
     :defer 2)
 #+end_src
 
-* org mode settings
+* org mode
 First set up our org mode directory
 #+begin_src emacs-lisp
   (defcustom hesam-org-directory "~/Dropbox/org"
@@ -1016,11 +1016,11 @@ This package provides very nice bullet points
            :kill-buffer t)))
 #+end_src
 
-* programming settings
+* programming
 Programming related settings and packages defined here. Language
 Server Protocol (LSP) provides IDE-like features and is configured
 here. Some relevant minor modes also set here, including their look
-and feel if appropriate. But first... let's get confgiurer tabs!
+and feel if appropriate. But first... let's configure tabs!
 #+begin_src emacs-lisp
   (setq-default indent-tabs-mode nil
                 tab-width 4)
@@ -1320,12 +1320,7 @@ Settings for searching buffers, notes and more.
           xref-show-definitions-function #'consult-xref)
     :config
     (setq consult-narrow-key "<"))
-
-
-
-
 #+end_src
-
 * shell settings
 Shell related packages and configurations. In order to get all environment variables correctly we define them in `.bash_profile`, let the package `exec-path-from-shell` read them and intialize our terminal correctly.
 
