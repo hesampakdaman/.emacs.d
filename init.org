@@ -1835,16 +1835,15 @@ descriptions on the right hand side -- at the margin if you will.
                 (chosen-wp (or wallpaper (hesam-matugen--get-wallpaper))))
       (hesam-matugen--apply chosen-state chosen-wp)))
 
-  (defun hesam-matugen-toggle ()
-    "Toggle Matugen theme mode."
-    (interactive)
-    (hesam-matugen-apply
-     (if (eq hesam-matugen-darkmode-state 'dark) 'light 'dark)))
+  (defun hesam-matugen--get-system-state ()
+    "Return current system theme state as `light' or `dark'."
+    (let ((state (string-trim (shell-command-to-string "darkman get"))))
+      (if (string-match-p "light" state) 'light 'dark)))
 
   (defun hesam-matugen-apply-by-solar ()
     "Apply Matugen based on whether it is currently daylight."
     (let ((target (if (hesam-matugen--is-daylight-p) 'light 'dark)))
-      (unless (eq target hesam-matugen-darkmode-state)
+      (unless (eq target (hesam-matugen--get-system-state))
         (hesam-matugen-apply target))))
 
   (defun hesam-matugen--next-switch-time ()
@@ -1881,7 +1880,9 @@ descriptions on the right hand side -- at the margin if you will.
 
   (defun hesam-matugen--on-switch ()
     "Apply solar theme and schedule the next switch."
-    (hesam-matugen-apply-by-solar)
+    (let ((target (if (hesam-matugen--is-daylight-p) 'light 'dark)))
+      (unless (eq target hesam-matugen-darkmode-state)
+        (hesam-matugen-apply target)))
     (hesam-matugen--start-timer))
 
   (defun hesam-matugen--missing-deps ()
@@ -1904,6 +1905,12 @@ descriptions on the right hand side -- at the margin if you will.
     (remove-hook 'after-init-hook #'hesam-matugen--start-timer)
     (hesam-matugen--stop-timer))
 
+  (defun hesam-matugen-toggle ()
+    "Toggle Matugen theme mode."
+    (interactive)
+    (hesam-matugen-apply
+     (if (eq hesam-matugen-darkmode-state 'dark) 'light 'dark)))
+
    ;;;###autoload
   (define-minor-mode hesam-matugen-mode
     "Toggle automatic Matugen integration."
@@ -1916,8 +1923,7 @@ descriptions on the right hand side -- at the margin if you will.
 
   (use-package hesam-matugen
     :ensure nil
-    :defer 2
-    :config
+    :init
     (hesam-matugen-mode)
     (hesam-matugen-apply-by-solar))
 #+end_src
