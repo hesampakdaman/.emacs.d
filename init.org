@@ -1794,6 +1794,8 @@ descriptions on the right hand side -- at the margin if you will.
     :type '(choice (const light) (const dark))
     :group 'hesam)
 
+  (defvar hesam-matugen--timer nil)
+
   (defun hesam-matugen--get-system-state ()
     "Return current system theme state as `light' or `dark'."
     (let ((state (string-trim (shell-command-to-string "darkman get"))))
@@ -1846,8 +1848,42 @@ descriptions on the right hand side -- at the margin if you will.
 
   (defun hesam-matugen-apply-by-solar ()
     "Apply Matugen based on whether it is currently daylight."
-    (hesam-matugen-apply
-     (if (hesam-matugen--is-daylight-p) 'light 'dark)))
+    (let* ((target (if (hesam-matugen--is-daylight-p) 'light 'dark))
+           (current (hesam-matugen--get-system-state)))
+      (unless (eq target current)
+        (hesam-matugen-apply target))))
+
+  (defun hesam-matugen--next-switch-time ()
+    "Return seconds until the next sunrise or sunset."
+    (let* ((times (solar-sunrise-sunset (calendar-current-date)))
+           (sunrise (caar times))
+           (sunset (caadr times))
+           (now (decode-time (current-time)))
+           (current-hours (+ (decoded-time-hour now)
+                             (/ (decoded-time-minute now) 60.0))))
+      (cond
+       ((< current-hours sunrise)
+        (* (- sunrise current-hours) 3600))
+       ((< current-hours sunset)
+        (* (- sunset current-hours) 3600))
+       (t
+        ;; Past sunset — next event is tomorrow's sunrise
+        (let* ((tomorrow (calendar-gregorian-from-absolute
+                          (1+ (calendar-absolute-from-gregorian (calendar-current-date)))))
+               (tomorrow-times (solar-sunrise-sunset tomorrow))
+               (tomorrow-sunrise (caar tomorrow-times)))
+          (* (+ (- 24 current-hours) tomorrow-sunrise) 3600))))))
+
+  (defun hesam-matugen--start-timer ()
+    (hesam-matugen--stop-timer)
+    (let ((delay (hesam-matugen--next-switch-time)))
+      (setq hesam-matugen--timer
+            (run-with-timer delay nil #'hesam-matugen--on-switch))))
+
+  (defun hesam-matugen--on-switch ()
+    "Apply solar theme and schedule the next switch."
+    (hesam-matugen-apply-by-solar)
+    (hesam-matugen--start-timer))
 
   (defun hesam-matugen--missing-deps ()
     "Signal an error if required external dependencies are missing."
@@ -1859,14 +1895,15 @@ descriptions on the right hand side -- at the margin if you will.
   (defun hesam-matugen--enable ()
     "Enable `hesam-matugen-mode' internals."
     (hesam-matugen--missing-deps)
-    (add-hook 'emacs-startup-hook #'hesam-matugen-apply-by-solar)
+    (add-hook 'after-init-hook #'hesam-matugen--start-timer)
     (when after-init-time
-      (hesam-matugen-apply-by-solar))
+      (hesam-matugen--start-timer))
     t)
 
   (defun hesam-matugen--disable ()
-    "Disable hesam-matugen-mode' internals."
-    (remove-hook 'emacs-startup-hook #'hesam-matugen-apply-by-solar))
+    "Disable `hesam-matugen-mode' internals."
+    (remove-hook 'after-init-hook #'hesam-matugen--start-timer)
+    (hesam-matugen--stop-timer))
 
    ;;;###autoload
   (define-minor-mode hesam-matugen-mode
@@ -1880,8 +1917,7 @@ descriptions on the right hand side -- at the margin if you will.
 
   (use-package hesam-matugen
     :ensure nil
-    :defer 2
-    :init (hesam-matugen-mode))
+    :config (hesam-matugen-mode))
 #+end_src
 
 *** ef-theme switching
