@@ -1917,7 +1917,9 @@ descriptions on the right hand side -- at the margin if you will.
   (use-package hesam-matugen
     :ensure nil
     :defer 2
-    :config (hesam-matugen-mode))
+    :config
+    (hesam-matugen-mode)
+    (hesam-matugen-apply-by-solar))
 #+end_src
 
 *** ef-theme switching
