@@ -1874,6 +1874,11 @@ descriptions on the right hand side -- at the margin if you will.
       (setq hesam-matugen--timer
             (run-with-timer delay nil #'hesam-matugen--on-switch))))
 
+  (defun hesam-matugen--stop-timer ()
+    (when (timerp hesam-matugen--timer)
+      (cancel-timer hesam-matugen--timer)
+      (setq hesam-matugen--timer nil)))
+
   (defun hesam-matugen--on-switch ()
     "Apply solar theme and schedule the next switch."
     (hesam-matugen-apply-by-solar)
@@ -1911,6 +1916,7 @@ descriptions on the right hand side -- at the margin if you will.
 
   (use-package hesam-matugen
     :ensure nil
+    :defer 2
     :config (hesam-matugen-mode))
 #+end_src
 
