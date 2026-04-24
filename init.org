@@ -1844,7 +1844,7 @@ descriptions on the right hand side -- at the margin if you will.
     "Toggle Matugen theme mode."
     (interactive)
     (hesam-matugen-apply
-     (if (eq (hesam-matugen--get-system-state) 'dark) 'light 'dark)))
+     (if (eq hesam-matugen-darkmode-state 'dark) 'light 'dark)))
 
   (defun hesam-matugen-apply-by-solar ()
     "Apply Matugen based on whether it is currently daylight."
