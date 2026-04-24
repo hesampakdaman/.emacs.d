@@ -11,7 +11,7 @@
 
 # state & history
 /auto-save-list/
-/backups/
+/backup/
 /url/
 /transient/
 /projects
@@ -20,6 +20,7 @@
 history
 savehist
 bookmarks
+*.eld
 
 # org & eshell
 .org-id-locations
@@ -32,3 +33,4 @@ bookmarks
 *.tmp
 tramp
 /session*
+
