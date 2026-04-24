@@ -1796,11 +1796,6 @@ descriptions on the right hand side -- at the margin if you will.
 
   (defvar hesam-matugen--timer nil)
 
-  (defun hesam-matugen--get-system-state ()
-    "Return current system theme state as `light' or `dark'."
-    (let ((state (string-trim (shell-command-to-string "darkman get"))))
-      (if (string-match-p "light" state) 'light 'dark)))
-
   (defun hesam-matugen--get-wallpaper ()
     "Return the current wallpaper path, or nil if unavailable."
     (let ((file (expand-file-name hesam-matugen-current-wallpaper-path)))
@@ -1848,9 +1843,8 @@ descriptions on the right hand side -- at the margin if you will.
 
   (defun hesam-matugen-apply-by-solar ()
     "Apply Matugen based on whether it is currently daylight."
-    (let* ((target (if (hesam-matugen--is-daylight-p) 'light 'dark))
-           (current (hesam-matugen--get-system-state)))
-      (unless (eq target current)
+    (let ((target (if (hesam-matugen--is-daylight-p) 'light 'dark)))
+      (unless (eq target hesam-matugen-darkmode-state)
         (hesam-matugen-apply target))))
 
   (defun hesam-matugen--next-switch-time ()
