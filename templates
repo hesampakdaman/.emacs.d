@@ -1,19 +1,24 @@
 org-mode
 
 (confsrc
- "#+begin_src conf :tangle " (p "path") n
- r n
- "#+end_src"
- :post (org-edit-src-code))
+  "#+begin_src conf :tangle " (p "path") n
+  r n
+  "#+end_src"
+  :post (org-edit-src-code))
 
+typst-ts-mode
+
+(ex "=== Exercise " (p "number") n
+  "#quote(block: true)[" (p "text") "]" n n
+  q)
 
 zig-mode
 
 (gwt "test \"" (p "description") "\" {" n>
-     "// Given" n>
-     p n n>
-     "// When" n>
-     p n n>
-     "// Then" n>
-     q n
-     "}")
+  "// Given" n>
+  (p "given") n n>
+  "// When" n>
+  (p "when") n n>
+  "// Then" n>
+  (p "then") n
+  "}")
