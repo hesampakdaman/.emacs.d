@@ -313,7 +313,7 @@ Disables bidirectional text scanning. We assume left-to-right text everywhere to
 #+begin_src emacs-lisp
   (use-package emacs
     :init
-    (setq-default bidi-display-reordering 'left-to-right
+    (setq-default bidi-display-reordering t
                   bidi-paragraph-direction 'left-to-right)
     (setq bidi-inhibit-bpa t))
 #+end_src
