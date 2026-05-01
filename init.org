@@ -1200,7 +1200,9 @@ To navigate buffers we prefer to use =ibuffer= instead.
 
 Mark popping defaults to =C-u C-SPC=. The following setting makes it so that after the first invocation all subsequent =C-SPC= presses will pop the mark.
 #+begin_src emacs-lisp
-  (setq set-mark-command-repeat-pop t)
+  (use-package emacs
+    :custom
+    (set-mark-command-repeat-pop t))
 #+end_src
 
 
