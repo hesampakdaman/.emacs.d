@@ -1188,8 +1188,8 @@ Removes trailing space and tabs from this user modified lines.
 #+begin_src emacs-lisp
   (use-package ffap
     :bind (("C-c o" . ffap))
-    :config
-    (setq ffap-machine-p-known 'reject))
+    :custom
+    (ffap-machine-p-known 'reject))
 #+end_src
 
 To navigate buffers we prefer to use =ibuffer= instead.
