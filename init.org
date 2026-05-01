@@ -1665,6 +1665,8 @@ under a hidden list.
     :config
     (push (lambda (name tab tab-number) (upcase name)) tab-bar-tab-name-format-functions)
 
+    (tab-bar-history-mode)
+
     ;; The tab bar format tabs string prepends a separator on the very
     ;; left side. We'll remove it with this advice
     (advice-add
