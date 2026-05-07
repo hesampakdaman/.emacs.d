@@ -1205,7 +1205,6 @@ Mark popping defaults to =C-u C-SPC=. The following setting makes it so that aft
     (set-mark-command-repeat-pop t))
 #+end_src
 
-
 * search
 ** consult
 #+begin_src emacs-lisp
@@ -1277,6 +1276,13 @@ Mark popping defaults to =C-u C-SPC=. The following setting makes it so that aft
           xref-show-definitions-function #'consult-xref)
     :config
     (setq consult-narrow-key "<"))
+#+end_src
+** re-builder
+Setting =re-builder= settings.
+#+begin_src emacs-lisp
+  (use-package emacs
+    :custom
+    (reb-re-syntax 'string))
 #+end_src
 * shell settings
 Shell related packages and configurations. In order to get all environment variables correctly we define them in `.bash_profile`, let the package `exec-path-from-shell` read them and intialize our terminal correctly.
