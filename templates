@@ -8,9 +8,10 @@ org-mode
 
 typst-ts-mode
 
-(ex "=== Exercise " (p "number") n
+(rudinex "=== Exercise " (p "number") n
   "#quote(block: true)[" (p "text") "]" n n
-  q)
+  q n n
+  "#qed")
 
 zig-mode
 
