@@ -1802,6 +1802,11 @@ descriptions on the right hand side -- at the margin if you will.
     :type '(choice (const light) (const dark))
     :group 'hesam)
 
+  (defcustom hesam-matugen-sunset-offset 35
+    "Minutes before mathematical sunset to switch to dark mode."
+    :type 'integer
+    :group 'hesam)
+
   (defvar hesam-matugen--timer nil)
 
   (defun hesam-matugen--get-wallpaper ()
@@ -1814,11 +1819,18 @@ descriptions on the right hand side -- at the margin if you will.
             (unless (string-empty-p wallpaper)
               (expand-file-name wallpaper)))))))
 
-  (defun hesam-matugen--is-daylight-p ()
-    "Return non-nil when it is daylight at the current solar location."
+  (defun hesam-matugen--solar-times ()
+    "Return (SUNRISE SUNSET) as decimal hours for today, with sunset offset applied."
     (let* ((times (solar-sunrise-sunset (calendar-current-date)))
            (sunrise (caar times))
-           (sunset (caadr times))
+           (sunset (- (caadr times) (/ hesam-matugen-sunset-offset 60.0))))
+      (list sunrise sunset)))
+
+  (defun hesam-matugen--is-light-mode-p ()
+    "Return non-nil if light mode should be active based on solar position."
+    (let* ((times (hesam-matugen--solar-times))
+           (sunrise (car times))
+           (sunset (cadr times))
            (now (decode-time (current-time)))
            (current-hours (+ (decoded-time-hour now)
                              (/ (decoded-time-minute now) 60.0))))
@@ -1850,15 +1862,15 @@ descriptions on the right hand side -- at the margin if you will.
 
   (defun hesam-matugen-apply-by-solar ()
     "Apply Matugen based on whether it is currently daylight."
-    (let ((target (if (hesam-matugen--is-daylight-p) 'light 'dark)))
+    (let ((target (if (hesam-matugen--is-light-mode-p) 'light 'dark)))
       (unless (eq target (hesam-matugen--get-system-state))
         (hesam-matugen-apply target))))
 
   (defun hesam-matugen--next-switch-time ()
     "Return seconds until the next sunrise or sunset."
-    (let* ((times (solar-sunrise-sunset (calendar-current-date)))
-           (sunrise (caar times))
-           (sunset (caadr times))
+    (let* ((times (hesam-matugen--solar-times))
+           (sunrise (car times))
+           (sunset (cadr times))
            (now (decode-time (current-time)))
            (current-hours (+ (decoded-time-hour now)
                              (/ (decoded-time-minute now) 60.0))))
@@ -1888,7 +1900,7 @@ descriptions on the right hand side -- at the margin if you will.
 
   (defun hesam-matugen--on-switch ()
     "Apply solar theme and schedule the next switch."
-    (let ((target (if (hesam-matugen--is-daylight-p) 'light 'dark)))
+    (let ((target (if (hesam-matugen--is-light-mode-p) 'light 'dark)))
       (unless (eq target hesam-matugen-darkmode-state)
         (hesam-matugen-apply target)))
     (hesam-matugen--start-timer))
