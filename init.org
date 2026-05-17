@@ -1611,15 +1611,9 @@ updates when changing themes.
          (hesam/hyprland-move-focus dir)))))
 
   (defun hesam/hyprland-move-focus (dir)
-    "Move focus in Hyprland in direction DIR.
-  DIR should be one of the symbols: 'left, 'right, 'up, 'down."
-    (let ((hypr-dir (pcase dir
-                      ('left  "l")
-                      ('right "r")
-                      ('up    "u")
-                      ('down  "d")
-                      (_ (error "Invalid direction: %s" dir)))))
-      (call-process "hyprctl" nil 0 nil "dispatch" "movefocus" hypr-dir)))
+    (let ((hypr-dir (symbol-name dir)))
+      (call-process "hyprctl" nil 0 nil "dispatch"
+                    (format "hl.dsp.focus({ direction = \"%s\" })" hypr-dir))))
 
   (defun hesam/hyprland-ensure-env ()
     "Set HYPRLAND_INSTANCE_SIGNATURE using the currently running Hyprland instance.
