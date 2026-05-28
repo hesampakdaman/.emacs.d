@@ -6,7 +6,7 @@
 *.eln
 *.so
 
-# Package manger
+# package manager
 /elpa/
 
 # state & history
@@ -17,20 +17,21 @@
 /projects
 /places
 /diary
-history
-savehist
-bookmarks
+/history
+/savehist
+/bookmarks
 *.eld
 
 # org & eshell
 .org-id-locations
-/eshell/history
-/eshell/lastdir
+/eshell/
 
 # system & tmp
 *~
 \#*\#
 *.tmp
-tramp
+/tramp
 /session*
 
+# local packages
+/site-lisp/
