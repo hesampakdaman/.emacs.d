@@ -645,7 +645,7 @@ To encourage being more keyboard-driven we disable the mouse.
     ;; hovered by the mouse pointer.
     (inhibit-mouse-adjust-mouse-highlight nil))
 #+end_src
-* miscellaneous Packages
+* miscellaneous packages
 This is not an exhaustive list of all packages used in our
 configuration. Rather we have put packages here that we couldn't
 motivate putting elsewhere under our directory tree.
