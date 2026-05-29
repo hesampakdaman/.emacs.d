@@ -1514,7 +1514,6 @@ is the face `hideshow` minor mode uses, which we have put in
       (remove-hook 'move-frame-functions       #'hesam/apply-font-to-frame)))
 
   (hesam-dpi-mode 1)
-  (hesam-zoom-mode 1)
 #+end_src
 *** Ligatures
 Ligatures are a way to display multiple characters as a single glyph. Here we use the package `ligature` to enable ligatures in Emacs. We use the font Iosevka Term Font which has ligatures built-in. We also set the ligatures to be enabled in programming modes.
