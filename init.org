@@ -764,20 +764,6 @@ Will expand mark in regions that makes sense, i.e. is context aware, and has tre
            ("C--" . expreg-contract)))
 #+end_src
 
-** pdf-tools
-A major mode for viewing PDF files inside Emacs. Ordinary `'isearch`
-works best in PDF tools which is why we explicitly set it for
-`PDFView` mode.
-#+begin_src emacs-lisp
-  (use-package pdf-tools
-    :config
-    (pdf-tools-install)
-    :bind (:map pdf-view-mode-map
-                ("d" . pdf-view-themed-minor-mode)
-                ("b" . bookmark-set)
-                ("j" . bookmark-jump)))
-#+end_src
-
 * org mode
 First set up our org mode directory
 #+begin_src emacs-lisp
