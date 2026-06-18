@@ -994,10 +994,16 @@ languages.
                 ("C-c e r" . eglot-rename))
 
     :hook
-    ((go-ts-mode python-ts-mode rust-ts-mode typst-ts-mode) . eglot-ensure)
+    ((go-ts-mode rust-ts-mode) . eglot-ensure)
     (eglot-managed-mode . (lambda () (add-hook 'before-save-hook #'hesam/eglot-format-buffer nil t))))
 #+end_src
 
+** eldoc
+#+begin_src emacs-lisp
+  (use-package eldoc
+    :custom
+    (eldoc-help-at-pt t))
+#+end_src
 ** flymake
 Flymake is an built-in syntax checker for Emacs to be used everywhere,
 but it's strongly linked to programming and that is why we define it
