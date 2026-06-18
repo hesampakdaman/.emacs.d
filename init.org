@@ -1115,14 +1115,12 @@ Highlights matching parens in prog-mode.
     :config
     (setq go-ts-mode-indent-offset 4))
 #+end_src
-
 *** Rust
 Demand the new treesitter mode for Rust.
 #+begin_src emacs-lisp
   (use-package rust-ts-mode
     :defer 1)
 #+end_src
-
 *** typst
 #+begin_src emacs-lisp
   (use-package typst-ts-mode
@@ -1139,28 +1137,13 @@ Demand the new treesitter mode for Rust.
 #+end_src
 
 ** treesit
-*** auto
 #+begin_src emacs-lisp
-  (use-package treesit-auto
-    :defer 2
-    :config
-    (setq treesit-auto-install t)
-    (global-treesit-auto-mode))
+  (use-package treesit
+    :ensure nil
+    :custom
+    (treesit-auto-install-grammer 'always)
+    (treesit-enabled-modes t))
 #+end_src
-
-*** remap
-#+begin_src emacs-lisp
-  (setq major-mode-remap-alist
-        '((bash-mode . bash-ts-mode)
-          (css-mode . css-ts-mode)
-          (js2-mode . js-ts-mode)
-          (json-mode . json-ts-mode)
-          (python-mode . python-ts-mode)
-          (rust-mode . rust-ts-mode)
-          (typescript-mode . typescript-ts-mode)
-          (yaml-mode . yaml-ts-mode)))
-#+end_src
-
 ** vundo
 In this excellent [[https://archive.casouri.cc/note/2021/visual-undo-tree/index.html][blog]] Yuan Fu describes a way of creating an undo-tree
 from Emacs' linear tree. This enables us to build an undo-tree on the
