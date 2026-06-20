@@ -1201,6 +1201,19 @@ Mark popping defaults to =C-u C-SPC=. The following setting makes it so that aft
     (set-mark-command-repeat-pop t))
 #+end_src
 
+#+begin_src emacs-lisp
+  (use-package speedbar
+    :ensure nil
+    :custom
+    (speedbar-window-default-width 25)
+    (speedbar-window-max-width 25)
+    (speedbar-use-images nil)
+    (speedbar-update-speed 1)
+    :config
+    (speedbar-enable-update)
+    :bind ("M-I" . speedbar-window))
+#+end_src
+
 * search
 ** consult
 #+begin_src emacs-lisp
