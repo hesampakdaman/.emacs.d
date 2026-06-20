@@ -532,7 +532,12 @@ minibuffer in modes like `M-x` or `(find-file)`.
                      #'completion--in-region)
                    args))))
 #+end_src
-
+** xref
+#+begin_src emacs-lisp
+  (use-package xref
+    :custom
+    (xref-search-program 'ripgrep))
+#+end_src
 * editing settings
 ** clipboard
 Deduplicate kill-ring entries and save the contents of the clipboard to the kill-ring.
