@@ -1530,19 +1530,6 @@ is the face `hideshow` minor mode uses, which we have put in
     "Refresh font settings for every open frame."
     (mapc #'hesam/apply-font-to-frame (frame-list)))
 
-  (define-minor-mode hesam-dpi-mode
-    "DPI-aware font auto-scaling."
-    :global t
-    :group 'hesam
-    (if hesam-dpi-mode
-        (progn
-          (add-hook 'after-make-frame-functions #'hesam/apply-font-to-frame)
-          ;; after-focus-change-function fires when moving between monitors
-          (add-function :after after-focus-change-function #'hesam/apply-to-all-frames)
-          (hesam/apply-to-all-frames))
-      (remove-hook 'after-make-frame-functions #'hesam/apply-font-to-frame)
-      (remove-function after-focus-change-function #'hesam/apply-to-all-frames)))
-
   (defun hesam/zoom-in ()
     "Increase font size across all frames."
     (interactive)
@@ -1582,9 +1569,11 @@ is the face `hideshow` minor mode uses, which we have put in
         (progn
           (add-hook 'after-make-frame-functions #'hesam/apply-font-to-frame)
           (add-hook 'move-frame-functions       #'hesam/apply-font-to-frame)
+          (add-function :after after-focus-change-function #'hesam/apply-to-all-frames)
           (hesam/apply-to-all-frames))
       (remove-hook 'after-make-frame-functions #'hesam/apply-font-to-frame)
-      (remove-hook 'move-frame-functions       #'hesam/apply-font-to-frame)))
+      (remove-hook 'move-frame-functions       #'hesam/apply-font-to-frame)
+      (remove-function after-focus-change-function #'hesam/apply-to-all-frames)))
 
   (hesam-dpi-mode 1)
 #+end_src
