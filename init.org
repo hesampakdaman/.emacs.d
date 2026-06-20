@@ -408,13 +408,21 @@ It's a good idea to be aware of Emacs' startup time. In case any new setting has
 #+end_src
 
 * completion settings
-** completion preview
+** completion
 #+begin_src emacs-lisp
+  (use-package completion
+    :custom
+    (completion-eager-update t)
+    (completion-eager-display 'auto)
+    (minibuffer-visible-completions 'up-down))
+
   (use-package completion-preview
     :bind (:map completion-preview-active-mode-map
-                ("M-n" . completion-preview-next-candidate)
-                ("M-p" . completion-preview-prev-candidate)
-                ("C-i" . indent-for-tab-command))
+                ("M-n"        . completion-preview-next-candidate)
+                ("M-p"        . completion-preview-prev-candidate)
+                ("C-<return>" . completion-preview-insert)
+                ("M-f"        . completion-preview-insert-word)
+                ("TAB"        . completion-at-point))
     :hook (org-mode comint-mode prog-mode))
 #+end_src
 ** cape
