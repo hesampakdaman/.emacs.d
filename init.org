@@ -1356,13 +1356,15 @@ Emacs shells.
     (add-to-list 'project-switch-commands '(ghostel-project "Ghostel") t)
     (add-to-list 'project-switch-commands '(ghostel-project-list-buffers "Ghostel buffers") t)
     (add-to-list 'ghostel-eval-cmds '("magit-status-setup-buffer" magit-status-setup-buffer))
-    (add-to-list 'ghostel-keymap-exceptions "M-s"))
-
-  (use-package ghostel-compile
-    :hook (after-init . ghostel-compile-global-mode))
-
-  (use-package ghostel-comint
-    :hook (after-init . ghostel-comint-global-mode))
+    (add-to-list 'ghostel-keymap-exceptions "M-s")
+    (add-to-list 'display-buffer-alist
+                 '("\\*ghostel.*"
+                   (display-buffer-in-direction)
+                   (direction . below)
+                   (dedicated . t)
+                   (window . root)
+                   (window-height . 0.25)
+                   (inhibit-same-window . nil))))
 #+end_src
 ** kitty keyboard protocol
 Makes sure that key inputs in the terminal works as expected.
