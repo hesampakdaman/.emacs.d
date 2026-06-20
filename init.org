@@ -1327,6 +1327,43 @@ Emacs shells.
     (exec-path-from-shell-initialize))
 #+end_src
 
+** ghostel
+#+begin_src emacs-lisp
+  (use-package ghostel
+    :bind (("C-x m" . ghostel)
+           :map ghostel-semi-char-mode-map
+           ("C-s"  . consult-line)
+           ("C-k"  . hesam--ghostel-send-C-k-and-kill)
+           ("M-p" . (lambda () (interactive) (ghostel-send-key "p" "ctrl")))
+           ("M-n" . (lambda () (interactive) (ghostel-send-key "n" "ctrl")))
+           :map project-prefix-map
+           ("m" . ghostel-project)
+           ("M" . ghostel-project-list-buffers))
+    :custom
+    (ghostel-max-scrollback 10000)
+    (ghostel-module-auto-install 'download)
+    (ghostel-kill-buffer-on-exit t)
+    (ghostel-enable-url-detection t)
+    (ghostel-enable-file-detection t)
+    :config
+    (defun hesam--ghostel-send-C-k-and-kill ()
+      "Send `C-k' to ghostel.
+  Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
+      (interactive)
+      (kill-ring-save (point) (line-end-position))
+      (ghostel-send-key "k" "ctrl"))
+    (advice-add #'project-shell :override #'ghostel-project)
+    (add-to-list 'project-switch-commands '(ghostel-project "Ghostel") t)
+    (add-to-list 'project-switch-commands '(ghostel-project-list-buffers "Ghostel buffers") t)
+    (add-to-list 'ghostel-eval-cmds '("magit-status-setup-buffer" magit-status-setup-buffer))
+    (add-to-list 'ghostel-keymap-exceptions "M-s"))
+
+  (use-package ghostel-compile
+    :hook (after-init . ghostel-compile-global-mode))
+
+  (use-package ghostel-comint
+    :hook (after-init . ghostel-comint-global-mode))
+#+end_src
 ** kitty keyboard protocol
 Makes sure that key inputs in the terminal works as expected.
 #+begin_src emacs-lisp
@@ -1345,8 +1382,8 @@ colorful a delight.
     :init
     (if (eq system-type 'darwin)
         (setq vterm-shell "/bin/zsh"))
-    (add-to-list 'project-switch-commands '(hesam/vterm-project-shell "vterm" ?s))
-    (advice-add #'project-shell :override #'hesam/vterm-project-shell)
+    ;; (add-to-list 'project-switch-commands '(hesam/vterm-project-shell "vterm" ?s))
+    ;; (advice-add #'project-shell :override #'hesam/vterm-project-shell)
     (add-to-list 'display-buffer-alist
                  '(".* vterm\\*"           ; captures vterm in project
                    (display-buffer-in-direction)
