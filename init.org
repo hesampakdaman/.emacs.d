@@ -231,6 +231,7 @@ Configuration for calendar, setting ISO formats and start of week.
 #+begin_src emacs-lisp
   (use-package calendar
     :init
+    (require 'solar)
     ;; 1. Location & Solar (Stockholm)
     (setq calendar-latitude 59.33
           calendar-longitude 18.06
@@ -253,8 +254,6 @@ Configuration for calendar, setting ISO formats and start of week.
                     (car (calendar-iso-from-absolute
                           (calendar-absolute-from-gregorian (list month day year)))))
             'font-lock-face 'calendar-iso-week-face)))
-
-  (require 'solar)
 #+end_src
 
 ** compilations and warnings
