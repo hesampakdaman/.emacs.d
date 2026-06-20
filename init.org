@@ -970,11 +970,11 @@ languages.
   (use-package eglot
     :defer 1
     :custom
-    (eglot-send-changes-idle-time 0.1)
+    (eglot-send-changes-idle-time 0.3)
     (eglot-documentation-renderer 'markdown-ts-view-mode)
-    (eglot-code-actions-indications nil)
+    (eglot-code-action-indications nil)
     :config
-    (defun hesam/eglot-format-buffer ()
+    (defun hesam--eglot-format-buffer ()
       (when (eglot-server-capable :documentFormattingProvider)
         (eglot-format-buffer)))
 
@@ -1003,7 +1003,7 @@ languages.
 
     :hook
     ((go-ts-mode rust-ts-mode) . eglot-ensure)
-    (eglot-managed-mode . (lambda () (add-hook 'before-save-hook #'hesam/eglot-format-buffer nil t))))
+    (eglot-managed-mode . (lambda () (add-hook 'before-save-hook #'hesam--eglot-format-buffer nil t))))
 #+end_src
 
 ** eldoc
