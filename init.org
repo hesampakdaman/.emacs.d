@@ -169,7 +169,6 @@ this file allow for fine-tuned adjustments to individual aspects,
 promoting a coherent and unified configuration tailored to specific
 user needs.
 
-
 ** autosave and backups
 Saves all backups to user's Emacs directory and in addition creates
 numbered backups. First things first, we create autosave and backup
@@ -542,7 +541,15 @@ minibuffer in modes like `M-x` or `(find-file)`.
 #+begin_src emacs-lisp
   (use-package emacs
     :custom
-    (kill-region-dwim 'emacs-word))
+    (kill-region-dwim 'emacs-word)   ; C-w with no region kills a word backwards
+    :config
+    ;; Adds 'd' at the save-some-buffers prompt (e.g. on C-x C-c) to diff
+    ;; the buffer against its file before deciding whether to save.
+    (add-to-list 'save-some-buffers-action-alist
+                 (list "d"
+                       (lambda (buffer)
+                         (diff-buffer-with-file (buffer-file-name buffer)))
+                       "show diff between the buffer and its file")))
 #+end_src
 ** clipboard
 Deduplicate kill-ring entries and save the contents of the clipboard to the kill-ring.
