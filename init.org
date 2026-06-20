@@ -86,8 +86,6 @@ files.
 
 *** system-pkg
 #+begin_src emacs-lisp
-  (require 'cl-lib)
-
   (defgroup system-pkg nil
     "Ensure system packages are installed."
     :group 'external)
@@ -1910,7 +1908,6 @@ descriptions on the right hand side -- at the margin if you will.
 
 *** ef-theme switching
 #+begin_src emacs-lisp
-  (require 'cl-lib)
   (require 'ef-themes)
 
   (defun hesam-matugen-pick-ef-theme-by-hsl (&rest colors)
