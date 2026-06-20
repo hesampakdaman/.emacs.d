@@ -539,6 +539,11 @@ minibuffer in modes like `M-x` or `(find-file)`.
     (xref-search-program 'ripgrep))
 #+end_src
 * editing settings
+#+begin_src emacs-lisp
+  (use-package emacs
+    :custom
+    (kill-region-dwim 'emacs-word))
+#+end_src
 ** clipboard
 Deduplicate kill-ring entries and save the contents of the clipboard to the kill-ring.
 #+begin_src emacs-lisp
@@ -1180,6 +1185,7 @@ Removes trailing space and tabs from this user modified lines.
 #+end_src
 
 * navigation
+** ffap
 =ffap= is guesses the file path under point and tries to open it; falling back to regular =find-file= when failing.
 #+begin_src emacs-lisp
   (use-package ffap
@@ -1187,20 +1193,32 @@ Removes trailing space and tabs from this user modified lines.
     :custom
     (ffap-machine-p-known 'reject))
 #+end_src
-
+** dired
+#+begin_src emacs-lisp
+  (use-package dired
+    :ensure nil
+    :custom
+    (dired-hide-details-hide-absolute-location t))
+#+end_src
+** ibuffer
 To navigate buffers we prefer to use =ibuffer= instead.
 #+begin_src emacs-lisp
   (use-package ibuffer
-    :bind ("C-x C-b" . ibuffer))
+    :bind ("C-x C-b" . ibuffer)
+    :custom
+    (ibuffer-human-readable-size t))
 #+end_src
 
+** mark
 Mark popping defaults to =C-u C-SPC=. The following setting makes it so that after the first invocation all subsequent =C-SPC= presses will pop the mark.
 #+begin_src emacs-lisp
   (use-package emacs
     :custom
+    (delete-pair-push-mark t)
     (set-mark-command-repeat-pop t))
 #+end_src
 
+** speedbar
 #+begin_src emacs-lisp
   (use-package speedbar
     :ensure nil
