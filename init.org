@@ -1002,10 +1002,12 @@ Automatically add closing brackets and indent code in `prog-mode`.
 *** hideshow
 Set up the `hideshow` minor mode for `prog-mode`.
 #+begin_src emacs-lisp
-  (setq hs-allow-nesting t)
-  (add-hook 'prog-mode-hook 'hs-minor-mode)
-  (eval-after-load 'prog-mode
-    '(define-key prog-mode-map (kbd "C-<return>") 'hs-toggle-hiding))
+  (use-package emacs
+    :hook (prog-mode . hs-minor-mode)
+    :bind (:map prog-mode-map
+                ("M-<return>" . hs-toggle-hiding))
+    :config
+    (setq hs-allow-nesting t))
 #+end_src
 
 Another symbol to be used for collapsed text.
