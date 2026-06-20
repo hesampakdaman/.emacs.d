@@ -1005,7 +1005,6 @@ languages.
     ((go-ts-mode rust-ts-mode) . eglot-ensure)
     (eglot-managed-mode . (lambda () (add-hook 'before-save-hook #'hesam--eglot-format-buffer nil t))))
 #+end_src
-
 ** eldoc
 #+begin_src emacs-lisp
   (use-package eldoc
@@ -1066,8 +1065,11 @@ We configure the built-in version control package.
 #+begin_src emacs-lisp
   (use-package vc
     :init
-    (setq vc-follow-symlinks t            ; goes to the real file
-          vc-make-backup-files t))        ; Make backups for git files
+    (setq vc-follow-symlinks t
+          vc-make-backup-files t
+          vc-auto-revert-mode t
+          vc-allow-rewriting-published-history t
+          vc-dir-auto-hide-up-to-date 'revert))
 #+end_src
 
 =ediff= is used for viewing diffs and acting upon them. We want the control that normally displays in another frame to be place in the same window.
