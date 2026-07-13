@@ -1278,12 +1278,11 @@ Emacs shells.
     (add-to-list 'ghostel-keymap-exceptions "M-s")
     (add-to-list 'display-buffer-alist
                  '("\\*ghostel.*"
-                   (display-buffer-in-direction)
+                   (display-buffer-reuse-mode-window display-buffer-in-direction)
+                   (mode . ghostel-mode)
                    (direction . below)
-                   (dedicated . t)
                    (window . root)
-                   (window-height . 0.25)
-                   (inhibit-same-window . nil))))
+                   (window-height . 0.25))))
 #+end_src
 ** kitty keyboard protocol
 Makes sure that key inputs in the terminal works as expected.
