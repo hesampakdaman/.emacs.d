@@ -1005,7 +1005,7 @@ Set up the `hideshow` minor mode for `prog-mode`.
   (use-package emacs
     :hook (prog-mode . hs-minor-mode)
     :bind (:map prog-mode-map
-                ("M-<return>" . hs-toggle-hiding))
+                ("C-<return>" . hs-toggle-hiding))
     :config
     (setq hs-allow-nesting t))
 #+end_src
