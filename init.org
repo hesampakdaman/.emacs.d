@@ -717,7 +717,18 @@ RSS reader that we configure with org.
     (setq rmh-elfeed-org-files
           (list (file-name-concat (expand-file-name "~") ".elfeed.org"))))
 #+end_src
-
+** emacs-reader
+#+begin_src emacs-lisp
+  (setq package-vc-allow-build-commands t)
+  (use-package reader
+    :vc (:url "https://codeberg.org/MonadicSheep/emacs-reader"
+  	        :make "all")
+    :bind (:map reader-mode-map
+                ("d" . reader-dark-mode)
+                ("b" . bookmark-set)
+                ("j" . bookmark-jump)))
+  (setq package-vc-allow-build-commands nil)
+#+end_src
 ** embark
 A package that provides a minibuffer UI for actions on things. We install =embark= and =embark-consult= for previewing targets.
 #+begin_src emacs-lisp
