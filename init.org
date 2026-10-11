@@ -79,8 +79,23 @@ tuning.
   (setq use-package-always-defer t
         use-package-always-ensure t)
 
+  ;; `use-package-ensure-elpa' requires package.el for every :ensure,
+  ;; which costs ~60ms at startup even when nothing needs installing.
+  ;; Skip it for packages the quickstart already activated and for
+  ;; built-ins; anything else falls through and gets installed.
+  (defun hesam--use-package-ensure (name args state &optional no-refresh)
+    (let ((pkg (use-package-as-symbol name)))
+      (unless (and (equal args '(t))
+                   (or (memq pkg package-activated-list)
+                       (package-built-in-p pkg)))
+        (use-package-ensure-elpa name args state no-refresh))))
+  (setq use-package-ensure-function #'hesam--use-package-ensure)
+
+  ;; Not demanded: startup activates packages from the quickstart file
+  ;; without loading package.el, and `package-installed-p' (used by
+  ;; :ensure) is autoloaded from the lighter package-activate.el. This
+  ;; config runs once package.el is needed, e.g. to install a package.
   (use-package package
-    :demand t
     :config
     (setq package-native-compile t
           package-quickstart t)
@@ -297,7 +312,6 @@ Configuration for calendar, setting ISO formats and start of week.
 #+begin_src emacs-lisp
   (use-package calendar
     :init
-    (require 'solar)
     ;; 1. Location & Solar (Stockholm)
     (setq calendar-latitude 59.33
           calendar-longitude 18.06
@@ -1051,11 +1065,16 @@ and build upon that to close the tab as well, bind this `C-x t k`.
     (windmove-wrap-around nil))
 #+end_src
 
-=winner-mode= allows for redo and undo for buffers and tabs.
+=winner-mode= allows for redo and undo for buffers and tabs. Enabling
+it pulls in =cus-edit=, so we turn it on after a second of idle time
+instead of during startup.
 #+begin_src emacs-lisp
-  (winner-mode t)
-  (global-set-key (kbd "C-c w r") 'winner-redo)
-  (global-set-key (kbd "C-c w u") 'winner-undo)
+  (use-package winner
+    :defer 1
+    :bind (("C-c w r" . winner-redo)
+           ("C-c w u" . winner-undo))
+    :config
+    (winner-mode t))
 #+end_src
 
 ** hyprland integration
@@ -1322,6 +1341,7 @@ into a single indicator (built in since Emacs 31).
 
   (defun hesam-matugen--solar-times ()
     "Return (SUNRISE SUNSET) as decimal hours for today, with sunset offset applied."
+    (require 'solar)
     (let* ((times (solar-sunrise-sunset (calendar-current-date)))
            (sunrise (caar times))
            (sunset (- (caadr times) (/ hesam-matugen-sunset-offset 60.0))))
@@ -1442,11 +1462,15 @@ into a single indicator (built in since Emacs 31).
         (hesam-matugen--enable)
       (hesam-matugen--disable)))
 
+  ;; Off the startup path: this loads calendar/solar and shells out to
+  ;; darkman, so do it once Emacs has been idle for a second.
   (use-package hesam-matugen
     :ensure nil
     :init
-    (hesam-matugen-mode)
-    (hesam-matugen-apply-by-solar))
+    (run-with-idle-timer 1 nil
+                         (lambda ()
+                           (hesam-matugen-mode)
+                           (hesam-matugen-apply-by-solar))))
 #+end_src
 
 *** ef-theme switching
