@@ -176,8 +176,8 @@ everything queued in one =yay= call. The macro does nothing unless
 
 ** custom group
 We define a customization group that we can use as a parent for all
-other `defcustom` commands. If we ever search for groups in
-`customize` we can easily find them.
+other =defcustom= commands. If we ever search for groups in
+=customize= we can easily find them.
 #+begin_src emacs-lisp
   (defgroup hesam nil
     "Parent group for my personal Emacs customization settings."
@@ -310,9 +310,9 @@ with =y-or-n-p= instead of =yes-or-no-p=.
 #+end_src
 
 ** help
-When spawning new `*Help*` buffers we select them (for ease of
-quitting with `q`) and tell Emacs to reuse the same window for all
-`*Help*` related buffers.
+When spawning new =*Help*= buffers we select them (for ease of
+quitting with =q=) and tell Emacs to reuse the same window for all
+=*Help*= related buffers.
 #+begin_src emacs-lisp
   (setq help-window-select t
         help-window-keep-selected t)      ; e.g. `s' (view source) reuses the help window
@@ -400,10 +400,10 @@ Allows us to repeat commands. For example, to use the next tab command we do =C-
 
 ** which-key
 Displays available key chords after partially input. Hence, if we
-input `C-x t` to Emacs then `which-key` will display all defined key
-chords that are prefixed with `C-x t`. Placement of which-key window
-is on the bottom and pagination is done by `C-h n` for next and `C-h
-p` for previous.
+input =C-x t= to Emacs then =which-key= will display all defined key
+chords that are prefixed with =C-x t=. The which-key window is placed
+at the bottom, and we page through it with =C-h n= for next and
+=C-h p= for previous.
 #+begin_src emacs-lisp
   (use-package which-key
     :defer 2
@@ -433,7 +433,7 @@ dabbrev, tempel).
 
 ** vertico
 Minibuffer completion system. It will display a vertical scrolling
-minibuffer in modes like `M-x` or `(find-file)`.
+minibuffer for commands like =M-x= or =C-x C-f=.
 #+begin_src emacs-lisp
   (use-package vertico
     :demand t
@@ -881,7 +881,7 @@ minor mode.
 
 ** sentences
 One of the ways Emacs recognizes sentences is by a '.', '?' or '!'
-followed by _two_ spaces. Hence sentence commands such as `M-k`
+followed by _two_ spaces. Hence sentence commands such as =M-k=
 will not work properly for text that does not follow this convention.
 We change it here so that only _one_ space is needed.
 #+begin_src emacs-lisp
@@ -894,8 +894,8 @@ in abbreviations and those that mark an end to a sentence. Consider
 Mt. Everest is Earth's highest mountain.
 #+end_quote
 
-Putting the cursor at the character `M` in the quote above and
-pressing `M-e` leaves us in the space between `Mt.` and `Everest`.
+Putting the cursor at the character =M= in the quote above and
+pressing =M-e= leaves us in the space between =Mt.= and =Everest=.
 
 ** expreg
 Expands the region step by step to the next larger syntactic unit:
@@ -925,7 +925,7 @@ so we can jump there afterwards.
 #+end_src
 
 ** narrow
-Allow narrowing `C-x n n` to a region. It makes sense to have it off
+Allow narrowing =C-x n n= to a region. It makes sense to have it off
 and warn the user by default. But once you familiarize with the mode
 it's okay to allow it. Simply put, this command lets you only display
 the region you selected.
@@ -946,7 +946,7 @@ the =C-c s= prefix.
 In this excellent [[https://archive.casouri.cc/note/2021/visual-undo-tree/index.html][blog]] Yuan Fu describes a way of creating an undo-tree
 from Emacs' linear tree. This enables us to build an undo-tree on the
 fly, navigate it and make Emacs go to that state. Born is the package
-`vundo` (visualize undo). Run =M-x vundo= to see the tree.
+=vundo= (visualize undo). Run =M-x vundo= to see the tree.
 #+begin_src emacs-lisp
   (use-package vundo)
 #+end_src
@@ -1050,15 +1050,15 @@ between windows.
   (setq-default right-margin-width 1)
 #+end_src
 
-Truncate long lines instead of wrapping them; toggle with `C-x x t`.
-A value of `t` means lines ARE truncated.
+Truncate long lines instead of wrapping them; toggle with =C-x x t=.
+A value of =t= means lines ARE truncated.
 #+begin_src emacs-lisp
   (setq-default truncate-lines t)
 #+end_src
 
-Setting partial width windows to `nil` means to respect the value for
-`truncate-lines`, otherwise we will get truncated lines for
-horizontally split windows (ie. `C-x 3` windows).
+Setting partial width windows to =nil= means to respect the value for
+=truncate-lines=, otherwise we will get truncated lines for
+horizontally split windows (ie. =C-x 3= windows).
 #+begin_src emacs-lisp
   (setq-default truncate-partial-width-windows nil)
 #+end_src
@@ -1154,7 +1154,7 @@ deletes the window, unless it is the only window in the frame.
         (delete-window current-window))))
 #+end_src
 
-and build upon that to close the tab as well, bind this `C-x t k`.
+and build upon that to close the tab as well, bind this =C-x t k=.
 #+begin_src emacs-lisp
   (defun hesam/kill-buffer-on-close-tab ()
     (interactive)
@@ -1392,7 +1392,7 @@ one zoom command we can keep pressing =+= / =-= / =0=.
 #+end_src
 
 *** ligatures
-Ligatures are a way to display multiple characters as a single glyph. Here we use the package `ligature` to enable ligatures in Emacs. We use JetBrainsMono Nerd Font (see [[fonts]]), which has ligatures built-in. We also set the ligatures to be enabled in programming modes.
+Ligatures are a way to display multiple characters as a single glyph. Here we use the package =ligature= to enable ligatures in Emacs. We use JetBrainsMono Nerd Font (see [[fonts]]), which has ligatures built-in. We also set the ligatures to be enabled in programming modes.
 #+begin_src emacs-lisp
   (use-package ligature
     :config
@@ -1917,7 +1917,7 @@ Minor modes that are turned on through =prog-mode-hook=, or are
 closely tied to programming.
 
 *** electric mode
-Automatically add closing brackets and indent code in `prog-mode`.
+Automatically add closing brackets and indent code in =prog-mode=.
 #+begin_src emacs-lisp
   (defun hesam/electric ()
     (electric-pair-local-mode t)
