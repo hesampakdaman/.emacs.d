@@ -2253,3 +2253,109 @@ package can run build commands.
                 ("j" . bookmark-jump)))
   (setq package-vc-allow-build-commands nil)
 #+end_src
+
+** media-log
+A log of the books, films, music and plays I finish, kept in an SQLite
+database next to my Org files. The database is the source of truth;
+=media-log/log.org= queries it with an Org Babel block. =M-x
+media-log-add= prompts for a new entry and =M-x media-log-open= browses
+the table in =sqlite-mode=, where =D= deletes a row.
+#+begin_src emacs-lisp
+  (defcustom media-log-file
+    (file-name-concat hesam-org-directory "media-log" "db.sqlite")
+    "SQLite database holding the media log."
+    :type 'file
+    :group 'hesam)
+
+  (defconst media-log--media '("Book" "Film" "Music" "Play"))
+  (defconst media-log--categories '("Fiction" "Non-fiction"))
+#+end_src
+
+The schema is created on every open, so a missing database is simply
+recreated empty and an existing one is never touched. The =CHECK=
+constraints make SQLite reject a malformed date or an out-of-range
+rating instead of storing it.
+#+begin_src emacs-lisp
+  (defconst media-log--schema
+    (let ((in (lambda (xs) (mapconcat (lambda (x) (format "'%s'" x)) xs ", "))))
+      (list
+       (format "CREATE TABLE IF NOT EXISTS media_log (
+                  id        INTEGER PRIMARY KEY AUTOINCREMENT,
+                  date      TEXT    NOT NULL CHECK (date IS date(date)),
+                  title     TEXT    NOT NULL,
+                  author    TEXT    NOT NULL,
+                  genre     TEXT    NOT NULL,
+                  category  TEXT    NOT NULL CHECK (category IN (%s)),
+                  medium    TEXT    NOT NULL CHECK (medium IN (%s)),
+                  published INTEGER NOT NULL,
+                  edition   TEXT,
+                  rating    INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5))"
+               (funcall in media-log--categories)
+               (funcall in media-log--media))
+       "CREATE VIEW IF NOT EXISTS book_list AS
+          SELECT ROW_NUMBER() OVER (ORDER BY date) AS \"#\", title, author, date
+          FROM media_log
+          WHERE medium = 'Book'"))
+    "Statements creating the media log's table and views.")
+
+  (defun media-log--db ()
+    "Open `media-log-file', creating its schema if missing."
+    (make-directory (file-name-directory media-log-file) t)
+    (let ((db (sqlite-open media-log-file)))
+      (dolist (statement media-log--schema)
+        (sqlite-execute db statement))
+      db))
+#+end_src
+
+Genres are stored as one string such as ="Science fiction; Philosophical
+fiction"=. Offering the genres already used as completion candidates
+keeps their spelling consistent.
+#+begin_src emacs-lisp
+  (defvar crm-separator)                  ; let-bound below, dynamically
+  (declare-function sqlite-mode-list-data "sqlite-mode")
+
+  (defun media-log--genres (db)
+    "Return the distinct genres used in DB."
+    (seq-uniq
+     (mapcan (lambda (row) (split-string (car row) "; *" t))
+             (sqlite-select db "SELECT genre FROM media_log"))))
+
+  (defun media-log-add ()
+    "Prompt for a finished book, film, album or play and log it."
+    (interactive)
+    (let ((db (media-log--db)))
+      (unwind-protect
+          (let* ((date (read-string "Finished (YYYY-MM-DD): "
+                                    (format-time-string "%F")))
+                 (title (read-string "Title: "))
+                 (author (read-string "Author(s) (Last, First; ...): "))
+                 (genre (let ((crm-separator "[ \t]*;[ \t]*"))
+                          (string-join
+                           (completing-read-multiple "Genres (separated by ;): "
+                                                     (media-log--genres db))
+                           "; ")))
+                 (category (completing-read "Category: " media-log--categories nil t))
+                 (medium (completing-read "Medium: " media-log--media nil t))
+                 (published (read-number "Published year: "))
+                 (edition (read-string "Edition (optional): "))
+                 (rating (string-to-number
+                          (completing-read "Rating: " '("5" "4" "3" "2" "1") nil t))))
+            (sqlite-execute
+             db
+             "INSERT INTO media_log
+                (date, title, author, genre, category, medium, published, edition, rating)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+             (list date title author genre category medium published
+                   (unless (string-empty-p edition) edition)
+                   rating))
+            (message "Logged %s" title))
+        (sqlite-close db))))
+
+  (defun media-log-open ()
+    "Browse the media log in `sqlite-mode'."
+    (interactive)
+    (sqlite-close (media-log--db))
+    (sqlite-mode-open-file media-log-file)
+    (forward-line 1)                      ; media_log is the only table
+    (sqlite-mode-list-data))
+#+end_src
