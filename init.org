@@ -468,9 +468,8 @@ contexts. We complete text with `TAB' across Emacs' buffers.
 ** dabbrev
 #+begin_src emacs-lisp
   (use-package dabbrev
-    ;; Swap M-/ and C-M-/
-    :bind (("M-/" . dabbrev-completion) ;; shows up in corfu
-           ("C-M-/" . dabbrev-expand))
+    ;; M-/ is cape-dabbrev (see cape); keep plain expansion on C-M-/
+    :bind ("C-M-/" . dabbrev-expand)
     :config
     (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
     (add-to-list 'dabbrev-ignored-buffer-modes 'authinfo-mode)
@@ -556,12 +555,12 @@ Deduplicate kill-ring entries and save the contents of the clipboard to the kill
           save-interprogram-paste-before-kill t))
 #+end_src
 
-A minor mode to interact with =cliphist= for copy, cut and selecting.
+Commands to interact with =cliphist= for copy, cut and selecting, all under the =C-c y= prefix.
 #+begin_src emacs-lisp
   (use-package emacs
-    :bind (("C-c y" . hesam-cliphist-select)
-           ("C-c c" . hesam-cliphist-copy)
-           ("C-c x" . hesam-cliphist-cut))
+    :bind (("C-c y y" . hesam-cliphist-select)
+           ("C-c y c" . hesam-cliphist-copy)
+           ("C-c y x" . hesam-cliphist-cut))
     :preface
     (defun hesam-cliphist-copy ()
       (interactive)
