@@ -2258,8 +2258,9 @@ package can run build commands.
 A log of the books, films, music and plays I finish, kept in an SQLite
 database next to my Org files. The database is the source of truth;
 =media-log/log.org= queries it with an Org Babel block. =M-x
-media-log-add= prompts for a new entry and =M-x media-log-open= browses
-the table in =sqlite-mode=, where =D= deletes a row.
+media-log-add= prompts for a new entry, =M-x media-log-edit= changes one
+field of an entry and =M-x media-log-open= browses the table in
+=sqlite-mode=, where =D= deletes a row.
 #+begin_src emacs-lisp
   (defcustom media-log-file
     (file-name-concat hesam-org-directory "media-log" "db.sqlite")
@@ -2307,48 +2308,112 @@ rating instead of storing it.
       db))
 #+end_src
 
-Genres are stored as one string such as ="Science fiction; Philosophical
-fiction"=. Offering the genres already used as completion candidates
-keeps their spelling consistent.
+Every entry is read one column at a time by =media-log--read=, which
+=media-log-add= calls for each column and =media-log-edit= for the one
+being changed, starting from its current value. Authors and genres are
+stored as one string such as ="Science fiction; Philosophical
+fiction"=; offering the ones already used as completions keeps their
+spelling consistent.
 #+begin_src emacs-lisp
   (defvar crm-separator)                  ; let-bound below, dynamically
   (declare-function sqlite-mode-list-data "sqlite-mode")
 
-  (defun media-log--genres (db)
-    "Return the distinct genres used in DB."
-    (seq-uniq
-     (mapcan (lambda (row) (split-string (car row) "; *" t))
-             (sqlite-select db "SELECT genre FROM media_log"))))
+  (defconst media-log--columns
+    '("date" "title" "author" "genre" "category" "medium" "published" "edition" "rating")
+    "Columns of media_log, in the order they are prompted for.")
+
+  (defconst media-log--ratings
+    '(("5" . "Loved; a masterpiece, will re-read")
+      ("4" . "Enjoyed; very good, might re-read")
+      ("3" . "Neutral; OK but will definitely not re-read")
+      ("2" . "Didn't enjoy; wouldn't recommend")
+      ("1" . "Disliked; not worth the time or abandoned early")))
+
+  (defun media-log--read-list (db column prompt current)
+    "Read \"; \"-separated values for COLUMN, completing those used in DB."
+    (let ((crm-separator "[ \t]*;[ \t]*")
+          (used (seq-uniq
+                 (mapcan (lambda (row) (split-string (car row) "; *" t))
+                         (sqlite-select db (format "SELECT %s FROM media_log" column))))))
+      (string-join (completing-read-multiple prompt used nil nil current) "; ")))
+
+  (defun media-log--read-rating (current)
+    "Read a rating, showing what each one means; CURRENT is the default."
+    (let ((completion-extra-properties
+           `(:display-sort-function identity
+             :annotation-function
+             ,(lambda (r) (concat "  " (alist-get r media-log--ratings nil nil #'equal))))))
+      (string-to-number
+       (completing-read "Rating: " media-log--ratings nil t nil nil
+                        (and current (number-to-string current))))))
+
+  (defun media-log--read (db column &optional current)
+    "Read a new value for COLUMN, starting from CURRENT."
+    (pcase column
+      ("date" (read-string "Finished (YYYY-MM-DD): "
+                           (or current (format-time-string "%F"))))
+      ("title" (read-string "Title: " current))
+      ("author" (media-log--read-list db column "Author(s) (Last, First; ...): " current))
+      ("genre" (media-log--read-list db column "Genres (separated by ;): " current))
+      ("category" (completing-read "Category: " media-log--categories nil t nil nil current))
+      ("medium" (completing-read "Medium: " media-log--media nil t nil nil current))
+      ("published" (read-number "Published year: " current))
+      ("edition" (let ((edition (read-string "Edition (optional): " current)))
+                   (unless (string-empty-p edition) edition)))
+      ("rating" (media-log--read-rating current))))
 
   (defun media-log-add ()
     "Prompt for a finished book, film, album or play and log it."
     (interactive)
     (let ((db (media-log--db)))
       (unwind-protect
-          (let* ((date (read-string "Finished (YYYY-MM-DD): "
-                                    (format-time-string "%F")))
-                 (title (read-string "Title: "))
-                 (author (read-string "Author(s) (Last, First; ...): "))
-                 (genre (let ((crm-separator "[ \t]*;[ \t]*"))
-                          (string-join
-                           (completing-read-multiple "Genres (separated by ;): "
-                                                     (media-log--genres db))
-                           "; ")))
-                 (category (completing-read "Category: " media-log--categories nil t))
-                 (medium (completing-read "Medium: " media-log--media nil t))
-                 (published (read-number "Published year: "))
-                 (edition (read-string "Edition (optional): "))
-                 (rating (string-to-number
-                          (completing-read "Rating: " '("5" "4" "3" "2" "1") nil t))))
+          (let ((values (mapcar (lambda (column) (media-log--read db column))
+                                media-log--columns)))
             (sqlite-execute
              db
-             "INSERT INTO media_log
-                (date, title, author, genre, category, medium, published, edition, rating)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
-             (list date title author genre category medium published
-                   (unless (string-empty-p edition) edition)
-                   rating))
-            (message "Logged %s" title))
+             (format "INSERT INTO media_log (%s) VALUES (%s)"
+                     (string-join media-log--columns ", ")
+                     (mapconcat (lambda (_) "?") media-log--columns ", "))
+             values)
+            (message "Logged %s" (nth 1 values)))
+        (sqlite-close db))))
+#+end_src
+
+=media-log-edit= changes one field of an entry. Entries are listed newest
+first, and each field shows its current value next to it.
+#+begin_src emacs-lisp
+  (defun media-log--read-entry (db)
+    "Prompt for an entry in DB; return its row as an alist of columns."
+    (let* ((rows (sqlite-select
+                  db (format "SELECT id, %s FROM media_log ORDER BY date DESC"
+                             (string-join media-log--columns ", "))))
+           (entries (mapcar (lambda (row)
+                              (let ((entry (seq-mapn #'cons (cons "id" media-log--columns) row)))
+                                (cons (format "%s  %s — %s"
+                                              (alist-get "date" entry nil nil #'equal)
+                                              (alist-get "title" entry nil nil #'equal)
+                                              (alist-get "author" entry nil nil #'equal))
+                                      entry)))
+                            rows))
+           (completion-extra-properties '(:display-sort-function identity)))
+      (cdr (assoc (completing-read "Entry: " entries nil t) entries))))
+
+  (defun media-log-edit ()
+    "Change one field of a logged entry."
+    (interactive)
+    (let ((db (media-log--db)))
+      (unwind-protect
+          (let* ((entry (media-log--read-entry db))
+                 (value-of (lambda (column) (alist-get column entry nil nil #'equal)))
+                 (column (let ((completion-extra-properties
+                                `(:display-sort-function identity
+                                  :annotation-function
+                                  ,(lambda (c) (format "  %s" (or (funcall value-of c) ""))))))
+                           (completing-read "Field: " media-log--columns nil t)))
+                 (value (media-log--read db column (funcall value-of column))))
+            (sqlite-execute db (format "UPDATE media_log SET %s = ? WHERE id = ?" column)
+                            (list value (funcall value-of "id")))
+            (message "Updated %s of %s" column (funcall value-of "title")))
         (sqlite-close db))))
 
   (defun media-log-open ()
