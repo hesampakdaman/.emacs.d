@@ -149,7 +149,7 @@ tuning.
     :lighter " SysPkg")
 #+end_src
 
-** custom global group
+** custom group
 We define a customization group that we can use as a parent for all
 other `defcustom` commands. If we ever search for groups in
 `customize` we can easily find them.
@@ -168,28 +168,23 @@ in another file instead of in this init file.
 #+end_src
 
 ** performance and startup
+Reduce the cost of bidirectional text on every redisplay. Reordering
+stays on, so right-to-left text still displays correctly, but
+paragraphs are assumed left-to-right and the bracket-pair algorithm is
+skipped. We also defer syntax-highlighting while typing, so scrolling
+and typing may feel smoother.
 #+begin_src emacs-lisp
   (use-package emacs
     :init
     ;; 4MB to improve subprocess throughput
     (setq read-process-output-max (* 4 1024 1024))
     ;; UI responsiveness
-    (setq idle-update-delay 0.1))
-#+end_src
-
-Reduce the cost of bidirectional text on every redisplay. Reordering stays on, so right-to-left text still displays correctly, but paragraphs are assumed left-to-right and the bracket-pair algorithm is skipped.
-#+begin_src emacs-lisp
-  (use-package emacs
-    :init
+    (setq idle-update-delay 0.1)
+    ;; cheaper bidi: paragraphs assumed LTR, skip bracket-pair algorithm
     (setq-default bidi-display-reordering t
                   bidi-paragraph-direction 'left-to-right)
-    (setq bidi-inhibit-bpa t))
-#+end_src
-
-Defer syntax-highlighting while typing. Scrolling and typing may feel smoother.
-#+begin_src emacs-lisp
-  (use-package emacs
-    :init
+    (setq bidi-inhibit-bpa t)
+    ;; defer fontification while typing
     (setq redisplay-skip-fontification-on-input t))
 #+end_src
 
@@ -290,9 +285,9 @@ quitting with `q`) and tell Emacs to reuse the same window for all
 #+end_src
 
 ** bells and messages
-Finding it too annoying hearing beeping sounds and seeing visual we alarms we turn all of them completely off.
+Turn off the bell entirely, and don't print the "When done with a
+buffer, type C-x #" hint for emacsclient.
 #+begin_src emacs-lisp
-  ;; no beeping
   (setq ring-bell-function 'ignore)
   (setq server-client-instructions nil)
 #+end_src
@@ -418,7 +413,7 @@ Provides completion styles to be used on top-of a completion packages
 such as `Vertico` or certain `Consult` functions. If we do `C-x C-f`
 and have two files `languages-and-modes.org` and `general.org` then
 the search string `g l` will match both if we have set `'orderless`
-style (ie. the order of your serach words does not matter).
+style (ie. the order of your search words does not matter).
 #+begin_src emacs-lisp
   (use-package orderless
     :demand t
@@ -430,7 +425,7 @@ style (ie. the order of your serach words does not matter).
 
 ** marginalia
 This package displays helpful descriptions of on the margins in
-certains instances. For example: invoking `M-x` displays all commands
+certain instances. For example: invoking `M-x` displays all commands
 that can be called interactively. `Marginalia` will show their
 descriptions on the right hand side -- at the margin if you will.
 #+begin_src emacs-lisp
@@ -440,7 +435,7 @@ descriptions on the right hand side -- at the margin if you will.
     (marginalia-mode))
 #+end_src
 
-** savehist mode
+** savehist
 Save minibuffer commands in a file that is loaded at startup
 #+begin_src emacs-lisp
   (savehist-mode t)
@@ -786,7 +781,7 @@ minor mode.
   (global-subword-mode 1)
 #+end_src
 
-** sentence end space
+** sentences
 One of the ways Emacs recognizes sentences is by a '.', ',', '?' or
 '!' followed by _two_ spaces. Hence sentence commands such as `M-k`
 will not work properly for text that does not follow this convention.
@@ -848,7 +843,7 @@ fly, navigate it and make Emacs go to that state. Born is the package
 #+end_src
 
 ** ws-butler
-Removes trailing space and tabs from this user modified lines.
+Removes trailing space and tabs from lines the user modified.
 #+begin_src emacs-lisp
   (use-package ws-butler
     :hook (prog-mode text-mode))
@@ -880,7 +875,7 @@ Editing files that need root is built in through TRAMP: =C-x x @=
 #+end_src
 
 ** ffap
-=ffap= is guesses the file path under point and tries to open it; falling back to regular =find-file= when failing.
+=ffap= guesses the file path under point and tries to open it; falling back to regular =find-file= when failing.
 #+begin_src emacs-lisp
   (use-package ffap
     :bind (("C-c o" . ffap))
@@ -914,7 +909,7 @@ To navigate buffers we prefer to use =ibuffer= instead.
 ** re-builder
 Setting =re-builder= settings.
 #+begin_src emacs-lisp
-  (use-package emacs
+  (use-package re-builder
     :custom
     (reb-re-syntax 'string))
 #+end_src
@@ -1269,7 +1264,7 @@ remove it after startup to ensure it is set when we try and delete it.
      (delete '(vc-mode vc-mode) mode-line-format)))
 #+end_src
 
-and to remove the precentage and All/Top/Bottom indicator.
+and to remove the percentage and All/Top/Bottom indicator.
 #+begin_src emacs-lisp
   (setq mode-line-percent-position nil)
 #+end_src
@@ -1656,7 +1651,7 @@ languages.
 #+end_src
 
 ** flymake
-Flymake is an built-in syntax checker for Emacs to be used everywhere,
+Flymake is a built-in syntax checker for Emacs to be used everywhere,
 but it's strongly linked to programming and that is why we define it
 here.
 #+begin_src emacs-lisp
@@ -1711,7 +1706,7 @@ Automatically add closing brackets and indent code in `prog-mode`.
 *** hideshow
 Set up the `hideshow` minor mode for `prog-mode`.
 #+begin_src emacs-lisp
-  (use-package emacs
+  (use-package hideshow
     :hook (prog-mode . hs-minor-mode)
     :bind (:map prog-mode-map
                 ("C-<return>" . hs-toggle-hiding))
@@ -1725,13 +1720,13 @@ Another symbol to be used for collapsed text.
                           'selective-display (string-to-vector " [+] "))
 #+end_src
 
-*** row/column/line numbers
-Shows column number in `mode-line` in addtion to row number.
+*** column numbers
+Shows column number in `mode-line` in addition to row number.
 #+begin_src emacs-lisp
   (add-hook 'prog-mode-hook 'column-number-mode)
 #+end_src
 
-*** show parent
+*** show paren
 Highlights matching parens in prog-mode.
 #+begin_src emacs-lisp
   (add-hook 'prog-mode-hook 'show-paren-mode)
