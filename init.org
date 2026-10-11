@@ -50,7 +50,8 @@ This will make sure that the tangled file has lexical binding.
         inhibit-startup-message t
         inhibit-startup-buffer-menu t)
 
-  ;; prevent Emacs from automatically resizing the frame during startup
+  ;; resize frames by pixel rather than whole characters, so tiled
+  ;; frames fill the space the window manager gives them
   (setq frame-resize-pixelwise t)
 
   ;; set these early to reduce flickering/resizing on startup
@@ -304,7 +305,7 @@ Finding it too annoying hearing beeping sounds and seeing visual we alarms we tu
     (setq idle-update-delay 0.1))
 #+end_src
 
-Disables bidirectional text scanning. We assume left-to-right text everywhere to save Emacs having to do some work on every re-display
+Reduce the cost of bidirectional text on every redisplay. Reordering stays on, so right-to-left text still displays correctly, but paragraphs are assumed left-to-right and the bracket-pair algorithm is skipped.
 #+begin_src emacs-lisp
   (use-package emacs
     :init
@@ -668,11 +669,10 @@ To encourage being more keyboard-driven we disable the mouse.
 * miscellaneous packages
 This is not an exhaustive list of all packages used in our
 configuration. Rather we have put packages here that we couldn't
-motivate putting elsewhere under our directory tree.
+motivate putting elsewhere in this file.
 
-For example, in `programming.org` we have declared `magit`
-package. But it makes sense to have it there since it has a clear
-connection with programming.
+For example, =magit= is declared under [[programming]] since it has a
+clear connection with programming.
 ** denote
 #+begin_src emacs-lisp
   (use-package denote
@@ -1362,8 +1362,8 @@ and have requirements on how and when a new window is created.
 * UI enhancement settings
 Settings for the feel and look of Emacs. We may also have some options
 configured elsewhere which affects the look of Emacs. One such example
-is the face `hideshow` minor mode uses, which we have put in
-`programming.org` because it's directly related to programming.
+is the display of `hideshow`'s collapsed text, which we have put under
+[[programming]] because it's directly related to programming.
 ** Faces
 #+begin_src emacs-lisp
   ;; fringe tweak
@@ -1478,7 +1478,7 @@ is the face `hideshow` minor mode uses, which we have put in
   (hesam-dpi-mode 1)
 #+end_src
 *** Ligatures
-Ligatures are a way to display multiple characters as a single glyph. Here we use the package `ligature` to enable ligatures in Emacs. We use the font Iosevka Term Font which has ligatures built-in. We also set the ligatures to be enabled in programming modes.
+Ligatures are a way to display multiple characters as a single glyph. Here we use the package `ligature` to enable ligatures in Emacs. We use JetBrainsMono Nerd Font (see [[Fonts]]), which has ligatures built-in. We also set the ligatures to be enabled in programming modes.
 #+begin_src emacs-lisp
   (use-package ligature
     :config
@@ -1527,8 +1527,8 @@ frame edge.
   (setq-default right-margin-width 1)
 #+end_src
 
-Do not truncate lines and if we need it the default binding to toggle
-is `C-x x t`. A value of `t` means to NOT truncate lines.
+Truncate long lines instead of wrapping them; toggle with `C-x x t`.
+A value of `t` means lines ARE truncated.
 #+begin_src emacs-lisp
   (setq-default truncate-lines t)
 #+end_src
