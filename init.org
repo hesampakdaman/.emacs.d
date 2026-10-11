@@ -21,13 +21,13 @@ This will make sure that the tangled file has lexical binding.
 #+begin_src emacs-lisp
   ;; -*- lexical-binding: t; -*-
 
-  ;; increase garbage collection threshold to delay GC during startup.
-  ;; this decreases startup time
+  ;; Raise the GC threshold so Emacs doesn't collect garbage while
+  ;; loading the config. It is lowered again in `after-init-hook' below.
   (setq gc-cons-threshold (* 100 (expt 10 6)) ; 100MB
         gc-cons-percentage 0.8)
 
-  ;; skip handling special file during startup. This decreases start
-  ;; time
+  ;; Every `load' consults `file-name-handler-alist' (TRAMP, compressed
+  ;; files, ...). Empty it during startup and restore it afterwards.
   (defvar startup/file-name-handler-alist file-name-handler-alist)
   (setq file-name-handler-alist nil)
 
@@ -39,10 +39,12 @@ This will make sure that the tangled file has lexical binding.
                     gc-cons-percentage 0.1
                     file-name-handler-alist startup/file-name-handler-alist)))
 
-  ;; use a simpler initial major mode during startup
+  ;; *scratch* starts in fundamental-mode, so lisp-interaction-mode
+  ;; isn't loaded during startup
   (setq initial-major-mode 'fundamental-mode)
 
-  ;; prevent Emacs from automatically resizing the frame during startup
+  ;; don't resize the frame when the font, tool bar etc. change size;
+  ;; the window manager decides the frame size
   (setq frame-inhibit-implied-resize t)
 
   ;; no splash screen
@@ -60,7 +62,9 @@ This will make sure that the tangled file has lexical binding.
   (tool-bar-mode -1)
   (menu-bar-mode -1)
 
-  ;; no window decorations and increased invisible border widths
+  ;; No title bar or WM decorations. The 15px internal border is
+  ;; padding around the frame's edge, and `drag-internal-border' lets
+  ;; us resize the frame by dragging that border instead.
   (dolist (frame-option
            '((undecorated . t) (internal-border-width . 15) (drag-internal-border . 5)))
     (add-to-list 'default-frame-alist frame-option))
@@ -76,8 +80,8 @@ tuning.
 *** use-package
 #+begin_src emacs-lisp
   (require 'use-package-ensure)
-  (setq use-package-always-defer t
-        use-package-always-ensure t)
+  (setq use-package-always-defer t     ; lazy-load unless :demand or :defer N
+        use-package-always-ensure t)   ; install missing packages
 
   ;; `use-package-ensure-elpa' requires package.el for every :ensure,
   ;; which costs ~60ms at startup even when nothing needs installing.
@@ -97,12 +101,18 @@ tuning.
   ;; config runs once package.el is needed, e.g. to install a package.
   (use-package package
     :config
-    (setq package-native-compile t
-          package-quickstart t)
+    (setq package-native-compile t   ; native-compile at install, not on first load
+          package-quickstart t)      ; keep package-quickstart.el up to date
     (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/")))
 #+end_src
 
 *** system-pkg
+Declare system (Arch, via =yay=) dependencies next to the Emacs
+packages that need them. =(system-pkg ripgrep :exe rg)= queues
+=ripgrep= for installation if =rg= isn't on =PATH= and the package
+isn't installed; =M-x system-pkg-install-queued= then installs
+everything queued in one =yay= call. The macro does nothing unless
+=system-pkg-mode= is on.
 #+begin_src emacs-lisp
   (defgroup system-pkg nil
     "Ensure system packages are installed."
@@ -175,8 +185,10 @@ other `defcustom` commands. If we ever search for groups in
 #+end_src
 
 ** custom file
-Emacs customization options are not tracked by git and will be saved
-in another file instead of in this init file.
+Settings saved through =customize= go to a separate file that is not
+tracked by git, instead of being appended to the init file. Some of
+them are written by code in this file, e.g. the current theme and the
+matugen light/dark state.
 #+begin_src emacs-lisp
   (setq custom-file (locate-user-emacs-file "emacs-custom.el"))
   (load custom-file 'noerror 'nomessage)
@@ -191,9 +203,11 @@ and typing may feel smoother.
 #+begin_src emacs-lisp
   (use-package emacs
     :init
-    ;; 4MB to improve subprocess throughput
+    ;; Read subprocess output in chunks of up to 4MB. Language servers
+    ;; send large JSON responses, which otherwise arrive in many reads.
     (setq read-process-output-max (* 4 1024 1024))
-    ;; UI responsiveness
+    ;; Wait 0.1s (default 0.5s) of idle time before updating things
+    ;; that follow point, so they feel snappier.
     (setq idle-update-delay 0.1)
     ;; cheaper bidi: paragraphs assumed LTR, skip bracket-pair algorithm
     (setq-default bidi-display-reordering t
@@ -216,6 +230,10 @@ It's a good idea to be aware of Emacs' startup time. In case any new setting has
 #+end_src
 
 ** compilation warnings
+Byte- and native-compiling third-party packages produces warnings that
+are meant for their authors, not for us. Native compilation runs in
+the background and would otherwise pop up the =*Warnings*= buffer
+while we work.
 #+begin_src emacs-lisp
   (setq byte-compile-warnings '(not obsolete free-vars unresolved noruntime lexical make-local cl-functions))
   (setq warning-suppress-log-types '((comp) (bytecomp)))
@@ -232,25 +250,25 @@ numbered backups. First things first, we create autosave and backup
 directory where we put autosaves and backups respectively.
 #+begin_src emacs-lisp
   (defcustom hesam-autosave-directory (expand-file-name "autosave/" user-emacs-directory)
-    "Directory where autosave and backups are put."
+    "Directory where auto-save files are put."
     :type 'directory
     :group 'hesam)
 
   (defcustom hesam-backup-directory (expand-file-name "backup/" user-emacs-directory)
-    "Directory where autosave and backups are put."
+    "Directory where backup files are put."
     :type 'directory
     :group 'hesam)
 #+end_src
 
-Of course we need to make sure these directories exists
+Of course we need to make sure these directories exist.
 #+begin_src emacs-lisp
   (dolist (dir (list hesam-autosave-directory hesam-backup-directory))
     (unless (file-directory-p dir)
       (make-directory dir)))
 #+end_src
 
-Use the directory for backups. There are some other sane settings used
-described below with comments.
+Use the directory for backups. We keep numbered backups (=file.~1~=,
+=file.~2~=, ...), up to the newest 1000 versions of each file.
 #+begin_src emacs-lisp
   (setq backup-directory-alist `((".*" . ,hesam-backup-directory))
         version-control t           ; Use version numbers for backups.
@@ -260,32 +278,33 @@ described below with comments.
         backup-by-copying t)  ; Copy all files, don't rename them.
 #+end_src
 
-But backups are only created once when the buffer is visited. We want
-to save backups on each save. We do so by resetting the flag that
-tells Emacs that the file has been backed up. Adding a hook to do that
-after each save will make Emacs backup the file since the counter has
-been reset.
+But Emacs only makes a backup on the first save after visiting a file.
+We want one on every save. Emacs tracks this with the buffer-local
+flag =buffer-backed-up=, so we reset it before each save and Emacs
+makes a new backup every time.
 #+begin_src emacs-lisp
   (defun force-backup-of-buffer ()
     (setq buffer-backed-up nil))
   (add-hook 'before-save-hook  'force-backup-of-buffer)
 #+end_src
 
-We also make sure to organize our autosaves in user's Emacs directory.
+We also keep auto-save files in the autosave directory instead of next
+to the files. The =t= makes the name unique by encoding the file's full
+path, so two files named =init.el= don't collide.
 #+begin_src emacs-lisp
   (setq auto-save-file-name-transforms
 	`((".*" ,hesam-autosave-directory t)))
 #+end_src
 
 ** reverting
-Will automatically load changed buffers, this can for example happen
-if we use git to reset recent changes.
+Automatically reload buffers whose files change on disk, for example
+after a =git checkout= or reset.
 #+begin_src emacs-lisp
   (global-auto-revert-mode t)
 #+end_src
 
-And make use of the quick revert setting when reverting files with
-`C-x x g`
+When reverting manually with =C-x x g= (=revert-buffer-quick=), ask
+with =y-or-n-p= instead of =yes-or-no-p=.
 #+begin_src emacs-lisp
   (setq revert-buffer-quick-short-answers t)
 #+end_src
@@ -296,7 +315,7 @@ quitting with `q`) and tell Emacs to reuse the same window for all
 `*Help*` related buffers.
 #+begin_src emacs-lisp
   (setq help-window-select t
-        help-window-keep-selected t)      ; reuse help window for related buffers
+        help-window-keep-selected t)      ; e.g. `s' (view source) reuses the help window
 #+end_src
 
 ** bells and messages
@@ -308,7 +327,10 @@ buffer, type C-x #" hint for emacsclient.
 #+end_src
 
 ** calendar and time
-Configuration for calendar, setting ISO formats and start of week.
+Calendar settings: weeks start on Monday, European date order, a
+24-hour clock and ISO week numbers. The location is also used by
+=solar= for sunrise and sunset, which the [[matugen]] light/dark switch
+relies on.
 #+begin_src emacs-lisp
   (use-package calendar
     :init
@@ -324,6 +346,8 @@ Configuration for calendar, setting ISO formats and start of week.
           '((if dayname (concat dayname ", ")) day " " monthname " " year))
 
     ;; 3. Time & Week Number Display
+    ;; `calendar-intermonth-text' shows the ISO week number ("W41") to
+    ;; the left of each week in M-x calendar.
     (setq calendar-time-display-form '(24-hours ":" minutes)
           display-time-24hr-format t
           display-time-day-and-date nil
@@ -340,12 +364,15 @@ Configuration for calendar, setting ISO formats and start of week.
 Saving bookmarks to Dropbox and auto-saving upon change.
 #+begin_src emacs-lisp
   (setq bookmark-default-file "~/Dropbox/emacs/bookmarks"
-        ;; num changes before saving bookmark
+        ;; save the bookmark file after every change
         bookmark-save-flag 1)
 #+end_src
 
 * keybindings
-All bindings are not defined here. Instead we have the another philosophy of creating bindings where packages are defined. As such we make extensive use of =use-package= and its =:bind= feature.
+Most bindings are not defined here. Instead we bind keys where the
+package they belong to is configured, using =use-package= and its
+=:bind= keyword. This section holds the bindings that don't belong to
+any one package.
 
 ** unbinding and disabling
 
@@ -357,8 +384,9 @@ We want to unbind default bindings that aren't useful to us, such as suspending.
     (global-unset-key (kbd "C-x C-z")))
 #+end_src
 
-We don't want to ever suspend Emacs or the frame. Therefore display a
-warning when these commands are run.
+We don't want to ever suspend Emacs or the frame. Marking the commands
+as disabled makes Emacs ask for confirmation if they are ever run, for
+example through =M-x=.
 #+begin_src emacs-lisp
   (put 'suspend-frame 'disabled t)
   (put 'suspend-emacs 'disabled t)
@@ -393,8 +421,8 @@ To encourage being more keyboard-driven we disable the mouse.
     :config
     (inhibit-mouse-mode)
     :custom
-    ;; Enables highlighting of clickable text such as URLs and hyperlinks when
-    ;; hovered by the mouse pointer.
+    ;; nil keeps hover highlighting on clickable text such as links;
+    ;; non-nil would turn it off as well.
     (inhibit-mouse-adjust-mouse-highlight nil))
 #+end_src
 
@@ -412,8 +440,10 @@ minibuffer in modes like `M-x` or `(find-file)`.
     :init
     (vertico-mode)
     :config
-    ;; Use `consult-completion-in-region' if Vertico is enabled.
-    ;; Otherwise use the default `completion--in-region' function.
+    ;; In-buffer completion where corfu isn't active (e.g. M-: in the
+    ;; minibuffer) shows candidates in Vertico via
+    ;; `consult-completion-in-region'. Fall back to the default if
+    ;; Vertico is turned off.
     (setq completion-in-region-function
           (lambda (&rest args)
             (apply (if vertico-mode
@@ -423,11 +453,14 @@ minibuffer in modes like `M-x` or `(find-file)`.
 #+end_src
 
 ** orderless
-Provides completion styles to be used on top-of a completion packages
-such as `Vertico` or certain `Consult` functions. If we do `C-x C-f`
-and have two files `languages-and-modes.org` and `general.org` then
-the search string `g l` will match both if we have set `'orderless`
-style (ie. the order of your search words does not matter).
+Provides a completion style that matches space-separated components
+in any order. If we do =C-x C-f= and have two files
+=languages-and-modes.org= and =general.org= then the search string =g l=
+matches both, since the order of the search words does not matter.
+
+File names keep =partial-completion= first, so =/u/s/l= expands to
+=/usr/share/locale= and so on. =completion-category-defaults= is cleared
+so Emacs' per-category defaults don't override orderless elsewhere.
 #+begin_src emacs-lisp
   (use-package orderless
     :demand t
@@ -438,10 +471,10 @@ style (ie. the order of your search words does not matter).
 #+end_src
 
 ** marginalia
-This package displays helpful descriptions of on the margins in
-certain instances. For example: invoking `M-x` displays all commands
-that can be called interactively. `Marginalia` will show their
-descriptions on the right hand side -- at the margin if you will.
+This package adds annotations to minibuffer candidates. For example,
+=M-x= lists all commands, and =marginalia= shows each command's
+keybinding and the first line of its docstring on the right hand side,
+in the margin if you will.
 #+begin_src emacs-lisp
   (use-package marginalia
     :defer 2
@@ -450,12 +483,17 @@ descriptions on the right hand side -- at the margin if you will.
 #+end_src
 
 ** savehist
-Save minibuffer commands in a file that is loaded at startup
+Persist minibuffer history (=M-x= commands, files, searches, ...)
+across sessions. Vertico uses it to sort recently used candidates
+first.
 #+begin_src emacs-lisp
   (savehist-mode t)
 #+end_src
 
 ** consult
+Search and navigation commands built on =completing-read=, with live
+previews. The bindings follow the consult README; the comments note
+which built-in command each one replaces.
 #+begin_src emacs-lisp
   (use-package consult
     :bind (;; C-c bindings in `mode-specific-map'
@@ -510,25 +548,33 @@ Save minibuffer commands in a file that is loaded at startup
            ("M-s" . consult-history)                 ;; orig. next-matching-history-element
            ("M-r" . consult-history))                ;; orig. previous-matching-history-element
     :init
-    ;; Optionally configure the register formatting. This improves the register
-    ;; preview for `consult-register', `consult-register-load',
-    ;; `consult-register-store' and the Emacs built-ins.
+    ;; Nicer register previews for `consult-register',
+    ;; `consult-register-load', `consult-register-store' and the
+    ;; built-in register commands, shown after 0.5s.
     (setq register-preview-delay 0.5
           register-preview-function #'consult-register-format)
 
-    ;; Optionally tweak the register preview window.
-    ;; This adds thin lines, sorting and hides the mode line of the window.
+    ;; The register preview window gets thin lines, sorting and no
+    ;; mode line.
     (advice-add #'register-preview :override #'consult-register-window)
 
     ;; Use Consult to select xref locations with preview
     (setq xref-show-xrefs-function #'consult-xref
           xref-show-definitions-function #'consult-xref)
     :config
+    ;; In multi-source commands like `consult-buffer', type `<' and a
+    ;; key to narrow to one source, e.g. `< b' for buffers only.
     (setq consult-narrow-key "<"))
 #+end_src
 
 ** embark
-A package that provides a minibuffer UI for actions on things. We install =embark= and =embark-consult= for previewing targets.
+=embark-act= (=C-;=) offers actions on the thing at point or the
+current minibuffer candidate: open, rename, delete, copy, and so on.
+=embark-consult= adds live previews in =embark-collect= buffers.
+
+Setting =prefix-help-command= means that =C-h= after an incomplete
+prefix (e.g. =C-x C-h=) lists that prefix's bindings with completion,
+instead of opening a help buffer.
 #+begin_src emacs-lisp
   (use-package embark
     :init
@@ -537,6 +583,7 @@ A package that provides a minibuffer UI for actions on things. We install =embar
     (("C-;" . embark-act)
      ("C-h B" . embark-bindings))
     :config
+    ;; no mode line in Embark's collect buffers
     (add-to-list 'display-buffer-alist
                  '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
                    nil
@@ -588,6 +635,20 @@ By default =embark= will show a preview window. We don't want that and instead p
 #+end_src
 
 ** completion
+Settings for the built-in =*Completions*= buffer, which shows up when
+Vertico or corfu don't handle a completion. The options live in
+=minibuffer.el=; =completion= is just a name to group them under.
+- =completion-eager-update= :: update =*Completions*= as we type.
+- =completion-eager-display= :: =auto= shows it right away for commands
+  that ask for it.
+- =minibuffer-visible-completions= :: =up-down= lets the up/down arrows
+  move through =*Completions*= from the minibuffer, while left/right
+  still move the cursor in the minibuffer.
+
+=completion-preview-mode= shows the top candidate inline, as grey text
+after the cursor, while we type. =M-n= / =M-p= cycle through
+candidates, =C-<return>= accepts, =M-f= accepts one word and =TAB=
+opens the full list.
 #+begin_src emacs-lisp
   (use-package completion
     :custom
@@ -606,8 +667,10 @@ By default =embark= will show a preview window. We don't want that and instead p
 #+end_src
 
 ** corfu
-General auto-completion system, but mostly used in programming
-contexts. We complete text with `TAB' across Emacs' buffers.
+Shows in-buffer completion candidates in a popup at point. =TAB=
+indents first and completes if the line is already indented
+(=tab-always-indent= =complete=). =SPC= inserts a separator instead of
+closing the popup, so we can type several orderless components.
 #+begin_src emacs-lisp
   (use-package corfu
     :demand t
@@ -615,10 +678,10 @@ contexts. We complete text with `TAB' across Emacs' buffers.
     (global-corfu-mode)
     :bind (:map corfu-map ("SPC" . corfu-insert-separator))
     :config
-    (setq corfu-cycle t
-          corfu-preselect 'first
-          corfu-count 20)
-    ;; Do not cycle commands instead give me the corfu pop-up
+    (setq corfu-cycle t            ; wrap around at the ends of the list
+          corfu-preselect 'first   ; select the first candidate
+          corfu-count 20)          ; show up to 20 candidates
+    ;; Never cycle through candidates on repeated TAB; always show the popup
     (setq completion-cycle-threshold nil)
     ;; Hide commands in M-x which do not apply to the current mode. Corfu
     ;; commands are hidden, since they are not supposed to be used via
@@ -631,7 +694,14 @@ contexts. We complete text with `TAB' across Emacs' buffers.
 #+end_src
 
 ** cape
-More completion at point functions.
+Extra =completion-at-point= functions (capfs). The global hooks are
+appended (the =t= argument), so a mode's own capfs are tried first and
+dabbrev, file names and Elisp in Org source blocks (=cape-elisp-block=)
+come after.
+
+In Eglot buffers, =eglot-capf-setup= merges the language server, tempel
+and file name completion into one capf, so candidates from all three
+appear in the same corfu popup. =cape-dabbrev= replaces =M-/=.
 #+begin_src emacs-lisp
   (use-package cape
     :defer 2
@@ -657,6 +727,8 @@ More completion at point functions.
     ;; M-/ is cape-dabbrev (see cape); keep plain expansion on C-M-/
     :bind ("C-M-/" . dabbrev-expand)
     :config
+    ;; don't take words from internal buffers (names starting with a
+    ;; space) or from these modes
     (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
     (add-to-list 'dabbrev-ignored-buffer-modes 'authinfo-mode)
     (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
@@ -665,7 +737,10 @@ More completion at point functions.
 #+end_src
 
 ** tempel
-Template system similar to yassnippet.
+Template system similar to yasnippet. Templates live in
+=~/.emacs.d/templates=. =M-+= completes a template name at point and
+=M-*= picks one with completion. In conf, prog and text modes, typing
+a template's exact name and completing (=TAB=) expands it.
 #+begin_src emacs-lisp
   (use-package tempel
     :bind (("M-+" . tempel-complete)
@@ -683,7 +758,8 @@ Template system similar to yassnippet.
 * editing
 
 ** defaults
-
+=C-w= without an active region kills the previous word. At the =save-some-buffers= prompt (e.g. on =C-x C-c=), =d= shows a
+diff of the buffer against its file before we decide whether to save.
 #+begin_src emacs-lisp
   (use-package emacs
     :custom
@@ -706,7 +782,10 @@ Use spaces for indentation with a tab width of four.
 #+end_src
 
 ** clipboard
-Deduplicate kill-ring entries and save the contents of the clipboard to the kill-ring.
+Don't add a kill to the kill ring if it duplicates the last entry. And
+before a kill replaces the system clipboard, save what was on the
+clipboard to the kill ring, so text copied in another program isn't
+lost.
 #+begin_src emacs-lisp
   (use-package emacs
     :init
@@ -714,7 +793,12 @@ Deduplicate kill-ring entries and save the contents of the clipboard to the kill
           save-interprogram-paste-before-kill t))
 #+end_src
 
-Commands to interact with =cliphist= for copy, cut and selecting, all under the =C-c y= prefix.
+Commands for the =cliphist= clipboard history (Wayland), all under the
+=C-c y= prefix.
+- =C-c y y= :: insert the most recent cliphist entry. With =C-u=, pick
+  any entry from the history.
+- =C-c y c= / =C-c y x= :: copy / cut the region to the system clipboard
+  with =wl-copy=, so cliphist records it.
 #+begin_src emacs-lisp
   (use-package emacs
     :bind (("C-c y y" . hesam-cliphist-select)
@@ -796,8 +880,8 @@ minor mode.
 #+end_src
 
 ** sentences
-One of the ways Emacs recognizes sentences is by a '.', ',', '?' or
-'!' followed by _two_ spaces. Hence sentence commands such as `M-k`
+One of the ways Emacs recognizes sentences is by a '.', '?' or '!'
+followed by _two_ spaces. Hence sentence commands such as `M-k`
 will not work properly for text that does not follow this convention.
 We change it here so that only _one_ space is needed.
 #+begin_src emacs-lisp
@@ -814,7 +898,10 @@ Putting the cursor at the character `M` in the quote above and
 pressing `M-e` leaves us in the space between `Mt.` and `Everest`.
 
 ** expreg
-Will expand mark in regions that makes sense, i.e. is context aware, and has tree-sitter integration.
+Expands the region step by step to the next larger syntactic unit:
+word, string, expression, function, and so on. It understands
+tree-sitter, so the steps match the language's syntax. =C-== expands
+and =C--= contracts.
 #+begin_src emacs-lisp
   (use-package expreg
     :ensure t
@@ -823,7 +910,13 @@ Will expand mark in regions that makes sense, i.e. is context aware, and has tre
 #+end_src
 
 ** mark
-Mark popping defaults to =C-u C-SPC=. The following setting makes it so that after the first invocation all subsequent =C-SPC= presses will pop the mark.
+Mark popping defaults to =C-u C-SPC=. With =set-mark-command-repeat-pop=,
+every =C-SPC= after the first =C-u C-SPC= pops the mark again, so we can
+walk back through the mark ring.
+
+=delete-pair-push-mark= makes =M-x delete-pair= (which removes a pair of
+parens or quotes) push a mark at the end of the region it unwrapped,
+so we can jump there afterwards.
 #+begin_src emacs-lisp
   (use-package emacs
     :custom
@@ -841,6 +934,8 @@ the region you selected.
 #+end_src
 
 ** surround
+Add, change and delete surrounding pairs (quotes, parens, ...) under
+the =C-c s= prefix.
 #+begin_src emacs-lisp
   (use-package surround
     :defer 2
@@ -851,19 +946,23 @@ the region you selected.
 In this excellent [[https://archive.casouri.cc/note/2021/visual-undo-tree/index.html][blog]] Yuan Fu describes a way of creating an undo-tree
 from Emacs' linear tree. This enables us to build an undo-tree on the
 fly, navigate it and make Emacs go to that state. Born is the package
-`vundo` (visualize undo).
+`vundo` (visualize undo). Run =M-x vundo= to see the tree.
 #+begin_src emacs-lisp
   (use-package vundo)
 #+end_src
 
 ** ws-butler
-Removes trailing space and tabs from lines the user modified.
+Removes trailing spaces and tabs, but only from lines we modified, so
+untouched lines in other people's files don't show up in diffs.
 #+begin_src emacs-lisp
   (use-package ws-butler
     :hook (prog-mode text-mode))
 #+end_src
 
 ** jinx
+Fast spell checking through the =enchant= library. It checks visible
+text as we type: prose in text modes, and comments and strings in
+code. =M-$= corrects the word at point, =C-.= the nearest misspelling.
 #+begin_src emacs-lisp
   (use-package jinx
     :defer 2
@@ -881,6 +980,8 @@ Editing files that need root is built in through TRAMP: =C-x x @=
 * navigation and search
 
 ** dired
+When details are hidden with =(= (=dired-hide-details-mode=), also hide
+the directory's absolute path in the header line.
 #+begin_src emacs-lisp
   (use-package dired
     :ensure nil
@@ -889,7 +990,12 @@ Editing files that need root is built in through TRAMP: =C-x x @=
 #+end_src
 
 ** ffap
-=ffap= guesses the file path under point and tries to open it; falling back to regular =find-file= when failing.
+=ffap= guesses the file path or URL under point and opens it, falling
+back to regular =find-file= when it finds nothing.
+
+Setting =ffap-machine-p-known= to =reject= means text that looks like a
+hostname is never treated as one. By default ffap might ping the host
+to check, which can block Emacs on the network.
 #+begin_src emacs-lisp
   (use-package ffap
     :bind (("C-c o" . ffap))
@@ -907,6 +1013,8 @@ To navigate buffers we prefer to use =ibuffer= instead.
 #+end_src
 
 ** speedbar
+A sidebar for browsing files and the tags (functions, headings, ...)
+in them. =M-I= toggles it as a side window in the current frame.
 #+begin_src emacs-lisp
   (use-package speedbar
     :ensure nil
@@ -921,7 +1029,10 @@ To navigate buffers we prefer to use =ibuffer= instead.
 #+end_src
 
 ** re-builder
-Setting =re-builder= settings.
+=M-x re-builder= builds a regexp interactively, with matches
+highlighted in the buffer. The =string= syntax means we type the regexp
+as we would at the =M-x replace-regexp= prompt (=\(foo\)=), not as an
+Elisp string literal with doubled backslashes (="\\(foo\\)"=).
 #+begin_src emacs-lisp
   (use-package re-builder
     :custom
@@ -931,10 +1042,10 @@ Setting =re-builder= settings.
 * windows, tabs and frames
 
 ** frames
-Lastly we use a little margin on both sides. Mainly because we want
-some padding between buffers. Recall that `internal-border` option is
-only around the frame and does not apply in areas that do not touch a
-frame edge.
+A one-column right margin in every buffer gives some padding between
+side-by-side windows. The frame's =internal-border-width= (see
+[[early-init]]) only pads the outer edges of the frame, not the borders
+between windows.
 #+begin_src emacs-lisp
   (setq-default right-margin-width 1)
 #+end_src
@@ -962,7 +1073,10 @@ so this also covers the initial frame).
 #+end_src
 
 ** cursor
-If you have several windows visible, Emacs draws a cursor in each of them – even the ones you’re not working in. It also highlights selections in non-focused windows. Two settings to stop that:
+If you have several windows visible, Emacs draws a cursor in each of
+them, even the ones you're not working in. It can also highlight
+selections in windows that aren't selected. We turn both off, and stop
+the cursor from blinking.
 #+begin_src emacs-lisp
   (use-package emacs
     :init
@@ -972,11 +1086,24 @@ If you have several windows visible, Emacs draws a cursor in each of them – ev
 #+end_src
 
 ** scrolling
+When scrolling fast over text that hasn't been fontified yet, only
+fontify what actually ends up on screen. Scrolling stays smooth, at
+the cost of slightly imprecise positions while scrolling.
 #+begin_src emacs-lisp
   (setq fast-but-imprecise-scrolling t)
 #+end_src
 
 ** tabs
+Each tab holds its own window configuration. The tab bar only shows
+when there is more than one tab (=tab-bar-show= 1). Tab names are in
+upper case, and tabs are only as wide as their names. The right side
+of the tab bar shows =global-mode-string= (e.g. the time), which we
+removed from the mode-line (see [[mode-line]]). =tab-bar-history-mode=
+remembers each tab's earlier window configurations, so we can go back
+and forward through them.
+
+After =C-x t 2= or =C-x t 0=, keep pressing =2= or =0= to open or close
+more tabs.
 #+begin_src emacs-lisp
   (use-package tab-bar
     :bind (("s-n" . tab-next)
@@ -1011,10 +1138,11 @@ If you have several windows visible, Emacs draws a cursor in each of them – ev
                       tab-bar-format-global)))
 #+end_src
 
-Define a function that kills all buffers associated with a window
+Define a function that kills the current window's buffer and then
+deletes the window, unless it is the only window in the frame.
 #+begin_src emacs-lisp
   (defun hesam/close-window-and-buffers ()
-    "Kill all buffers associated with the current window, and then delete the window if possible."
+    "Kill the current window's buffer, then delete the window if possible."
     (interactive)
     (let* ((current-window (selected-window))
            (buffers (delq nil (mapcar (lambda (win)
@@ -1039,7 +1167,11 @@ and build upon that to close the tab as well, bind this `C-x t k`.
 #+end_src
 
 ** windmove and winner-mode
-=windmove= allows for easy navigation inside a window. We configure =windmove= to wrap around when moving buffers around (=windmove= is enabled by default).
+=windmove= moves focus between windows by direction with =s-h/j/k/l=,
+and =s-H/J/K/L= swaps the current buffer with the neighbour in that
+direction. Wrap-around is off, so at the edge of the frame windmove
+stops instead of jumping to the opposite side. The
+[[hyprland integration]] below relies on that to move into Hyprland.
 #+begin_src emacs-lisp
   (use-package windmove
     :bind
@@ -1078,6 +1210,17 @@ instead of during startup.
 #+end_src
 
 ** hyprland integration
+One set of keys moves focus both between Emacs windows and between
+Hyprland windows. Hyprland binds =SUPER+h/j/k/l= to
+=emacsclient -e "(hesam/windmove-or-hyprland 'left)"= and so on (see
+=~/.config/hypr/hyprland.lua=). If Emacs is focused, we move to the
+neighbouring Emacs window, and at the edge of the frame we hand over
+to Hyprland. If another program is focused, we just ask Hyprland to
+move focus.
+
+=hyprctl= needs =HYPRLAND_INSTANCE_SIGNATURE= in its environment. The
+Emacs daemon can start before Hyprland, and then lacks the variable,
+so we look it up with =hyprctl instances= the first time we need it.
 #+begin_src emacs-lisp
   (defun hesam/windmove-or-hyprland (dir)
     "If focused window is Emacs, try to move using windmove.
@@ -1111,6 +1254,7 @@ instead of during startup.
          (hesam/hyprland-move-focus dir)))))
 
   (defun hesam/hyprland-move-focus (dir)
+    "Ask Hyprland to move focus in direction DIR."
     (let ((hypr-dir (symbol-name dir)))
       (call-process "hyprctl" nil 0 nil "dispatch"
                     (format "hl.dsp.focus({ direction = \"%s\" })" hypr-dir))))
@@ -1131,6 +1275,14 @@ to what they affect, e.g. the collapsed-text symbol of =hideshow= under
 [[programming]].
 
 ** fonts
+The font size follows the monitor's DPI. For each frame we compute the
+DPI from the monitor's size in pixels and millimetres, and pick a base
+point size from it. Fonts are reapplied when a frame is created, when
+it moves (e.g. to another monitor) and when focus changes.
+
+=hesam/zoom-in=, =hesam/zoom-out= and =hesam/zoom-reset= adjust an offset on
+top of the DPI-based size, for all frames. With =repeat-mode=, after
+one zoom command we can keep pressing =+= / =-= / =0=.
 #+begin_src emacs-lisp
   (defcustom hesam-default-font-family "JetBrainsMono Nerd Font"
     "Default font family."
@@ -1256,7 +1408,9 @@ Ligatures are a way to display multiple characters as a single glyph. Here we us
 #+end_src
 
 ** themes
-Chosen theme that is loaded when starting Emacs can be customized.
+The theme loaded at startup is =hesam-default-theme=. The matugen
+integration below saves a new value whenever the wallpaper changes, so
+the next start uses the theme matching the current wallpaper.
 #+begin_src emacs-lisp
   (defcustom hesam-default-theme 'modus-vivendi
     "Theme that is loaded at startup."
@@ -1272,9 +1426,10 @@ Chosen theme that is loaded when starting Emacs can be customized.
 #+end_src
 
 ** mode-line
-We like a compact mode-line and since VC mode will display potentially
-long branch names we remove it from the mode-line. To be safe we
-remove it after startup to ensure it is set when we try and delete it.
+We like a compact mode-line, where runs of spaces are collapsed into
+one. VC mode can display long branch names, so we remove it from the
+mode-line. We do that after startup, to be sure the entry is there
+when we try to delete it.
 #+begin_src emacs-lisp
   (setq mode-line-compact t)
   (add-hook
@@ -1283,18 +1438,17 @@ remove it after startup to ensure it is set when we try and delete it.
      (delete '(vc-mode vc-mode) mode-line-format)))
 #+end_src
 
-and to remove the percentage and All/Top/Bottom indicator.
+We also remove the percentage and All/Top/Bottom indicator.
 #+begin_src emacs-lisp
   (setq mode-line-percent-position nil)
 #+end_src
 
-Remove global info from the mode-line. Otherwise `display-time-mode`
-will display the time on every mode-line bar since
-`mode-line-misc-info` carries the global-string. We instead opt for
-the tab-bar to include the global-info-string since for each frame we
-have only one tab-bar. At the time of writing, as you'll see below, we
-need to wait until the mode-line-misc-info is set and safest is to do
-it after startup.
+Remove global info from the mode-line. Otherwise =display-time-mode=
+would display the time on every window's mode-line, since
+=mode-line-misc-info= carries =global-mode-string=. We show it in the
+tab bar instead (see [[tabs]]), which each frame has only one of. As
+with VC above, we wait until after startup to be sure the entry is in
+=mode-line-misc-info=.
 #+begin_src emacs-lisp
   (add-hook
    'emacs-startup-hook
@@ -1310,7 +1464,19 @@ into a single indicator (built in since Emacs 31).
 #+end_src
 
 ** matugen
+=matugen= generates a colour scheme from the current wallpaper and
+applies it system-wide through templates. Emacs takes part in two
+ways.
+
 *** dark mode toggle
+Switch the whole desktop between light and dark at sunrise and sunset.
+Sunset is moved earlier by =hesam-matugen-sunset-offset= minutes. Times
+come from =solar=, using the location set in [[calendar and time]].
+=hesam-matugen-mode= runs a timer that fires at the next sunrise or
+sunset, applies the matching mode and re-arms itself. At startup we
+also correct the mode if the system (as reported by =darkman=) is
+wrong for the time of day. The last applied mode is saved with
+=customize=. =M-x hesam-matugen-toggle= switches by hand.
 #+begin_src emacs-lisp
   (defcustom hesam-matugen-current-wallpaper-path "~/.local/state/wallpaper_path"
     "Path to the file containing the current wallpaper path."
@@ -1327,7 +1493,8 @@ into a single indicator (built in since Emacs 31).
     :type 'integer
     :group 'hesam)
 
-  (defvar hesam-matugen--timer nil)
+  (defvar hesam-matugen--timer nil
+    "Timer for the next sunrise/sunset switch.")
 
   (defun hesam-matugen--get-wallpaper ()
     "Return the current wallpaper path, or nil if unavailable."
@@ -1474,6 +1641,17 @@ into a single indicator (built in since Emacs 31).
 #+end_src
 
 *** ef-theme switching
+Pick the Ef theme closest to the wallpaper's colours. matugen renders
+the template =~/.config/matugen/emacs.el= to =~/.emacs.d/matugen.el=, a
+call to =hesam-matugen-pick-ef-theme-by-hsl= with the generated colours
+as HSL strings. Its post hook loads that file through =emacsclient=.
+
+The surface colour's lightness decides between light and dark themes.
+Each Ef theme has an approximate hue/saturation anchor in
+=hesam--matugen-ef-theme-targets=, and we choose the theme whose anchor
+is closest to the primary colour. Hue is circular and weighted 2.5x
+more than saturation, since hue is what makes a theme look like the
+wallpaper.
 #+begin_src emacs-lisp
   (require 'ef-themes)
 
@@ -1612,6 +1790,10 @@ here. Some relevant minor modes also set here, including their look
 and feel if appropriate.
 
 ** treesit
+Use the tree-sitter (=-ts-mode=) variant of every major mode that has
+one (=treesit-enabled-modes= =t=), and install missing grammars
+without asking. =markdown-ts-mode= is built into Emacs 31; Eglot also
+uses it to render documentation.
 #+begin_src emacs-lisp
   (use-package treesit
     :ensure nil
@@ -1625,20 +1807,23 @@ and feel if appropriate.
 #+end_src
 
 ** eglot
-Setup Language Server Protocol (LSP) for different programming
-languages.
+Language Server Protocol (LSP) client, built into Emacs. It starts
+automatically for Go and Rust; for Typst, =M-x eglot= uses =tinymist=.
+Buffers are formatted on save, but only when the server supports
+formatting.
 #+begin_src emacs-lisp
   (use-package eglot
     :defer 1
     :custom
-    (eglot-send-changes-idle-time 0.3)
+    (eglot-send-changes-idle-time 0.3)   ; send edits after 0.3s idle (default 0.5)
     (eglot-documentation-renderer 'markdown-ts-view-mode)
-    (eglot-code-action-indications nil)
+    (eglot-code-action-indications nil)  ; no hints for available actions; use C-c e a
     :config
     (defun hesam--eglot-format-buffer ()
       (when (eglot-server-capable :documentFormattingProvider)
         (eglot-format-buffer)))
 
+    ;; inlay hints (parameter names, inferred types, ...) for gopls
     (setq-default eglot-workspace-configuration
                   '(:gopls
                     (:hints
@@ -1650,6 +1835,8 @@ languages.
                       :parameterNames t
                       :rangeVariableTypes t))))
 
+    ;; :size 0 disables the JSON-RPC events log, which slows things
+    ;; down; raise it temporarily when debugging a server
     (setq eglot-events-buffer-config '(:size 0 :format full))
     (set-face-attribute 'eglot-highlight-symbol-face nil :inherit 'match)
     (add-to-list 'eglot-server-programs '(typst-ts-mode . ("tinymist")))
@@ -1668,6 +1855,8 @@ languages.
 #+end_src
 
 ** eldoc
+Also show the help text of the thing at point in the echo area through
+Eldoc, e.g. the help for a button or link.
 #+begin_src emacs-lisp
   (use-package eldoc
     :custom
@@ -1677,7 +1866,13 @@ languages.
 ** flymake
 Flymake is a built-in syntax checker for Emacs to be used everywhere,
 but it's strongly linked to programming and that is why we define it
-here.
+here. Eglot reports its diagnostics through Flymake.
+
+We check 0.25s after typing stops and on save, show the most severe
+diagnostic at the end of each affected line, and hide zero counters in
+the mode-line. After =C-c f n= or =C-c f p=, keep pressing =n= / =p= to
+move between errors. The project diagnostics buffer opens at the top
+of the frame, using 20% of its height.
 #+begin_src emacs-lisp
   (use-package flymake
     :bind (:map flymake-mode-map
@@ -1709,6 +1904,8 @@ here.
 #+end_src
 
 ** xref
+Use ripgrep when xref searches files, e.g. for =project-find-regexp=
+(=C-x p g=) and when there is no better source for references.
 #+begin_src emacs-lisp
   (use-package xref
     :custom
@@ -1716,7 +1913,8 @@ here.
 #+end_src
 
 ** prog-mode minor modes
-Many of these mode are activated by adding a hook to =prog-mode-hook= or is highly associated with programming.
+Minor modes that are turned on through =prog-mode-hook=, or are
+closely tied to programming.
 
 *** electric mode
 Automatically add closing brackets and indent code in `prog-mode`.
@@ -1728,7 +1926,10 @@ Automatically add closing brackets and indent code in `prog-mode`.
 #+end_src
 
 *** hideshow
-Set up the `hideshow` minor mode for `prog-mode`.
+Fold code blocks with =hs-minor-mode=. =C-<return>= toggles the block
+at point. With =hs-allow-nesting=, hiding an outer block remembers
+which inner blocks were hidden, so they stay hidden when the outer
+block is shown again.
 #+begin_src emacs-lisp
   (use-package hideshow
     :hook (prog-mode . hs-minor-mode)
@@ -1738,20 +1939,23 @@ Set up the `hideshow` minor mode for `prog-mode`.
     (setq hs-allow-nesting t))
 #+end_src
 
-Another symbol to be used for collapsed text.
+Show folded text as " [+] " instead of "...".
 #+begin_src emacs-lisp
   (set-display-table-slot standard-display-table
                           'selective-display (string-to-vector " [+] "))
 #+end_src
 
 *** column numbers
-Shows column number in `mode-line` in addition to row number.
+Show the column number in the mode-line in addition to the line
+number. =column-number-mode= is a global mode, so it is turned on for
+all buffers the first time a programming buffer opens.
 #+begin_src emacs-lisp
   (add-hook 'prog-mode-hook 'column-number-mode)
 #+end_src
 
 *** show paren
-Highlights matching parens in prog-mode.
+Highlight matching parens. =show-paren-mode= is a global mode and is
+already on by default since Emacs 28, so this hook is a no-op.
 #+begin_src emacs-lisp
   (add-hook 'prog-mode-hook 'show-paren-mode)
 #+end_src
@@ -1759,13 +1963,17 @@ Highlights matching parens in prog-mode.
 ** languages
 
 *** auto-mode
-We associate some file extensions with major modes not included by default
+Associate files with tree-sitter modes that Emacs doesn't map by
+default.
 #+begin_src emacs-lisp
   (add-to-list 'auto-mode-alist '("Dockerfile" . dockerfile-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.y[a]?ml\\'" . yaml-ts-mode))
 #+end_src
 
 *** go
+=:defer 1= loads the mode after one second of idle time, so opening
+the first file of the language doesn't pause. Go code is indented
+with tabs; =go-ts-mode-indent-offset= sets the width.
 #+begin_src emacs-lisp
   (use-package go-ts-mode
     :defer 1
@@ -1774,13 +1982,16 @@ We associate some file extensions with major modes not included by default
 #+end_src
 
 *** rust
-Demand the new treesitter mode for Rust.
+Preload the tree-sitter mode for Rust, like Go above.
 #+begin_src emacs-lisp
   (use-package rust-ts-mode
     :defer 1)
 #+end_src
 
 *** typst
+=typst-ts-mode= is installed from source. Its tree-sitter grammar is in
+=~/.emacs.d/tree-sitter=. =M-x typst-ts-watch= recompiles on save, and
+=--open= opens the PDF in a viewer.
 #+begin_src emacs-lisp
   (use-package typst-ts-mode
     :defer 1
@@ -1796,7 +2007,8 @@ Demand the new treesitter mode for Rust.
 #+end_src
 
 ** version control
-=magit= is a git porcelain
+=magit= is a git porcelain. =C-x p v= (=project-vc-dir=) opens Magit
+instead of VC-Dir, and Magit buffers open to the right of the frame.
 #+begin_src emacs-lisp
   (use-package magit
     :bind ("C-c g" . magit-status)
@@ -1811,7 +2023,12 @@ Demand the new treesitter mode for Rust.
                  (direction . right))))
 #+end_src
 
-We configure the built-in version control package.
+We configure the built-in version control package. Opening a symlink
+to a version-controlled file visits the real file without asking.
+Files under version control also get the backups configured in
+[[autosave and backups]] (off by default). VC may rewrite already
+pushed history (e.g. amend a pushed commit). In VC-Dir, refreshing with
+=g= also hides up-to-date and ignored files.
 #+begin_src emacs-lisp
   (use-package vc
     :init
@@ -1822,7 +2039,9 @@ We configure the built-in version control package.
           vc-dir-auto-hide-up-to-date 'revert))
 #+end_src
 
-=ediff= is used for viewing diffs and acting upon them. We want the control that normally displays in another frame to be place in the same window.
+=ediff= is used for viewing diffs and acting upon them. Its control
+panel normally opens in a separate frame; we put it in a window in the
+same frame instead.
 #+begin_src emacs-lisp
   (use-package ediff
     :init
@@ -1832,12 +2051,14 @@ We configure the built-in version control package.
 * shells and terminals
 Shell related packages and configurations. Environment variables such as =PATH= are defined in =.bash_profile=; the graphical session (uwsm) imports them from a login shell, and the Emacs daemon inherits them from there, so no extra package is needed to copy them.
 
-Use completions other than for binaries.
+In =M-x shell=, complete any file name in the command position, not
+just executables.
 #+begin_src emacs-lisp
   (setq shell-completion-execonly nil)
 #+end_src
 
 ** eshell
+=C-u C-l= clears the whole eshell buffer.
 #+begin_src emacs-lisp
   (use-package eshell
     :after esh-mode
@@ -1853,6 +2074,22 @@ Use completions other than for binaries.
 #+end_src
 
 ** ghostel
+Our main terminal: a terminal emulator built on =libghostty-vt=, the
+terminal core of Ghostty. =C-x m= opens one, and in a project =C-x p m=
+opens one in the project root. =ghostel-project= also replaces
+=project-shell=. Terminals open at the bottom of the frame, using a
+quarter of its height.
+
+Inside the terminal:
+- =C-s= searches the terminal buffer with =consult-line=.
+- =C-k= kills to the end of the line in the shell and also saves the
+  text to the kill ring.
+- =M-p= / =M-n= send =C-p= / =C-n= to the shell, i.e. shell history.
+- =M-s= is not sent to the terminal, so Emacs' search map keeps working.
+The native module is downloaded automatically the first time ghostel
+is used. URLs and =file:line= references in the output become links.
+The shell may call =magit-status-setup-buffer= in Emacs through an
+escape sequence, so a shell function can open Magit.
 #+begin_src emacs-lisp
   (use-package ghostel
     :bind (("C-x m" . ghostel)
@@ -1892,8 +2129,9 @@ Use completions other than for binaries.
 #+end_src
 
 ** vterm
-Powerful terminal emulator based on libvterm written in C. Fast,
-colorful a delight.
+Terminal emulator based on libvterm, written in C. Ghostel is our main
+terminal; vterm is kept as a fallback. The commented-out lines would
+make it the project shell again.
 #+begin_src emacs-lisp
   (use-package vterm
     :after project
@@ -1920,10 +2158,10 @@ colorful a delight.
     (vterm-max-scrollback 10000))
 #+end_src
 
-The custom function `hesam/vterm-project-shell` is for usage with
-`project.el`. It overrides the default shell. The function is rather
-long because we want to make sure vterm is started in `project-root`
-and have requirements on how and when a new window is created.
+The custom function =hesam/vterm-project-shell= is for use with
+=project.el=, as a replacement for =project-shell= (see the
+commented-out lines above). It starts vterm in the project root, or
+switches to that project's existing vterm buffer.
 #+begin_src emacs-lisp
   (defun hesam/vterm-project-shell ()
     "Run `vterm' in the current project's root.
@@ -1951,17 +2189,19 @@ and have requirements on how and when a new window is created.
 #+end_src
 
 ** kitty keyboard protocol
-Makes sure that key inputs in the terminal works as expected. We enable it when the first terminal frame is set up rather than checking =display-graphic-p= at init, since the daemon has no display at init and would otherwise always load it.
+In terminal frames (=emacs -nw=), use the kitty keyboard protocol so
+keys that terminals normally can't tell apart (e.g. =C-i= vs =TAB=,
+=C-<return>=) reach Emacs. We enable it when the first terminal frame is set up rather than checking =display-graphic-p= at init, since the daemon has no display at init and would otherwise always load it.
 #+begin_src emacs-lisp
   (use-package kkp
     :hook (tty-setup . global-kkp-mode))
 #+end_src
 
 * org and notes
-First set up our org mode directory
+First set up our org mode directory.
 #+begin_src emacs-lisp
   (defcustom hesam-org-directory "~/Dropbox/org"
-    "Default directory for where Org will look at put files."
+    "Default directory where Org looks for and puts files."
     :type 'directory
     :group 'hesam)
 #+end_src
@@ -1969,29 +2209,32 @@ First set up our org mode directory
 #+begin_src emacs-lisp
   (use-package org
     :config
-    (setq org-latex-src-block-backend 'engraved
-          org-src-window-setup 'current-window
+    (setq org-latex-src-block-backend 'engraved   ; colour source blocks in LaTeX export
+          org-src-window-setup 'current-window   ; edit source blocks (C-c ') in this window
           org-tag-alist '(("@work" . ?w) ("@home" . ?h)))
     :custom
     (org-directory hesam-org-directory)
-    (org-imenu-depth 5)
-    (org-outline-path-complete-in-steps t)
+    (org-imenu-depth 5)                       ; imenu/consult-imenu sees 5 heading levels
+    (org-outline-path-complete-in-steps t)    ; refile: pick the path one level at a time
     ;; agenda
-    (org-agenda-start-on-weekday nil)
-    (org-agenda-skip-deadline-if-done t)
-    (org-agenda-skip-scheduled-if-done t)
-    (org-agenda-show-all-dates t)
+    (org-agenda-start-on-weekday nil)         ; start the agenda today, not on Monday
+    (org-agenda-skip-deadline-if-done t)      ; hide done items' deadlines
+    (org-agenda-skip-scheduled-if-done t)     ; and scheduled dates
+    (org-agenda-show-all-dates t)             ; list empty days too
     :bind ("C-c c" . org-capture)
     :hook ((org-mode . visual-line-mode)))
 #+end_src
 
-This package provides very nice bullet points
+This package replaces the heading stars with nicer bullet points.
 #+begin_src emacs-lisp
   (use-package org-bullets
     :hook org-mode)
 #+end_src
 
 ** org-journal
+One journal file per day in =journal/= under our Org directory. =C-c j=
+adds a new entry. The two helper functions give the capture template
+below today's file and heading.
 #+begin_src emacs-lisp
   (use-package org-journal
     :init
@@ -2004,15 +2247,22 @@ This package provides very nice bullet points
     (org-journal-time-format "%H:%M "))
 
   (defun hesam-org-journal--today-file ()
+    "Return the path of today's journal file."
     (expand-file-name
      (format-time-string org-journal-file-format)
      org-journal-dir))
 
   (defun hesam-org-journal--heading ()
+    "Return today's journal heading."
     (format-time-string "%a %Y-%m-%d"))
 #+end_src
 
 ** org-templates
+Capture templates for =C-c c=:
+- =j= :: a time-stamped note under today's heading in today's journal
+  file.
+- =t= :: a TODO in =todo.org=, with the selected text and a link to
+  where we captured it from.
 #+begin_src emacs-lisp
   (setq org-capture-templates
         `(("j" "Journal quick note"
@@ -2027,6 +2277,10 @@ This package provides very nice bullet points
 #+end_src
 
 ** denote
+Notes as plain files whose names hold the date, title and keywords,
+kept in =~/Dropbox/denote=. All commands are under =C-c n=. In Dired,
+=denote-dired-mode= highlights the parts of note file names in that
+directory.
 #+begin_src emacs-lisp
   (use-package denote
     :defer 2
@@ -2059,7 +2313,8 @@ This package provides very nice bullet points
 * applications
 
 ** elfeed
-RSS reader that we configure with org.
+RSS reader. The feeds are listed in an Org file, =~/.elfeed.org=, which
+=elfeed-org= reads when elfeed starts.
 #+begin_src emacs-lisp
   (use-package elfeed
     :config
@@ -2073,6 +2328,11 @@ RSS reader that we configure with org.
 #+end_src
 
 ** emacs-reader
+A document reader (PDF, EPUB, ...) that renders with MuPDF in a native
+module, installed from source. Building the module runs =make=, which
+=package-vc= only does when =package-vc-allow-build-commands= is set. We
+allow build commands just around this declaration, so no other
+package can run build commands.
 #+begin_src emacs-lisp
   (setq package-vc-allow-build-commands t)
   (use-package reader
