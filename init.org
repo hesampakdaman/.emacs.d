@@ -1022,7 +1022,6 @@ in them. =M-I= toggles it as a side window in the current frame.
     (speedbar-window-default-width 25)
     (speedbar-window-max-width 25)
     (speedbar-use-images nil)
-    (speedbar-update-speed 1)
     :config
     (speedbar-enable-update)
     :bind ("M-I" . speedbar-window))
@@ -1438,9 +1437,12 @@ when we try to delete it.
      (delete '(vc-mode vc-mode) mode-line-format)))
 #+end_src
 
-We also remove the percentage and All/Top/Bottom indicator.
+We also remove the percentage and All/Top/Bottom indicator, and show
+the column number next to the line number in every buffer, as
+=(line,col)=.
 #+begin_src emacs-lisp
   (setq mode-line-percent-position nil)
+  (column-number-mode 1)
 #+end_src
 
 Remove global info from the mode-line. Otherwise =display-time-mode=
@@ -1816,7 +1818,6 @@ formatting.
     :defer 1
     :custom
     (eglot-send-changes-idle-time 0.3)   ; send edits after 0.3s idle (default 0.5)
-    (eglot-documentation-renderer 'markdown-ts-view-mode)
     (eglot-code-action-indications nil)  ; no hints for available actions; use C-c e a
     :config
     (defun hesam--eglot-format-buffer ()
@@ -1945,21 +1946,6 @@ Show folded text as " [+] " instead of "...".
                           'selective-display (string-to-vector " [+] "))
 #+end_src
 
-*** column numbers
-Show the column number in the mode-line in addition to the line
-number. =column-number-mode= is a global mode, so it is turned on for
-all buffers the first time a programming buffer opens.
-#+begin_src emacs-lisp
-  (add-hook 'prog-mode-hook 'column-number-mode)
-#+end_src
-
-*** show paren
-Highlight matching parens. =show-paren-mode= is a global mode and is
-already on by default since Emacs 28, so this hook is a no-op.
-#+begin_src emacs-lisp
-  (add-hook 'prog-mode-hook 'show-paren-mode)
-#+end_src
-
 ** languages
 
 *** auto-mode
@@ -2001,9 +1987,10 @@ Preload the tree-sitter mode for Rust, like Go above.
     :hook ((typst-ts-mode . visual-line-mode))
     :custom
     (typst-ts-watch-options "--open")
-    (typst-ts-mode-grammar-location (expand-file-name "tree-sitter/libtree-sitter-typst.so" user-emacs-directory))
-    (typst-ts-mode-enable-raw-blocks-highlight t)
-    (typst-ts-mode-highlight-raw-blocks-at-startup t))
+    ;; checked against the minimum grammar version typst-ts-mode supports
+    (typst-ts-grammar-location (expand-file-name "tree-sitter/libtree-sitter-typst.so" user-emacs-directory))
+    ;; highlight code in raw blocks with that language's grammar
+    (typst-ts-enable-raw-blocks-highlight t))
 #+end_src
 
 ** version control
@@ -2034,7 +2021,6 @@ pushed history (e.g. amend a pushed commit). In VC-Dir, refreshing with
     :init
     (setq vc-follow-symlinks t
           vc-make-backup-files t
-          vc-auto-revert-mode t
           vc-allow-rewriting-published-history t
           vc-dir-auto-hide-up-to-date 'revert))
 #+end_src
@@ -2215,7 +2201,7 @@ First set up our org mode directory.
     :custom
     (org-directory hesam-org-directory)
     (org-imenu-depth 5)                       ; imenu/consult-imenu sees 5 heading levels
-    (org-outline-path-complete-in-steps t)    ; refile: pick the path one level at a time
+    (org-outline-path-complete-in-steps nil)  ; refile: complete the whole path at once (vertico)
     ;; agenda
     (org-agenda-start-on-weekday nil)         ; start the agenda today, not on Monday
     (org-agenda-skip-deadline-if-done t)      ; hide done items' deadlines
@@ -2223,6 +2209,12 @@ First set up our org mode directory.
     (org-agenda-show-all-dates t)             ; list empty days too
     :bind ("C-c c" . org-capture)
     :hook ((org-mode . visual-line-mode)))
+#+end_src
+
+The =engraved= LaTeX backend set above needs =engrave-faces=, which
+colours source blocks with the same faces as the Emacs theme.
+#+begin_src emacs-lisp
+  (use-package engrave-faces)
 #+end_src
 
 This package replaces the heading stars with nicer bullet points.
