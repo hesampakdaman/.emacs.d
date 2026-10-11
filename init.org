@@ -2,7 +2,7 @@
 #+TITLE: Emacs configuration
 #+AUTHOR: Hesam Pakdaman
 #+STARTUP: overview
-#+PROPERTY: header-args :mkdrip yes :tangle-mode o444 :results silent :tangle (concat user-emacs-directory "init.el")
+#+PROPERTY: header-args :mkdirp yes :tangle-mode o444 :results silent :tangle (concat user-emacs-directory "init.el")
 * introduction
 This Emacs configuration will be tangled to =init.el= inside Emacs'
 configuration directory -- usually =~/.emacs.d= -- with one exception:
@@ -50,7 +50,8 @@ This will make sure that the tangled file has lexical binding.
         inhibit-startup-message t
         inhibit-startup-buffer-menu t)
 
-  ;; prevent Emacs from automatically resizing the frame during startup
+  ;; resize frames by pixel rather than whole characters, so tiled
+  ;; frames fill the space the window manager gives them
   (setq frame-resize-pixelwise t)
 
   ;; set these early to reduce flickering/resizing on startup
@@ -78,8 +79,7 @@ files.
   (use-package package
     :demand t
     :config
-    (setq package-check-signature nil
-          package-native-compile t
+    (setq package-native-compile t
           package-quickstart t)
     (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/")))
 #+end_src
@@ -305,7 +305,7 @@ Finding it too annoying hearing beeping sounds and seeing visual we alarms we tu
     (setq idle-update-delay 0.1))
 #+end_src
 
-Disables bidirectional text scanning. We assume left-to-right text everywhere to save Emacs having to do some work on every re-display
+Reduce the cost of bidirectional text on every redisplay. Reordering stays on, so right-to-left text still displays correctly, but paragraphs are assumed left-to-right and the bracket-pair algorithm is skipped.
 #+begin_src emacs-lisp
   (use-package emacs
     :init
@@ -469,9 +469,8 @@ contexts. We complete text with `TAB' across Emacs' buffers.
 ** dabbrev
 #+begin_src emacs-lisp
   (use-package dabbrev
-    ;; Swap M-/ and C-M-/
-    :bind (("M-/" . dabbrev-completion) ;; shows up in corfu
-           ("C-M-/" . dabbrev-expand))
+    ;; M-/ is cape-dabbrev (see cape); keep plain expansion on C-M-/
+    :bind ("C-M-/" . dabbrev-expand)
     :config
     (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
     (add-to-list 'dabbrev-ignored-buffer-modes 'authinfo-mode)
@@ -557,12 +556,12 @@ Deduplicate kill-ring entries and save the contents of the clipboard to the kill
           save-interprogram-paste-before-kill t))
 #+end_src
 
-A minor mode to interact with =cliphist= for copy, cut and selecting.
+Commands to interact with =cliphist= for copy, cut and selecting, all under the =C-c y= prefix.
 #+begin_src emacs-lisp
   (use-package emacs
-    :bind (("C-c y" . hesam-cliphist-select)
-           ("C-c c" . hesam-cliphist-copy)
-           ("C-c x" . hesam-cliphist-cut))
+    :bind (("C-c y y" . hesam-cliphist-select)
+           ("C-c y c" . hesam-cliphist-copy)
+           ("C-c y x" . hesam-cliphist-cut))
     :preface
     (defun hesam-cliphist-copy ()
       (interactive)
@@ -630,13 +629,10 @@ A minor mode to interact with =cliphist= for copy, cut and selecting.
            ("C-." . jinx-correct-nearest)))
 #+end_src
 
-** sudo-edit
-When buffer is locked for editing due to permissons we can use this
-package to make editing with sudo access easily. We extensively use
-either `(sudo-edit-current-file)` or `(sudo-edit-find-file)`.
-#+begin_src emacs-lisp
-  (use-package sudo-edit)
-#+end_src
+** sudo
+Editing files that need root is built in through TRAMP: =C-x x @=
+(=tramp-revert-buffer-with-sudo=) reopens the current file as root, and
+=C-x C-f /sudo::/path= opens any file as root.
 
 ** surround
 #+begin_src emacs-lisp
@@ -670,11 +666,10 @@ To encourage being more keyboard-driven we disable the mouse.
 * miscellaneous packages
 This is not an exhaustive list of all packages used in our
 configuration. Rather we have put packages here that we couldn't
-motivate putting elsewhere under our directory tree.
+motivate putting elsewhere in this file.
 
-For example, in `programming.org` we have declared `magit`
-package. But it makes sense to have it there since it has a clear
-connection with programming.
+For example, =magit= is declared under [[programming]] since it has a
+clear connection with programming.
 ** denote
 #+begin_src emacs-lisp
   (use-package denote
@@ -857,8 +852,8 @@ This package provides very nice bullet points
   (setq org-capture-templates
         `(("j" "Journal quick note"
            entry (file+headline
-                  (lambda () (hesam-org-journal--today-file))
-                  ,(hesam-org-journal--heading))
+                  hesam-org-journal--today-file
+                  hesam-org-journal--heading)
            "** %(format-time-string \"%H:%M\") %?\n"
            :kill-buffer t)
           ("t" "Todo" entry (file ,(expand-file-name "todo.org" hesam-org-directory))
@@ -1224,7 +1219,7 @@ Setting =re-builder= settings.
     (reb-re-syntax 'string))
 #+end_src
 * shell settings
-Shell related packages and configurations. In order to get all environment variables correctly we define them in `.bash_profile`, let the package `exec-path-from-shell` read them and intialize our terminal correctly.
+Shell related packages and configurations. Environment variables such as =PATH= are defined in =.bash_profile=; the graphical session (uwsm) imports them from a login shell, and the Emacs daemon inherits them from there, so no extra package is needed to copy them.
 
 Use completions other than for binaries.
 #+begin_src emacs-lisp
@@ -1244,17 +1239,6 @@ Use completions other than for binaries.
       (let ((inhibit-read-only t))
         (erase-buffer)
         (eshell-send-input))))
-#+end_src
-
-** exec-path-from-shell
-Uses environment variables defined in your env files
-correctly. Otherwise, we have executables that are not reconginzed by
-Emacs shells.
-#+begin_src emacs-lisp
-  (use-package exec-path-from-shell
-    :defer 1
-    :config
-    (exec-path-from-shell-initialize))
 #+end_src
 
 ** ghostel
@@ -1296,12 +1280,10 @@ Emacs shells.
                    (window-height . 0.25))))
 #+end_src
 ** kitty keyboard protocol
-Makes sure that key inputs in the terminal works as expected.
+Makes sure that key inputs in the terminal works as expected. We enable it when the first terminal frame is set up rather than checking =display-graphic-p= at init, since the daemon has no display at init and would otherwise always load it.
 #+begin_src emacs-lisp
-  (unless (display-graphic-p)
-    (use-package kkp
-      :demand t
-      :config (global-kkp-mode)))
+  (use-package kkp
+    :hook (tty-setup . global-kkp-mode))
 #+end_src
 
 ** vterm
@@ -1366,8 +1348,8 @@ and have requirements on how and when a new window is created.
 * UI enhancement settings
 Settings for the feel and look of Emacs. We may also have some options
 configured elsewhere which affects the look of Emacs. One such example
-is the face `hideshow` minor mode uses, which we have put in
-`programming.org` because it's directly related to programming.
+is the display of `hideshow`'s collapsed text, which we have put under
+[[programming]] because it's directly related to programming.
 ** Faces
 #+begin_src emacs-lisp
   ;; fringe tweak
@@ -1482,7 +1464,7 @@ is the face `hideshow` minor mode uses, which we have put in
   (hesam-dpi-mode 1)
 #+end_src
 *** Ligatures
-Ligatures are a way to display multiple characters as a single glyph. Here we use the package `ligature` to enable ligatures in Emacs. We use the font Iosevka Term Font which has ligatures built-in. We also set the ligatures to be enabled in programming modes.
+Ligatures are a way to display multiple characters as a single glyph. Here we use the package `ligature` to enable ligatures in Emacs. We use JetBrainsMono Nerd Font (see [[Fonts]]), which has ligatures built-in. We also set the ligatures to be enabled in programming modes.
 #+begin_src emacs-lisp
   (use-package ligature
     :config
@@ -1502,7 +1484,7 @@ Chosen theme that is loaded when starting Emacs can be customized.
 #+begin_src emacs-lisp
   (defcustom hesam-default-theme 'modus-vivendi
     "Theme that is loaded at startup."
-    :type 'string
+    :type 'symbol
     :group 'hesam)
   (add-hook 'emacs-startup-hook (lambda () (load-theme hesam-default-theme t)))
 
@@ -1531,8 +1513,8 @@ frame edge.
   (setq-default right-margin-width 1)
 #+end_src
 
-Do not truncate lines and if we need it the default binding to toggle
-is `C-x x t`. A value of `t` means to NOT truncate lines.
+Truncate long lines instead of wrapping them; toggle with `C-x x t`.
+A value of `t` means lines ARE truncated.
 #+begin_src emacs-lisp
   (setq-default truncate-lines t)
 #+end_src
@@ -1631,13 +1613,11 @@ it after startup.
      (delete '(global-mode-string ("" global-mode-string)) mode-line-misc-info)))
 #+end_src
 
-To further clean-up the mode-line we will install `minions` that hides
-them under the major mode. Now all relevant minor modes are shown
-under a hidden list.
+To further clean up the mode-line we collapse all minor mode lighters
+into a single indicator (built in since Emacs 31).
 #+begin_src emacs-lisp
-  (use-package minions
-    :defer 1
-    :config (minions-mode t))
+  (setq mode-line-collapse-minor-modes t
+        mode-line-collapse-minor-modes-to " ≡") ; same indicator minions used
 #+end_src
 
 ** Tabs and Windows
