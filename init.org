@@ -629,13 +629,10 @@ Commands to interact with =cliphist= for copy, cut and selecting, all under the 
            ("C-." . jinx-correct-nearest)))
 #+end_src
 
-** sudo-edit
-When buffer is locked for editing due to permissons we can use this
-package to make editing with sudo access easily. We extensively use
-either `(sudo-edit-current-file)` or `(sudo-edit-find-file)`.
-#+begin_src emacs-lisp
-  (use-package sudo-edit)
-#+end_src
+** sudo
+Editing files that need root is built in through TRAMP: =C-x x @=
+(=tramp-revert-buffer-with-sudo=) reopens the current file as root, and
+=C-x C-f /sudo::/path= opens any file as root.
 
 ** surround
 #+begin_src emacs-lisp
@@ -1222,7 +1219,7 @@ Setting =re-builder= settings.
     (reb-re-syntax 'string))
 #+end_src
 * shell settings
-Shell related packages and configurations. In order to get all environment variables correctly we define them in `.bash_profile`, let the package `exec-path-from-shell` read them and intialize our terminal correctly.
+Shell related packages and configurations. Environment variables such as =PATH= are defined in =.bash_profile=; the graphical session (uwsm) imports them from a login shell, and the Emacs daemon inherits them from there, so no extra package is needed to copy them.
 
 Use completions other than for binaries.
 #+begin_src emacs-lisp
@@ -1242,17 +1239,6 @@ Use completions other than for binaries.
       (let ((inhibit-read-only t))
         (erase-buffer)
         (eshell-send-input))))
-#+end_src
-
-** exec-path-from-shell
-Uses environment variables defined in your env files
-correctly. Otherwise, we have executables that are not reconginzed by
-Emacs shells.
-#+begin_src emacs-lisp
-  (use-package exec-path-from-shell
-    :defer 1
-    :config
-    (exec-path-from-shell-initialize))
 #+end_src
 
 ** ghostel
@@ -1627,13 +1613,11 @@ it after startup.
      (delete '(global-mode-string ("" global-mode-string)) mode-line-misc-info)))
 #+end_src
 
-To further clean-up the mode-line we will install `minions` that hides
-them under the major mode. Now all relevant minor modes are shown
-under a hidden list.
+To further clean up the mode-line we collapse all minor mode lighters
+into a single indicator (built in since Emacs 31).
 #+begin_src emacs-lisp
-  (use-package minions
-    :defer 1
-    :config (minions-mode t))
+  (setq mode-line-collapse-minor-modes t
+        mode-line-collapse-minor-modes-to " ≡") ; same indicator minions used
 #+end_src
 
 ** Tabs and Windows
