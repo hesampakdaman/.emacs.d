@@ -1902,7 +1902,9 @@ Preload the tree-sitter mode for Rust, like Go above.
 #+begin_src emacs-lisp
   (use-package typst-ts-mode
     :defer 1
-    :vc (:url "https://codeberg.org/meow_king/typst-ts-mode")
+    ;; :newest tracks the develop branch; the latest release's
+    ;; autoloads fail unless compile.el is already loaded
+    :vc (:url "https://codeberg.org/meow_king/typst-ts-mode" :rev :newest)
     :hook ((typst-ts-mode . visual-line-mode))
     :custom
     (typst-ts-watch-options "--open")
