@@ -2131,9 +2131,10 @@ colours source blocks with the same faces as the Emacs theme.
   (use-package engrave-faces)
 #+end_src
 
-This package replaces the heading stars with nicer bullet points.
+This package replaces the heading stars with nicer bullet points. It
+is the maintained successor of =org-bullets=.
 #+begin_src emacs-lisp
-  (use-package org-bullets
+  (use-package org-superstar
     :hook org-mode)
 #+end_src
 
