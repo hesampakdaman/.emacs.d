@@ -637,7 +637,7 @@ By default =embark= will show a preview window. We don't want that and instead p
 ** completion
 Settings for the built-in =*Completions*= buffer, which shows up when
 Vertico or corfu don't handle a completion. The options live in
-=minibuffer.el=; =completion= is just a name to group them under.
+=minibuffer.el=.
 - =completion-eager-update= :: update =*Completions*= as we type.
 - =completion-eager-display= :: =auto= shows it right away for commands
   that ask for it.
@@ -650,7 +650,8 @@ after the cursor, while we type. =M-n= / =M-p= cycle through
 candidates, =C-<return>= accepts, =M-f= accepts one word and =TAB=
 opens the full list.
 #+begin_src emacs-lisp
-  (use-package completion
+  (use-package minibuffer
+    :ensure nil
     :custom
     (completion-eager-update t)
     (completion-eager-display 'auto)
