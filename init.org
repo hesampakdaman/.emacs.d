@@ -1333,18 +1333,23 @@ Ligatures are a way to display multiple characters as a single glyph. Here we us
 The theme loaded at startup is =hesam-default-theme=. The matugen
 integration below saves a new value whenever the wallpaper changes, so
 the next start uses the theme matching the current wallpaper.
+
+The theme is loaded during init rather than after startup, so the first
+frame never shows the default colours. It comes after the theme
+packages, so their options (e.g. bold constructs) apply when it loads.
 #+begin_src emacs-lisp
   (defcustom hesam-default-theme 'modus-vivendi
     "Theme that is loaded at startup."
     :type 'symbol
     :group 'hesam)
-  (add-hook 'emacs-startup-hook (lambda () (load-theme hesam-default-theme t)))
 
   (use-package ef-themes)
   (use-package doric-themes)
   (use-package modus-themes
     :custom
     (modus-themes-bold-constructs t))
+
+  (load-theme hesam-default-theme t)
 #+end_src
 
 ** mode-line
