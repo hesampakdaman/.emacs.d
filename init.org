@@ -1027,6 +1027,15 @@ in them. =M-I= toggles it as a side window in the current frame.
     :bind ("M-I" . speedbar-window))
 #+end_src
 
+** query-replace
+While we type the replacement in =M-%= or =C-M-%=, the matches visible
+in the window show what they would become, with the match and its
+replacement side by side (=both=). Replacements using =\,= or =\#= are
+not previewed. New in Emacs 32.
+#+begin_src emacs-lisp
+  (setq query-replace-show-preview 'both)
+#+end_src
+
 ** re-builder
 =M-x re-builder= builds a regexp interactively, with matches
 highlighted in the buffer. The =string= syntax means we type the regexp
