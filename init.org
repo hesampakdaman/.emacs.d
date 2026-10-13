@@ -1876,14 +1876,6 @@ Show folded text as " [+] " instead of "...".
 
 ** languages
 
-*** auto-mode
-Associate files with tree-sitter modes that Emacs doesn't map by
-default.
-#+begin_src emacs-lisp
-  (add-to-list 'auto-mode-alist '("Dockerfile" . dockerfile-ts-mode))
-  (add-to-list 'auto-mode-alist '("\\.y[a]?ml\\'" . yaml-ts-mode))
-#+end_src
-
 *** go
 =:defer 1= loads the mode after one second of idle time, so opening
 the first file of the language doesn't pause. Go code is indented
@@ -1910,8 +1902,6 @@ Preload the tree-sitter mode for Rust, like Go above.
   (use-package typst-ts-mode
     :defer 1
     :vc (:url "https://codeberg.org/meow_king/typst-ts-mode")
-    :config
-    (add-to-list 'auto-mode-alist (cons "\\.typ\\'" 'typst-ts-mode))
     :hook ((typst-ts-mode . visual-line-mode))
     :custom
     (typst-ts-watch-options "--open")
