@@ -68,6 +68,12 @@ This will make sure that the tangled file has lexical binding.
   (dolist (frame-option
            '((undecorated . t) (internal-border-width . 15) (drag-internal-border . 5)))
     (add-to-list 'default-frame-alist frame-option))
+
+  ;; Create the first frame with our font, so Emacs doesn't open the
+  ;; default font first and switch fonts later (~65ms at startup).
+  ;; Keep it in sync with `hesam-default-font-family' and
+  ;; `hesam-default-font-height' (see fonts).
+  (add-to-list 'default-frame-alist '(font . "JetBrainsMono Nerd Font-14"))
 #+end_src
 
 * foundation
