@@ -1153,14 +1153,10 @@ deletes the window, unless it is the only window in the frame.
   (defun hesam/close-window-and-buffers ()
     "Kill the current window's buffer, then delete the window if possible."
     (interactive)
-    (let* ((current-window (selected-window))
-           (buffers (delq nil (mapcar (lambda (win)
-                                        (when (eq win current-window)
-                                          (window-buffer win)))
-                                      (window-list)))))
-      (mapc 'kill-buffer buffers)
+    (let ((window (selected-window)))
+      (kill-buffer (window-buffer window))
       (unless (one-window-p t)
-        (delete-window current-window))))
+        (delete-window window))))
 #+end_src
 
 and build upon that to close the tab as well, bind this =C-x t k=.
