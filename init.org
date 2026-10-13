@@ -1786,9 +1786,10 @@ Flymake is a built-in syntax checker for Emacs to be used everywhere,
 but it's strongly linked to programming and that is why we define it
 here. Eglot reports its diagnostics through Flymake.
 
-We check 0.25s after typing stops and on save, show the most severe
-diagnostic at the end of each affected line, and hide zero counters in
-the mode-line. After =C-c f n= or =C-c f p=, keep pressing =n= / =p= to
+We check 0.25s after typing stops and on save, and hide zero counters
+in the mode-line. Diagnostics on the line with point are drawn below
+it with Unicode graphics (=fancy=); on other lines only the most severe
+one is shown at the end of the line (=short=). After =C-c f n= or =C-c f p=, keep pressing =n= / =p= to
 move between errors. The project diagnostics buffer opens at the top
 of the frame, using 20% of its height.
 #+begin_src emacs-lisp
@@ -1808,7 +1809,7 @@ of the frame, using 20% of its height.
     (put 'flymake-goto-prev-error 'repeat-map 'flymake-repeat-map)
     :config
     (setq flymake-no-changes-timeout 0.25
-          flymake-show-diagnostics-at-end-of-line 'short
+          flymake-inline-diagnostics '((current-line . fancy) (t . short))
           flymake-start-on-save-buffer t
           flymake-suppress-zero-counters t)
     (add-to-list 'display-buffer-alist
