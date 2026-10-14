@@ -2252,12 +2252,16 @@ A document reader (PDF, EPUB, ...) that renders with MuPDF in a native
 module, installed from source. Building the module runs =make=, which
 =package-vc= only does when =package-vc-allow-build-commands= is set. We
 allow build commands for =reader= only, so no other package can run
-build commands.
+build commands. We track the newest commit rather than the last
+release, since releases lag well behind fixes such as HiDPI rendering.
+Libmupdf upgrades change its soname, so after one, rebuild the module
+with =M-x package-vc-rebuild RET reader=.
 #+begin_src emacs-lisp
   (setq package-vc-allow-build-commands '(reader))
   (use-package reader
     :vc (:url "https://codeberg.org/MonadicSheep/emacs-reader"
-  	        :make "all")
+          :rev :newest
+          :make "all")
     :bind (:map reader-mode-map
                 ("d" . reader-dark-mode)
                 ("b" . bookmark-set)
