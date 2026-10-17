@@ -1591,9 +1591,11 @@ say, the terminal.
 
 The candidates are the Ef, Modus and Doric themes of the requested
 mode, except those matching =hesam-matugen-theme-exclude-regexp= (the
-colour-blind variants). Each theme is described by its background and
-mode line colours, read from its palette, and we choose the theme whose
-two colours are closest to the primary colour. Colours are compared
+colour-blind variants). Each theme is described by its background,
+mode line and cursor colours, read from its palette, and we choose the
+theme whose three colours are closest to the primary colour. The
+cursor counts because it is small but stands out: a theme with a warm
+background and a green cursor looks wrong next to a warm terminal. Colours are compared
 by hue and colourfulness in OKLab, ignoring lightness. Colourfulness is
 relative: a theme colour is scaled by the most colourful one of its
 kind among the candidates, and the primary colour counts as fully vivid
@@ -1613,8 +1615,9 @@ so it is done once and cached.
     :group 'hesam)
 
   (defvar hesam--matugen-theme-signatures nil
-    "Cached list of (THEME LIGHTP BG ML) for all Ef, Modus and Doric themes.
-  BG and ML are the OKLab (A B) of the background and mode line.")
+    "Cached list of (THEME LIGHTP BG ML CURSOR) for all Ef, Modus and Doric themes.
+  BG, ML and CURSOR are the OKLab (A B) of the background, mode line and
+  cursor.")
 
   (defun hesam-matugen-pick-theme (color mode)
     "Load the theme closest to matugen's primary COLOR and save it.
@@ -1633,36 +1636,39 @@ so it is done once and cached.
                          (not (string-match-p hesam-matugen-theme-exclude-regexp
                                               (symbol-name (car sig))))))
                   (hesam--matugen-theme-signatures)))
-           (bg-max (seq-max (mapcar (lambda (sig) (hesam--matugen-chroma (nth 2 sig))) sigs)))
-           (ml-max (seq-max (mapcar (lambda (sig) (hesam--matugen-chroma (nth 3 sig))) sigs)))
+           ;; the largest chroma of each theme colour among the candidates
+           (maxima (apply #'cl-mapcar
+                          (lambda (&rest abs) (seq-max (mapcar #'hesam--matugen-chroma abs)))
+                          (mapcar #'cddr sigs)))
            (ab (cdr (hesam--matugen-oklab color)))
            (chroma (max (hesam--matugen-chroma ab) 1e-9))
            (target (hesam--matugen-scale ab (/ (min chroma 0.2) 0.2 chroma))))
       (caar (sort sigs
                   :key (lambda (sig)
-                         (+ (hesam--matugen-distance
-                             (hesam--matugen-scale (nth 2 sig) (/ 1 bg-max)) target)
-                            (hesam--matugen-distance
-                             (hesam--matugen-scale (nth 3 sig) (/ 1 ml-max)) target)))))))
+                         (apply #'+ (cl-mapcar
+                                     (lambda (ab max)
+                                       (hesam--matugen-distance
+                                        (hesam--matugen-scale ab (/ 1 max)) target))
+                                     (cddr sig) maxima)))))))
 
   (defun hesam--matugen-theme-signatures ()
     "Return `hesam--matugen-theme-signatures', computing it if needed."
     (with-memoization hesam--matugen-theme-signatures
       (mapcar (lambda (theme)
-                (pcase-let* ((`(,bg ,ml) (hesam--matugen-theme-colors theme))
-                             (`(,l . ,ab) (hesam--matugen-oklab bg)))
-                  (list theme (> l 0.6) ab (cdr (hesam--matugen-oklab ml)))))
+                (let ((labs (mapcar #'hesam--matugen-oklab
+                                    (hesam--matugen-theme-colors theme))))
+                  (cl-list* theme (> (caar labs) 0.6) (mapcar #'cdr labs))))
               (append ef-themes-items modus-themes-items doric-themes-collection))))
 
   (defun hesam--matugen-theme-colors (theme)
-    "Return the background and mode line colours of THEME as hex strings."
+    "Return the background, mode line and cursor colours of THEME as hex strings."
     (unless (custom-theme-p theme)
       (load-theme theme t t))
     (if (memq theme doric-themes-collection)
         (let ((palette (symbol-value (intern (format "%s-palette" theme)))))
-          (list (cadr (assq 'bg-main palette)) (cadr (assq 'bg-accent palette))))
-      (list (modus-themes-get-color-value 'bg-main nil theme)
-            (modus-themes-get-color-value 'bg-mode-line-active nil theme))))
+          (mapcar (lambda (key) (cadr (assq key palette))) '(bg-main bg-accent cursor)))
+      (mapcar (lambda (key) (modus-themes-get-color-value key nil theme))
+              '(bg-main bg-mode-line-active cursor))))
 
   (defun hesam--matugen-oklab (hex)
     "Return the OKLab (L A B) of colour HEX."
