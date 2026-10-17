@@ -1576,147 +1576,105 @@ wrong for the time of day. The last applied mode is saved with
                            (hesam-matugen-apply-by-solar))))
 #+end_src
 
-*** ef-theme switching
-Pick the Ef theme closest to the wallpaper's colours. matugen renders
-the template =~/.config/matugen/emacs.el= to =~/.emacs.d/matugen.el=, a
-call to =hesam-matugen-pick-ef-theme-by-hsl= with the generated colours
-as HSL strings. Its post hook loads that file through =emacsclient=.
+*** theme switching
+Pick the installed theme that best matches the wallpaper. matugen
+renders the template =~/.config/matugen/emacs.el= to
+=~/.emacs.d/matugen.el=, a call to =hesam-matugen-pick-theme= with the
+wallpaper's dominant colour and the light/dark mode. Its post hook
+loads that file through =emacsclient=.
 
-The surface colour's lightness decides between light and dark themes.
-Each Ef theme has an approximate hue/saturation anchor in
-=hesam--matugen-ef-theme-targets=, and we choose the theme whose anchor
-is closest to the primary colour. Hue is circular and weighted 2.5x
-more than saturation, since hue is what makes a theme look like the
-wallpaper.
+The candidates are the Ef, Modus and Doric themes of the requested
+mode, except those matching =hesam-matugen-theme-exclude-regexp= (the
+colour-blind variants). Each theme is described by its background and
+mode line colours, read from its palette, and we choose the theme whose
+two colours are closest to the wallpaper colour. Colours are compared
+by hue and colourfulness in OKLab, ignoring lightness, so a grey
+wallpaper gets a neutral theme and a vivid one a colourful theme.
+Colourfulness is relative: a theme colour is scaled by the most
+colourful one of its kind among the candidates, and the wallpaper
+colour counts as fully vivid from a chroma of 0.2.
+
+Reading the palettes loads every theme, which takes a second or two,
+so it is done once and cached.
 #+begin_src emacs-lisp
+  (require 'color)
   (require 'ef-themes)
+  (require 'modus-themes)
+  (require 'doric-themes)
 
-  (defun hesam-matugen-pick-ef-theme-by-hsl (&rest colors)
-    "Parse HSL COLORS `plist', pick an `ef-theme', save it, and load it."
-    (let* ((parsed (hesam--matugen-parse-hsl-colors-plist colors))
-           (primary (plist-get parsed :primary))
-           (surface (plist-get parsed :surface)))
-      (unless (and primary surface)
-        (user-error "Missing required colors: :primary and :surface"))
-      (let ((theme (hesam--matugen-pick-ef-theme-from-normalized parsed)))
-        (unless theme
-          (user-error "Could not determine theme from Matugen colors"))
-        (customize-save-variable 'hesam-default-theme theme)
-        (ef-themes-load-theme theme))))
+  (defcustom hesam-matugen-theme-exclude-regexp "deuteranopia\\|tritanopia"
+    "Themes whose names match this regexp are never picked by matugen."
+    :type 'regexp
+    :group 'hesam)
 
-  (defconst hesam--matugen-ef-theme-targets
-    '((light
-       ;; neutral / general
-       (ef-light              :h 0.62 :s 0.20)
-       (ef-deuteranopia-light :h 0.55 :s 0.20)
-       (ef-tritanopia-light   :h 0.55 :s 0.20)
+  (defvar hesam--matugen-theme-signatures nil
+    "Cached list of (THEME LIGHTP BG ML) for all Ef, Modus and Doric themes.
+  BG and ML are the OKLab (A B) of the background and mode line.")
 
-       ;; warm
-       (ef-arbutus            :h 0.97 :s 0.55)
-       (ef-summer             :h 0.93 :s 0.65)
-       (ef-orange             :h 0.10 :s 0.85)
-       (ef-day                :h 0.12 :s 0.45)
-       (ef-eagle              :h 0.08 :s 0.25)
-       (ef-reverie            :h 0.11 :s 0.25)
-       (ef-melissa-light      :h 0.14 :s 0.55)
+  (defun hesam-matugen-pick-theme (source mode)
+    "Load the theme closest to wallpaper colour SOURCE and save it.
+  SOURCE is a hex colour and MODE is `light' or `dark'."
+    (let ((theme (hesam--matugen-closest-theme source (eq mode 'light))))
+      (customize-save-variable 'hesam-default-theme theme)
+      (mapc #'disable-theme custom-enabled-themes)
+      (load-theme theme t)))
 
-       ;; green / earthy
-       (ef-spring             :h 0.36 :s 0.45)
-       (ef-elea-light         :h 0.32 :s 0.35)
-       (ef-cyprus             :h 0.14 :s 0.40)
+  (defun hesam--matugen-closest-theme (source lightp)
+    "Return the theme whose colours are closest to SOURCE.
+  Consider only light themes if LIGHTP is non-nil, else only dark ones."
+    (let* ((sigs (seq-filter
+                  (lambda (sig)
+                    (and (eq (nth 1 sig) lightp)
+                         (not (string-match-p hesam-matugen-theme-exclude-regexp
+                                              (symbol-name (car sig))))))
+                  (hesam--matugen-theme-signatures)))
+           (bg-max (seq-max (mapcar (lambda (sig) (hesam--matugen-chroma (nth 2 sig))) sigs)))
+           (ml-max (seq-max (mapcar (lambda (sig) (hesam--matugen-chroma (nth 3 sig))) sigs)))
+           (ab (cdr (hesam--matugen-oklab source)))
+           (chroma (max (hesam--matugen-chroma ab) 1e-9))
+           (wall (hesam--matugen-scale ab (/ (min chroma 0.2) 0.2 chroma))))
+      (caar (sort sigs
+                  :key (lambda (sig)
+                         (+ (hesam--matugen-distance
+                             (hesam--matugen-scale (nth 2 sig) (/ 1 bg-max)) wall)
+                            (hesam--matugen-distance
+                             (hesam--matugen-scale (nth 3 sig) (/ 1 ml-max)) wall)))))))
 
-       ;; cool
-       (ef-duo-light          :h 0.58 :s 0.45)
-       (ef-frost              :h 0.58 :s 0.45)
-       (ef-maris-light        :h 0.54 :s 0.45)
-       (ef-kassio             :h 0.78 :s 0.25)
-       (ef-trio-light         :h 0.72 :s 0.35))
+  (defun hesam--matugen-theme-signatures ()
+    "Return `hesam--matugen-theme-signatures', computing it if needed."
+    (with-memoization hesam--matugen-theme-signatures
+      (mapcar (lambda (theme)
+                (pcase-let* ((`(,bg ,ml) (hesam--matugen-theme-colors theme))
+                             (`(,l . ,ab) (hesam--matugen-oklab bg)))
+                  (list theme (> l 0.6) ab (cdr (hesam--matugen-oklab ml)))))
+              (append ef-themes-items modus-themes-items doric-themes-collection))))
 
-      (dark
-       ;; neutral
-       (ef-dark               :h 0.62 :s 0.30)
-       (ef-deuteranopia-dark  :h 0.55 :s 0.20)
-       (ef-tritanopia-dark    :h 0.55 :s 0.20)
+  (defun hesam--matugen-theme-colors (theme)
+    "Return the background and mode line colours of THEME as hex strings."
+    (unless (custom-theme-p theme)
+      (load-theme theme t t))
+    (if (memq theme doric-themes-collection)
+        (let ((palette (symbol-value (intern (format "%s-palette" theme)))))
+          (list (cadr (assq 'bg-main palette)) (cadr (assq 'bg-accent palette))))
+      (list (modus-themes-get-color-value 'bg-main nil theme)
+            (modus-themes-get-color-value 'bg-mode-line-active nil theme))))
 
-       ;; warm / purple
-       (ef-autumn             :h 0.08 :s 0.55)
-       (ef-symbiosis          :h 0.14 :s 0.40)
-       (ef-cherie             :h 0.90 :s 0.60)
-       (ef-rosa               :h 0.94 :s 0.45)
-       (ef-dream              :h 0.78 :s 0.25)
-       (ef-winter             :h 0.82 :s 0.45)
-       (ef-trio-dark          :h 0.76 :s 0.35)
-       (ef-melissa-dark       :h 0.14 :s 0.55)
+  (defun hesam--matugen-oklab (hex)
+    "Return the OKLab (L A B) of colour HEX."
+    (apply #'color-srgb-to-oklab
+           (mapcar (lambda (v) (/ v 65535.0)) (color-values-from-color-spec hex))))
 
-       ;; green
-       (ef-bio                :h 0.38 :s 0.45)
-       (ef-elea-dark          :h 0.30 :s 0.35)
+  (defun hesam--matugen-chroma (ab)
+    "Return the chroma of OKLab (A B)."
+    (sqrt (+ (expt (car ab) 2) (expt (cadr ab) 2))))
 
-       ;; cool / blue
-       (ef-fig                :h 0.82 :s 0.30) ; fixed
-       (ef-maris-dark         :h 0.56 :s 0.45)
-       (ef-night              :h 0.62 :s 0.35)
-       (ef-owl                :h 0.68 :s 0.20)
-       (ef-duo-dark           :h 0.58 :s 0.45)))
-    "Approximate hue/saturation anchors for Ef themes.")
+  (defun hesam--matugen-scale (ab factor)
+    "Return OKLab (A B) multiplied by FACTOR."
+    (mapcar (lambda (v) (* v factor)) ab))
 
-  (defun hesam--matugen-pick-ef-theme-from-normalized (colors)
-    "Pick the closest `ef-theme' from normalized COLORS plist.
-
-  COLORS is a plist like:
-
-    :primary (:h H :s S :l L)
-    :surface (:h H :s S :l L)
-
-  Return the chosen `ef-theme' symbol, or nil if required colors are
-  missing."
-    (let* ((primary (plist-get colors :primary))
-           (surface (plist-get colors :surface)))
-      (when (and primary surface)
-        (let* ((h (plist-get primary :h))
-               (s (plist-get primary :s))
-               (surface-l (plist-get surface :l))
-               (group (if (> surface-l 0.5) 'light 'dark))
-               (themes (cdr (assq group hesam--matugen-ef-theme-targets))))
-          (car
-           (cl-reduce
-            (lambda (a b)
-              (if (< (hesam--matugen-theme-distance h s a)
-                     (hesam--matugen-theme-distance h s b))
-                  a
-                b))
-            themes))))))
-
-  (defun hesam--matugen-theme-distance (h s theme-spec)
-    "Return distance between wallpaper H/S and THEME-SPEC."
-    (let ((theme-h (plist-get (cdr theme-spec) :h))
-          (theme-s (plist-get (cdr theme-spec) :s)))
-      (+ (* 2.5 (hesam--matugen-hue-distance h theme-h))
-         (abs (- s theme-s)))))
-
-  (defun hesam--matugen-hue-distance (a b)
-    "Return circular distance between hue A and B, both in [0,1]."
-    (let ((d (abs (- a b))))
-      (min d (- 1.0 d))))
-
-  (defun hesam--matugen-parse-hsl-colors-plist (colors)
-    "Parse COLORS plist of HSL strings into normalized plist."
-    (cl-loop for (key val) on colors by #'cddr
-             when val
-             for parsed = (hesam--matugen-parse-hsl val)
-             when parsed
-             collect key
-             collect parsed))
-
-  (defun hesam--matugen-parse-hsl (hsl-string)
-    "Parse HSL-STRING into a plist (:h H :s S :l L), values in [0,1]."
-    (when (and hsl-string
-               (string-match
-                "hsl(\\([0-9.]+\\),[[:space:]]*\\([0-9.]+\\)%,[[:space:]]*\\([0-9.]+\\)%\\(?:[[:space:]]*/[[:space:]]*[0-9.]+\\)?[[:space:]]*)"
-                hsl-string))
-      (list :h (/ (string-to-number (match-string 1 hsl-string)) 360.0)
-            :s (/ (string-to-number (match-string 2 hsl-string)) 100.0)
-            :l (/ (string-to-number (match-string 3 hsl-string)) 100.0))))
+  (defun hesam--matugen-distance (ab1 ab2)
+    "Return the distance between OKLab (A B) points AB1 and AB2."
+    (hesam--matugen-chroma (cl-mapcar #'- ab1 ab2)))
 #+end_src
 
 * programming
