@@ -118,13 +118,8 @@ packages that need them. =(system-pkg ripgrep :exe rg)= queues
 =ripgrep= for installation if =rg= isn't on =PATH= and the package
 isn't installed; =M-x system-pkg-install-queued= then installs
 everything queued in one =yay= call. The macro does nothing unless
-=system-pkg-mode= is non-nil, which the dotfiles repo's =.dir-locals.el=
-sets for =dotfiles.org=.
-
-=system-pkg-mode= is a plain buffer-local variable, not a minor mode.
-Emacs sets a user option from file-local variables through its custom
-setter, and a minor mode's setter can't set a buffer-local value, so
-Emacs would warn every time the file is opened.
+=system-pkg-mode= is on in the current buffer; the dotfiles repo's
+=.dir-locals.el= turns it on for =dotfiles.org=.
 #+begin_src emacs-lisp
   (defgroup system-pkg nil
     "Ensure system packages are installed."
@@ -180,8 +175,9 @@ Emacs would warn every time the file is opened.
          (funcall system-pkg-install-command pkgs)
          "*system-pkg-install*"))))
 
-  (defvar-local system-pkg-mode nil
-    "Non-nil means `system-pkg' declarations queue missing packages.")
+  (define-minor-mode system-pkg-mode
+    "Toggle queued system package support."
+    :lighter " SysPkg")
 #+end_src
 
 ** custom group
