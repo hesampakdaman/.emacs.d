@@ -118,7 +118,8 @@ packages that need them. =(system-pkg ripgrep :exe rg)= queues
 =ripgrep= for installation if =rg= isn't on =PATH= and the package
 isn't installed; =M-x system-pkg-install-queued= then installs
 everything queued in one =yay= call. The macro does nothing unless
-=system-pkg-mode= is on.
+=system-pkg-mode= is on in the current buffer; the dotfiles repo's
+=.dir-locals.el= turns it on for =dotfiles.org=.
 #+begin_src emacs-lisp
   (defgroup system-pkg nil
     "Ensure system packages are installed."
@@ -176,7 +177,6 @@ everything queued in one =yay= call. The macro does nothing unless
 
   (define-minor-mode system-pkg-mode
     "Toggle queued system package support."
-    :global t
     :lighter " SysPkg")
 #+end_src
 
