@@ -119,10 +119,11 @@ packages that need them. =(system-pkg ripgrep :exe rg)= queues
 isn't installed; =M-x system-pkg-install-queued= then installs
 everything queued in one =yay= call. =:setup= lists one-time steps
 the package needs, such as =sudo= commands outside =$HOME=, as
-=(CHECK COMMAND)= pairs. CHECK is evaluated every time, even if the
-package is installed, and COMMAND is queued when it returns nil;
-queued commands run after the =yay= call, so they can rely on the
-package. The macro does nothing unless =system-pkg-mode= is on in the
+=(:unless CHECK :run COMMAND)= entries. CHECK is evaluated every
+time, even if the package is installed, and COMMAND is queued unless
+it returns non-nil; queued commands run after the =yay= call, so they
+can rely on the package. =system-pkg-unit-enabled-p= is a CHECK for
+user units. The macro does nothing unless =system-pkg-mode= is on in the
 current buffer; the dotfiles repo's =.dir-locals.el= turns it on for
 =dotfiles.org=.
 #+begin_src emacs-lisp
@@ -165,9 +166,10 @@ current buffer; the dotfiles repo's =.dir-locals.el= turns it on for
   A package is considered present if either the executable is found
   in PATH or `system-pkg-installed-p` reports it as installed.
 
-  SETUP, if provided, is a list of (CHECK COMMAND) pairs. Each CHECK
-  is a form evaluated every time; when it returns nil, the shell
-  COMMAND is queued to run after the packages are installed."
+  SETUP, if provided, is a list of (:unless CHECK :run COMMAND)
+  entries. Each CHECK is a form evaluated every time; unless it
+  returns non-nil, the shell COMMAND is queued to run after the
+  packages are installed."
     (declare (indent 1))
     `(when system-pkg-mode
        (let ((pkg-name (system-pkg--name ',pkg))
@@ -175,11 +177,18 @@ current buffer; the dotfiles repo's =.dir-locals.el= turns it on for
          (unless (or (executable-find exe-name)
                      (funcall system-pkg-installed-p pkg-name))
            (cl-pushnew pkg-name system-pkg--queue :test #'string=)))
-       ,@(mapcar (pcase-lambda (`(,check ,command))
-                   `(unless ,check
-                      (cl-pushnew ,command system-pkg--setup-queue
+       ,@(mapcar (lambda (step)
+                   `(unless ,(plist-get step :unless)
+                      (cl-pushnew ,(or (plist-get step :run)
+                                       (error "Setup step without :run: %S" step))
+                                  system-pkg--setup-queue
                                   :test #'string=)))
                  setup)))
+
+  (defun system-pkg-unit-enabled-p (unit)
+    "Return non-nil if the systemd user UNIT is enabled."
+    (eq 0 (call-process "systemctl" nil nil nil
+                        "--user" "is-enabled" "--quiet" unit)))
 
   (defun system-pkg-install-queued ()
     (interactive)
