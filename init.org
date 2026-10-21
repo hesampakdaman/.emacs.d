@@ -117,9 +117,14 @@ Declare system (Arch, via =yay=) dependencies next to the Emacs
 packages that need them. =(system-pkg ripgrep :exe rg)= queues
 =ripgrep= for installation if =rg= isn't on =PATH= and the package
 isn't installed; =M-x system-pkg-install-queued= then installs
-everything queued in one =yay= call. The macro does nothing unless
-=system-pkg-mode= is on in the current buffer; the dotfiles repo's
-=.dir-locals.el= turns it on for =dotfiles.org=.
+everything queued in one =yay= call. =:setup= lists one-time steps
+the package needs, such as =sudo= commands outside =$HOME=, as
+=(CHECK COMMAND)= pairs. CHECK is evaluated every time, even if the
+package is installed, and COMMAND is queued when it returns nil;
+queued commands run after the =yay= call, so they can rely on the
+package. The macro does nothing unless =system-pkg-mode= is on in the
+current buffer; the dotfiles repo's =.dir-locals.el= turns it on for
+=dotfiles.org=.
 #+begin_src emacs-lisp
   (defgroup system-pkg nil
     "Ensure system packages are installed."
@@ -141,6 +146,7 @@ everything queued in one =yay= call. The macro does nothing unless
     :group 'system-pkg)
 
   (defvar system-pkg--queue nil)
+  (defvar system-pkg--setup-queue nil)
 
   (defun system-pkg--name (x)
     (cond
@@ -148,7 +154,7 @@ everything queued in one =yay= call. The macro does nothing unless
      ((stringp x) x)
      (t (error "Expected symbol or string, got: %S" x))))
 
-  (cl-defmacro system-pkg (pkg &key exe)
+  (cl-defmacro system-pkg (pkg &key exe setup)
     "Ensure PKG is available, queuing it for installation if necessary.
 
   PKG is the name of the system package to install.
@@ -157,22 +163,38 @@ everything queued in one =yay= call. The macro does nothing unless
   `executable-find`. Defaults to PKG.
 
   A package is considered present if either the executable is found
-  in PATH or `system-pkg-installed-p` reports it as installed."
+  in PATH or `system-pkg-installed-p` reports it as installed.
+
+  SETUP, if provided, is a list of (CHECK COMMAND) pairs. Each CHECK
+  is a form evaluated every time; when it returns nil, the shell
+  COMMAND is queued to run after the packages are installed."
     (declare (indent 1))
     `(when system-pkg-mode
        (let ((pkg-name (system-pkg--name ',pkg))
              (exe-name (system-pkg--name ',(or exe pkg))))
          (unless (or (executable-find exe-name)
                      (funcall system-pkg-installed-p pkg-name))
-           (cl-pushnew pkg-name system-pkg--queue :test #'string=)))))
+           (cl-pushnew pkg-name system-pkg--queue :test #'string=)))
+       ,@(mapcar (pcase-lambda (`(,check ,command))
+                   `(unless ,check
+                      (cl-pushnew ,command system-pkg--setup-queue
+                                  :test #'string=)))
+                 setup)))
 
   (defun system-pkg-install-queued ()
     (interactive)
-    (when system-pkg--queue
-      (let ((pkgs (delete-dups (reverse system-pkg--queue))))
-        (setq system-pkg--queue nil)
+    (when (or system-pkg--queue system-pkg--setup-queue)
+      (let ((pkgs (delete-dups (reverse system-pkg--queue)))
+            (setup (reverse system-pkg--setup-queue)))
+        (setq system-pkg--queue nil
+              system-pkg--setup-queue nil)
+        ;; && so a failed install skips the setup steps that need it.
         (async-shell-command
-         (funcall system-pkg-install-command pkgs)
+         (string-join (append (and pkgs
+                                   (list (funcall system-pkg-install-command
+                                                  pkgs)))
+                              setup)
+                      " && ")
          "*system-pkg-install*"))))
 
   (define-minor-mode system-pkg-mode
