@@ -93,13 +93,13 @@ tuning.
   ;; which costs ~60ms at startup even when nothing needs installing.
   ;; Skip it for packages the quickstart already activated and for
   ;; built-ins; anything else falls through and gets installed.
-  (defun hesam--use-package-ensure (name args state &optional no-refresh)
+  (defun hesam-use-package--ensure (name args state &optional no-refresh)
     (let ((pkg (use-package-as-symbol name)))
       (unless (and (equal args '(t))
                    (or (memq pkg package-activated-list)
                        (package-built-in-p pkg)))
         (use-package-ensure-elpa name args state no-refresh))))
-  (setq use-package-ensure-function #'hesam--use-package-ensure)
+  (setq use-package-ensure-function #'hesam-use-package--ensure)
 
   ;; Not demanded: startup activates packages from the quickstart file
   ;; without loading package.el, and `package-installed-p' (used by
@@ -259,11 +259,11 @@ It's a good idea to be aware of Emacs' startup time. In case any new setting has
   (use-package emacs
     :demand t
     :preface
-    (defun hesam--display-startup-time ()
+    (defun hesam-startup--display-time ()
       (message "Emacs loaded in %s seconds with %d packages active. Happy hacking!"
                (emacs-init-time "%.2f")
                (length package-activated-list)))
-    :hook (emacs-startup . hesam--display-startup-time))
+    :hook (emacs-startup . hesam-startup--display-time))
 #+end_src
 
 ** compilation warnings
@@ -1211,7 +1211,7 @@ more tabs.
 Define a function that kills the current window's buffer and then
 deletes the window, unless it is the only window in the frame.
 #+begin_src emacs-lisp
-  (defun hesam/close-window-and-buffers ()
+  (defun hesam-window-close-and-kill-buffer ()
     "Kill the current window's buffer, then delete the window if possible."
     (interactive)
     (let ((window (selected-window)))
@@ -1222,14 +1222,14 @@ deletes the window, unless it is the only window in the frame.
 
 and build upon that to close the tab as well, bind this =C-x t k=.
 #+begin_src emacs-lisp
-  (defun hesam/kill-buffer-on-close-tab ()
+  (defun hesam-tab-close-and-kill-buffer ()
     (interactive)
-    (hesam/close-window-and-buffers)
+    (hesam-window-close-and-kill-buffer)
     (tab-close))
 
   ;; Usually we don't bind custom keys to C-x but make an exception this
   ;; time to gather all tab commands with the one defined.
-  (global-set-key (kbd "C-x t k") 'hesam/kill-buffer-on-close-tab)
+  (global-set-key (kbd "C-x t k") 'hesam-tab-close-and-kill-buffer)
 #+end_src
 
 ** windmove and winner-mode
@@ -1278,7 +1278,7 @@ instead of during startup.
 ** hyprland integration
 One set of keys moves focus both between Emacs windows and between
 Hyprland windows. Hyprland binds =SUPER+h/j/k/l= to
-=emacsclient -e "(hesam/windmove-or-hyprland 'left)"= and so on (see
+=emacsclient -e "(hesam-hyprland-windmove 'left)"= and so on (see
 =~/.config/hypr/hyprland.lua=). If Emacs is focused, we move to the
 neighbouring Emacs window, and at the edge of the frame we hand over
 to Hyprland. If another program is focused, we just ask Hyprland to
@@ -1288,23 +1288,23 @@ move focus.
 Emacs daemon can start before Hyprland, and then lacks the variable,
 so we look it up with =hyprctl instances= the first time we need it.
 #+begin_src emacs-lisp
-  (defun hesam/windmove-or-hyprland (dir)
+  (defun hesam-hyprland-windmove (dir)
     "If focused window is Emacs, try to move using windmove.
   If that fails or not in Emacs, fallback to Hyprland movefocus.
   DIR should be one of the symbols: 'left, 'right, 'up, or 'down."
-    (hesam/hyprland-ensure-env)
-    (if (hesam/hyprland-emacs-window-p)
-        (hesam/hyprland-windmove-or-fallback dir)
-      (hesam/hyprland-move-focus dir)))
+    (hesam-hyprland--ensure-env)
+    (if (hesam-hyprland--emacs-window-p)
+        (hesam-hyprland--windmove-or-fallback dir)
+      (hesam-hyprland--move-focus dir)))
 
-  (defun hesam/hyprland-emacs-window-p ()
+  (defun hesam-hyprland--emacs-window-p ()
     "Return t if the currently focused Hyprland window is Emacs."
     (let* ((json (shell-command-to-string "hyprctl activewindow -j"))
            (class (when (string-match "\"class\": \"\\([^\"]+\\)\"" json)
                     (match-string 1 json))))
       (string= class "emacs")))
 
-  (defun hesam/hyprland-windmove-or-fallback (dir)
+  (defun hesam-hyprland--windmove-or-fallback (dir)
     "Try to move focus in Emacs in direction DIR using windmove.
   If that fails (no window), fallback to Hyprland's movefocus.
   DIR should be one of the symbols: 'left, 'right, 'up, or 'down."
@@ -1317,15 +1317,15 @@ so we look it up with =hyprctl instances= the first time we need it.
       (condition-case nil
           (funcall fn)
         (user-error
-         (hesam/hyprland-move-focus dir)))))
+         (hesam-hyprland--move-focus dir)))))
 
-  (defun hesam/hyprland-move-focus (dir)
+  (defun hesam-hyprland--move-focus (dir)
     "Ask Hyprland to move focus in direction DIR."
     (let ((hypr-dir (symbol-name dir)))
       (call-process "hyprctl" nil 0 nil "dispatch"
                     (format "hl.dsp.focus({ direction = \"%s\" })" hypr-dir))))
 
-  (defun hesam/hyprland-ensure-env ()
+  (defun hesam-hyprland--ensure-env ()
     "Set HYPRLAND_INSTANCE_SIGNATURE using the currently running Hyprland instance.
   Uses `hyprctl instances` to get the active signature."
     (unless (getenv "HYPRLAND_INSTANCE_SIGNATURE")
@@ -1669,7 +1669,7 @@ so it is done once and cached.
     :type 'regexp
     :group 'hesam)
 
-  (defvar hesam--matugen-theme-signatures nil
+  (defvar hesam-matugen--theme-signatures nil
     "Cached list of (THEME LIGHTP BG ML CURSOR) for all Ef, Modus and Doric themes.
   BG, ML and CURSOR are the OKLab (A B) of the background, mode line and
   cursor.")
@@ -1677,12 +1677,12 @@ so it is done once and cached.
   (defun hesam-matugen-pick-theme (color mode)
     "Load the theme closest to matugen's primary COLOR and save it.
   COLOR is a hex colour and MODE is `light' or `dark'."
-    (let ((theme (hesam--matugen-closest-theme color (eq mode 'light))))
+    (let ((theme (hesam-matugen--closest-theme color (eq mode 'light))))
       (customize-save-variable 'hesam-default-theme theme)
       (mapc #'disable-theme custom-enabled-themes)
       (load-theme theme t)))
 
-  (defun hesam--matugen-closest-theme (color lightp)
+  (defun hesam-matugen--closest-theme (color lightp)
     "Return the theme whose colours are closest to COLOR.
   Consider only light themes if LIGHTP is non-nil, else only dark ones."
     (let* ((sigs (seq-filter
@@ -1690,32 +1690,32 @@ so it is done once and cached.
                     (and (eq (nth 1 sig) lightp)
                          (not (string-match-p hesam-matugen-theme-exclude-regexp
                                               (symbol-name (car sig))))))
-                  (hesam--matugen-theme-signatures)))
+                  (hesam-matugen--theme-signatures)))
            ;; the largest chroma of each theme colour among the candidates
            (maxima (apply #'cl-mapcar
-                          (lambda (&rest abs) (seq-max (mapcar #'hesam--matugen-chroma abs)))
+                          (lambda (&rest abs) (seq-max (mapcar #'hesam-matugen--chroma abs)))
                           (mapcar #'cddr sigs)))
-           (ab (cdr (hesam--matugen-oklab color)))
-           (chroma (max (hesam--matugen-chroma ab) 1e-9))
-           (target (hesam--matugen-scale ab (/ (min chroma 0.2) 0.2 chroma))))
+           (ab (cdr (hesam-matugen--oklab color)))
+           (chroma (max (hesam-matugen--chroma ab) 1e-9))
+           (target (hesam-matugen--scale ab (/ (min chroma 0.2) 0.2 chroma))))
       (caar (sort sigs
                   :key (lambda (sig)
                          (apply #'+ (cl-mapcar
                                      (lambda (ab max)
-                                       (hesam--matugen-distance
-                                        (hesam--matugen-scale ab (/ 1 max)) target))
+                                       (hesam-matugen--distance
+                                        (hesam-matugen--scale ab (/ 1 max)) target))
                                      (cddr sig) maxima)))))))
 
-  (defun hesam--matugen-theme-signatures ()
-    "Return `hesam--matugen-theme-signatures', computing it if needed."
-    (with-memoization hesam--matugen-theme-signatures
+  (defun hesam-matugen--theme-signatures ()
+    "Return `hesam-matugen--theme-signatures', computing it if needed."
+    (with-memoization hesam-matugen--theme-signatures
       (mapcar (lambda (theme)
-                (let ((labs (mapcar #'hesam--matugen-oklab
-                                    (hesam--matugen-theme-colors theme))))
+                (let ((labs (mapcar #'hesam-matugen--oklab
+                                    (hesam-matugen--theme-colors theme))))
                   (cl-list* theme (> (caar labs) 0.6) (mapcar #'cdr labs))))
               (append ef-themes-items modus-themes-items doric-themes-collection))))
 
-  (defun hesam--matugen-theme-colors (theme)
+  (defun hesam-matugen--theme-colors (theme)
     "Return the background, mode line and cursor colours of THEME as hex strings."
     (unless (custom-theme-p theme)
       (load-theme theme t t))
@@ -1725,22 +1725,22 @@ so it is done once and cached.
       (mapcar (lambda (key) (modus-themes-get-color-value key nil theme))
               '(bg-main bg-mode-line-active cursor))))
 
-  (defun hesam--matugen-oklab (hex)
+  (defun hesam-matugen--oklab (hex)
     "Return the OKLab (L A B) of colour HEX."
     (apply #'color-srgb-to-oklab
            (mapcar (lambda (v) (/ v 65535.0)) (color-values-from-color-spec hex))))
 
-  (defun hesam--matugen-chroma (ab)
+  (defun hesam-matugen--chroma (ab)
     "Return the chroma of OKLab (A B)."
     (sqrt (+ (expt (car ab) 2) (expt (cadr ab) 2))))
 
-  (defun hesam--matugen-scale (ab factor)
+  (defun hesam-matugen--scale (ab factor)
     "Return OKLab (A B) multiplied by FACTOR."
     (mapcar (lambda (v) (* v factor)) ab))
 
-  (defun hesam--matugen-distance (ab1 ab2)
+  (defun hesam-matugen--distance (ab1 ab2)
     "Return the distance between OKLab (A B) points AB1 and AB2."
-    (hesam--matugen-chroma (cl-mapcar #'- ab1 ab2)))
+    (hesam-matugen--chroma (cl-mapcar #'- ab1 ab2)))
 #+end_src
 
 * programming
@@ -1778,7 +1778,7 @@ formatting.
     (eglot-send-changes-idle-time 0.3)   ; send edits after 0.3s idle (default 0.5)
     (eglot-code-action-indications nil)  ; no hints for available actions; use C-c e a
     :config
-    (defun hesam--eglot-format-buffer ()
+    (defun hesam-eglot--format-buffer ()
       (when (eglot-server-capable :documentFormattingProvider)
         (eglot-format-buffer)))
 
@@ -1810,7 +1810,7 @@ formatting.
 
     :hook
     ((go-ts-mode rust-ts-mode) . eglot-ensure)
-    (eglot-managed-mode . (lambda () (add-hook 'before-save-hook #'hesam--eglot-format-buffer nil t))))
+    (eglot-managed-mode . (lambda () (add-hook 'before-save-hook #'hesam-eglot--format-buffer nil t))))
 #+end_src
 
 ** eldoc
@@ -1879,10 +1879,10 @@ closely tied to programming.
 *** electric mode
 Automatically add closing brackets and indent code in =prog-mode=.
 #+begin_src emacs-lisp
-  (defun hesam/electric ()
+  (defun hesam-prog--enable-electric ()
     (electric-pair-local-mode t)
     (electric-indent-local-mode t))
-  (add-hook 'prog-mode-hook #'hesam/electric)
+  (add-hook 'prog-mode-hook #'hesam-prog--enable-electric)
 #+end_src
 
 *** hideshow
@@ -2000,9 +2000,9 @@ just executables.
   (use-package eshell
     :after esh-mode
     :bind (:map eshell-mode-map
-                ("C-u C-l" . hesam/eshell-clear-buffer))
+                ("C-u C-l" . hesam-eshell-clear-buffer))
     :config
-    (defun hesam/eshell-clear-buffer ()
+    (defun hesam-eshell-clear-buffer ()
       "Clear the eshell buffer."
       (interactive)
       (let ((inhibit-read-only t))
@@ -2032,7 +2032,7 @@ escape sequence, so a shell function can open Magit.
     :bind (("C-x m" . ghostel)
            :map ghostel-semi-char-mode-map
            ("C-s"  . consult-line)
-           ("C-k"  . hesam--ghostel-send-C-k-and-kill)
+           ("C-k"  . hesam-ghostel-send-C-k-and-kill)
            ("M-p" . (lambda () (interactive) (ghostel-send-key "p" "ctrl")))
            ("M-n" . (lambda () (interactive) (ghostel-send-key "n" "ctrl")))
            :map project-prefix-map
@@ -2045,7 +2045,7 @@ escape sequence, so a shell function can open Magit.
     (ghostel-enable-url-detection t)
     (ghostel-enable-file-detection t)
     :config
-    (defun hesam--ghostel-send-C-k-and-kill ()
+    (defun hesam-ghostel-send-C-k-and-kill ()
       "Send `C-k' to ghostel.
   Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
       (interactive)
@@ -2075,8 +2075,8 @@ make it the project shell again.
     :init
     (if (eq system-type 'darwin)
         (setq vterm-shell "/bin/zsh"))
-    ;; (add-to-list 'project-switch-commands '(hesam/vterm-project-shell "vterm" ?s))
-    ;; (advice-add #'project-shell :override #'hesam/vterm-project-shell)
+    ;; (add-to-list 'project-switch-commands '(hesam-vterm-project-shell "vterm" ?s))
+    ;; (advice-add #'project-shell :override #'hesam-vterm-project-shell)
     (add-to-list 'display-buffer-alist
                  '(".* vterm\\*"           ; captures vterm in project
                    (display-buffer-in-direction)
@@ -2095,12 +2095,12 @@ make it the project shell again.
     (vterm-max-scrollback 10000))
 #+end_src
 
-The custom function =hesam/vterm-project-shell= is for use with
+The custom function =hesam-vterm-project-shell= is for use with
 =project.el=, as a replacement for =project-shell= (see the
 commented-out lines above). It starts vterm in the project root, or
 switches to that project's existing vterm buffer.
 #+begin_src emacs-lisp
-  (defun hesam/vterm-project-shell ()
+  (defun hesam-vterm-project-shell ()
     "Run `vterm' in the current project's root.
 
   If the VTerm buffer for this project exists and is visible, switch to it.
