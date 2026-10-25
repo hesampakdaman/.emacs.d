@@ -227,7 +227,7 @@ tracked by git, instead of being appended to the init file. Some of
 them are written by code in this file, e.g. the current theme and the
 matugen light/dark state.
 #+begin_src emacs-lisp
-  (setq custom-file (locate-user-emacs-file "emacs-custom.el"))
+  (setq custom-file (locate-user-emacs-file "custom.el"))
   (load custom-file 'noerror 'nomessage)
 #+end_src
 
