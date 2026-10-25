@@ -819,6 +819,30 @@ Use spaces for indentation with a tab width of four.
                 tab-width 4)
 #+end_src
 
+** line width
+Fill and wrap at 80 columns instead of the default 70. Besides =M-q= and
+auto-fill, this sets the text width of =visual-fill-column=, and Flymake's
+fancy inline diagnostics pad their rows to column 80, so a narrower text
+area wraps them onto an extra line.
+
+#+begin_src emacs-lisp
+  (setq-default fill-column 80)
+#+end_src
+
+=visual-fill-column-mode= wraps a buffer at =fill-column= with equal
+margins on both sides. It is not hooked to any mode; turn it on by hand.
+
+#+begin_src emacs-lisp
+  (use-package visual-fill-column
+    :defer t
+    :custom
+    ;; wrap at `fill-column' with equal margins on both sides
+    (visual-fill-column-center-text t)
+    ;; shift the text two columns right, since ragged-right lines
+    ;; otherwise make the right margin look wider than the left
+    (visual-fill-column-extra-text-width '(-2 . 2)))
+#+end_src
+
 ** clipboard
 Don't add a kill to the kill ring if it duplicates the last entry. And
 before a kill replaces the system clipboard, save what was on the
