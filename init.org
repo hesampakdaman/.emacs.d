@@ -2295,10 +2295,19 @@ module, installed from source. Building the module runs =make=, which
 =package-vc= only does when =package-vc-allow-build-commands= is set. We
 allow build commands for =reader= only, so no other package can run
 build commands.
+
+Before =make=, =:shell-command= applies =patches/reader-trim-pixmap.patch=
+unless it is already applied. On a HiDPI frame the module renders odd
+sized pixmaps that Emacs resamples on every redisplay, which makes
+scrolling slow at some zoom levels; the patch trims them to an exact
+multiple of the frame scale. =use-package= only uses this spec on a
+fresh install; upgrades read the copy in =package-vc-selected-packages=
+in the custom file, so keep the two in sync.
 #+begin_src emacs-lisp
   (setq package-vc-allow-build-commands '(reader))
   (use-package reader
     :vc (:url "https://codeberg.org/MonadicSheep/emacs-reader"
+              :shell-command "p=~/.emacs.d/patches/reader-trim-pixmap.patch; git apply -R --check $p 2>/dev/null || git apply $p"
   	        :make "all")
     :bind (:map reader-mode-map
                 ("d" . reader-dark-mode)

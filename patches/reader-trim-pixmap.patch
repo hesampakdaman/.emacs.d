@@ -1,0 +1,27 @@
+diff --git i/render/render-core.c w/render/render-core.c
+index 93879c9..2e68299 100644
+--- i/render/render-core.c
++++ w/render/render-core.c
+@@ -186,6 +186,22 @@ draw_page_thread(void *arg)
+ 
+ 			local_imgh = (int)(fz_pixmap_height(ctx, pixmap) / frame_scale);
+ 			local_imgw = (int)(fz_pixmap_width(ctx, pixmap) / frame_scale);
++
++			/* Trim the pixmap to an exact multiple of the frame scale.
++			   Otherwise Emacs resamples the whole image on every
++			   redisplay to fit the truncated logical size.  */
++			int exact_w = (int)(local_imgw * frame_scale);
++			int exact_h = (int)(local_imgh * frame_scale);
++			if (exact_w != fz_pixmap_width(ctx, pixmap)
++			    || exact_h != fz_pixmap_height(ctx, pixmap))
++				{
++					fz_irect r = fz_pixmap_bbox(ctx, pixmap);
++					r.x1 = r.x0 + exact_w;
++					r.y1 = r.y0 + exact_h;
++					fz_pixmap *trimmed = fz_new_pixmap_from_pixmap(ctx, pixmap, &r);
++					fz_drop_pixmap(ctx, pixmap);
++					pixmap = trimmed;
++				}
+ 			buf = fz_new_buffer(ctx, 1024);
+ 			out = fz_new_output_with_buffer(ctx, buf);
+ 			fz_write_pixmap_as_pnm(ctx, out, pixmap);
