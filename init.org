@@ -1950,14 +1950,9 @@ render again once Emacs is idle, so no refresh on save is needed.
 #+begin_src emacs-lisp
   (use-package typst-overlay
     :custom
-    ;; report equations that fail to compile to Flymake
+    ;; report equations that fail to compile to Flymake in Typst
+    ;; buffers too, not only in org buffers
     (typst-overlay-use-flymake t)
-    (typst-overlay-scale 1.0)
-    (typst-overlay-max-active-compiles 8)
-    ;; re-render edited equations after this many idle seconds
-    (typst-overlay-idle-refresh-delay 0.25)
-    ;; show the equation being edited rendered beside its source
-    (typst-overlay-preview t)
     :hook ((typst-ts-mode . typst-overlay-mode)
            (typst-ts-mode . flymake-mode)))
 #+end_src
