@@ -1944,6 +1944,24 @@ Preload the tree-sitter mode for Rust, like Go above.
     (typst-ts-enable-raw-blocks-highlight t))
 #+end_src
 
+=typst-overlay= renders Typst math as images over the source, and
+reports equations that fail to compile to Flymake. Edited equations
+render again once Emacs is idle, so no refresh on save is needed.
+#+begin_src emacs-lisp
+  (use-package typst-overlay
+    :custom
+    ;; report equations that fail to compile to Flymake
+    (typst-overlay-use-flymake t)
+    (typst-overlay-scale 1.0)
+    (typst-overlay-max-active-compiles 8)
+    ;; re-render edited equations after this many idle seconds
+    (typst-overlay-idle-refresh-delay 0.25)
+    ;; show the equation being edited rendered beside its source
+    (typst-overlay-preview t)
+    :hook ((typst-ts-mode . typst-overlay-mode)
+           (typst-ts-mode . flymake-mode)))
+#+end_src
+
 ** version control
 =magit= is a git porcelain. =C-x p v= (=project-vc-dir=) opens Magit
 instead of VC-Dir, and Magit buffers open to the right of the frame.
