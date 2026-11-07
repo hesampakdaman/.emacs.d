@@ -112,6 +112,29 @@ tuning.
     (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/")))
 #+end_src
 
+Installing a package regenerates the quickstart file, and that prints
+warnings that point at nothing wrong. =package-quickstart-refresh= calls
+=package-initialize= even when the install already did, so an install
+during startup warns "Unnecessary call to `package-initialize' in init
+file". Compiling the file then warns about other packages' autoloads,
+such as magit's and org's (package.el has a FIXME to hide these). The
+advice drops both, but still reports compiler errors.
+#+begin_src emacs-lisp
+  (defvar byte-compile-log-warning-function)
+  (defvar warning-suppress-log-types)
+  (define-advice package-quickstart-refresh (:around (fn) quiet)
+    (require 'bytecomp)
+    (require 'warnings)
+    (let* ((log byte-compile-log-warning-function)
+           (byte-compile-log-warning-function
+            (lambda (string pos fill level)
+              (when (eq level :error)
+                (funcall log string pos fill level))))
+           (warning-suppress-log-types
+            (cons '(package reinitialization) warning-suppress-log-types)))
+      (funcall fn)))
+#+end_src
+
 *** system-pkg
 Declare system (Arch, via =yay=) dependencies next to the Emacs
 packages that need them. =(system-pkg ripgrep :exe rg)= queues
