@@ -1936,6 +1936,11 @@ Preload the tree-sitter mode for Rust, like Go above.
     ;; autoloads fail unless compile.el is already loaded
     :vc (:url "https://codeberg.org/meow_king/typst-ts-mode" :rev :newest)
     :hook ((typst-ts-mode . visual-line-mode))
+    :init
+    ;; highlight Typst blocks in org with typst-ts-mode, and edit them
+    ;; in it with C-c '
+    (with-eval-after-load 'org-src
+      (add-to-list 'org-src-lang-modes '("typst" . typst-ts)))
     :custom
     (typst-ts-watch-options "--open")
     ;; checked against the minimum grammar version typst-ts-mode supports
